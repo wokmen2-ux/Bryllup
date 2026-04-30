@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benjamin &amp; Camilla · 22.05.2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   BASE / RESET / VARIABLES
+══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #b8922a;
+  --gold-light: #d4aa3a;
+  --cream: #f8f3ec;
+  --dark: #2c2416;
+  --mid: #6e6455;
+  --light: #9e917e;
+  --glass: rgba(248,243,236,0.75);
+  --glass-border: rgba(184,148,42,0.18);
+}
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'Raleway', sans-serif;
+  background: #1c1810;
+  color: var(--dark);
+}
+
+/* ══════════════════════════════════════
+   FIXED BACKGROUND
+══════════════════════════════════════ */
+#bg-fixed {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(184,148,42,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(210,180,100,0.06) 0%, transparent 50%),
+    linear-gradient(160deg, #1e1a10 0%, #2a2214 40%, #1a160c 100%);
+}
+
+/* ══════════════════════════════════════
+   SLIDE SYSTEM
+══════════════════════════════════════ */
+#landing {
+  position: fixed; inset: 0; z-index: 10;
+  transition: transform 1.1s cubic-bezier(0.77,0,0.175,1), opacity 0.8s ease;
+}
+#landing.exiting {
+  transform: translateY(-100vh);
+  opacity: 0;
+  pointer-events: none;
+}
+.slide {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  will-change: transform;
+}
+
+/* ══════════════════════════════════════
+   GLASS CARDS
+══════════════════════════════════════ */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: 0 12px 48px rgba(28,24,16,0.18), 0 2px 8px rgba(28,24,16,0.08);
+}
+
+/* ══════════════════════════════════════
+   SLIDE DOTS
+══════════════════════════════════════ */
+#slide-dots {
+  position: fixed; right: 18px; top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 8px;
+  z-index: 200; opacity: 0; transition: opacity 0.6s;
+}
+#slide-dots.show { opacity: 1; }
+.sdot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,235,170,0.3); cursor: pointer;
+  transition: all 0.3s;
+}
+.sdot.on { background: var(--gold-light); transform: scale(1.4); }
+
+/* ══════════════════════════════════════
+   SECTION TITLE / GOLD RULE
+══════════════════════════════════════ */
+.section-title-big {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 8vw, 38px);
+  font-weight: 300; font-style: italic;
+  color: var(--dark); margin-bottom: 4px;
+}
+.gold-rule {
+  width: 36px; height: 1px; margin: 10px 0 18px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ══════════════════════════════════════
+   SCROLL CUE
+══════════════════════════════════════ */
+.scroll-cue {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.scroll-cue-text {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(255,235,170,0.5);
+}
+.scroll-cue-line {
+  width: 1px; height: 32px;
+  background: linear-gradient(to bottom, rgba(184,148,42,0.5), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%,100% { opacity: 0.4; transform: scaleY(1); }
+  50%      { opacity: 1; transform: scaleY(1.2); }
+}
+
+/* ══════════════════════════════════════
+   S0 — ENVELOPE
+══════════════════════════════════════ */
+.env-outer {
+  cursor: pointer; display: flex; flex-direction: column;
+  align-items: center; gap: 20px;
+  transition: transform 0.3s ease;
+}
+.env-box {
+  position: relative;
+  width: min(380px, 88vw); height: min(260px, 60vw);
+  overflow: visible;
+}
+.env-body {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #f6ede0dd, #ecdcc8ee);
+  border-radius: 5px;
+  box-shadow: 0 20px 60px rgba(28,24,16,0.3), 0 4px 16px rgba(28,24,16,0.15);
+  border: 1px solid rgba(184,148,42,0.3);
+  overflow: hidden;
+}
+.env-fold-left {
+  position: absolute; bottom: 0; left: 0;
+  width: 0; height: 0;
+  border-bottom: min(130px, 30vw) solid rgba(220,205,178,0.6);
+  border-right: min(190px, 44vw) solid transparent;
+}
+.env-fold-right {
+  position: absolute; bottom: 0; right: 0;
+  width: 0; height: 0;
+  border-bottom: min(130px, 30vw) solid rgba(210,195,168,0.5);
+  border-left: min(190px, 44vw) solid transparent;
+}
+.env-names {
+  position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+  text-align: center; white-space: nowrap;
+}
+.env-names-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(14px, 3.5vw, 18px);
+  font-style: italic; color: rgba(110,100,88,0.8);
+}
+.env-name-line {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184,148,42,0.4), transparent);
+  margin: 5px 0;
+}
+.env-flap {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 55%;
+  background: linear-gradient(175deg, #eeded0, #e6d4bc);
+  clip-path: polygon(0 0, 100% 0, 50% 68%);
+  transform-origin: top center;
+  transition: transform 0.75s cubic-bezier(0.4,0,0.2,1);
+  z-index: 2;
+  border-bottom: 1px solid rgba(184,148,42,0.15);
+}
+.env-flap.open { transform: perspective(600px) rotateX(-180deg); }
+.wax {
+  position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: clamp(56px, 14vw, 72px); height: clamp(56px, 14vw, 72px);
+  background: radial-gradient(circle at 38% 35%, #d4aa3a, #b8860b, #8b6400);
+  border-radius: 50%;
+  box-shadow: 0 4px 18px rgba(139,100,0,0.5), inset 0 1px 3px rgba(255,230,100,0.2);
+  z-index: 3; display: flex; align-items: center; justify-content: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  animation: waxPulse 3.5s ease-in-out infinite;
+}
+@keyframes waxPulse {
+  0%,100% { box-shadow: 0 4px 18px rgba(139,100,0,0.5), 0 0 0 0 rgba(184,148,42,0.3); }
+  50%      { box-shadow: 0 4px 18px rgba(139,100,0,0.5), 0 0 0 10px rgba(184,148,42,0); }
+}
+.wax-inner {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(10px, 2.5vw, 13px);
+  color: rgba(255,245,210,0.95);
+  letter-spacing: 1px; user-select: none;
+}
+.env-letter {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%) translateY(105%);
+  width: 86%; z-index: 1;
+  background: linear-gradient(180deg, #fffdf8, #f8f4ee);
+  border-radius: 3px 3px 0 0;
+  padding: 18px 16px 14px;
+  box-shadow: 0 -3px 16px rgba(28,24,16,0.08);
+  border: 1px solid rgba(184,148,42,0.18);
+  text-align: center;
+  visibility: hidden;
+  transition: transform 0.9s cubic-bezier(0.3,0,0.1,1);
+}
+.env-letter.rising {
+  visibility: visible;
+  transform: translateX(-50%) translateY(-115%);
+}
+.env-letter.settled {
+  visibility: visible;
+  transform: translateX(-50%) translateY(-80%);
+  transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+.env-letter p {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(11px, 2.8vw, 13px);
+  line-height: 1.7; color: var(--dark);
+  font-style: italic; opacity: 0.8;
+}
+.env-letter-names {
+  font-size: clamp(16px, 4.5vw, 20px);
+  margin: 6px 0;
+}
+.env-letter-date {
+  font-family: 'Raleway', sans-serif;
+  font-size: 9px; letter-spacing: 3px; color: var(--mid);
+  text-transform: uppercase; opacity: 0.75; margin-top: 4px;
+}
+.env-hint {
+  font-family: 'Raleway', sans-serif;
+  font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(255,240,200,0.7); opacity: 0;
+  animation: fadeInHint 2s ease 1.2s forwards;
+}
+@keyframes fadeInHint { to { opacity: 0.85; } }
+
+/* Hearts */
+.float-heart {
+  position: absolute; pointer-events: none; opacity: 0;
+  animation: heartFloat var(--dur, 16s) ease-in-out var(--delay, 0s) infinite;
+  font-size: var(--sz, 22px); color: rgba(255,220,120,0.25);
+  user-select: none;
+}
+@keyframes heartFloat {
+  0%   { opacity: 0; transform: translateY(105vh) rotate(-10deg) scale(0.7); }
+  8%   { opacity: 1; }
+  92%  { opacity: 0.5; }
+  100% { opacity: 0; transform: translateY(-10vh) rotate(15deg) scale(1.1); }
+}
+
+/* ══════════════════════════════════════
+   S1 — INVITATION
+══════════════════════════════════════ */
+.invite-bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center 20%;
+  opacity: 0.15; filter: grayscale(40%) saturate(0.7);
+  z-index: 0;
+}
+.invite-vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(28,20,10,0.55) 100%);
+}
+.invite-body {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; text-align: center; padding: 24px;
+}
+.invite-eyebrow {
+  font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+  color: var(--gold-light); opacity: 0.85;
+}
+.invite-names {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(44px, 14vw, 72px);
+  font-weight: 300; color: #fff8ee;
+  line-height: 1.05; letter-spacing: -1px;
+  text-shadow: 0 2px 30px rgba(0,0,0,0.4);
+}
+.invite-amp {
+  font-style: italic; color: var(--gold-light);
+  font-size: 0.75em; display: block;
+}
+.invite-rule {
+  width: 40px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+}
+.invite-sub {
+  font-size: 11px; letter-spacing: 2px; color: rgba(255,245,220,0.75);
+  line-height: 1.8; font-weight: 300;
+}
+
+/* ══════════════════════════════════════
+   S2 — MAP
+══════════════════════════════════════ */
+#s2 { padding: 0; overflow: hidden; }
+.map-world-wrap {
+  position: relative; width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+#map-world-img {
+  width: min(700px, 95vw);
+  opacity: 0.22; filter: grayscale(30%) sepia(30%);
+  display: block; pointer-events: none;
+  user-select: none;
+}
+#map-canvas {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2;
+}
+.map-overlay-top {
+  position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
+  text-align: center; z-index: 3;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+.map-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 6vw, 32px); font-weight: 300; font-style: italic;
+  color: rgba(255,245,215,0.92); text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+}
+.map-subtitle {
+  font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+  color: rgba(212,170,58,0.75); margin-top: 4px;
+}
+.map-info-card {
+  padding: 14px 20px; text-align: center; z-index: 3;
+  min-width: min(300px, 88vw);
+  opacity: 0; transition: opacity 0.8s ease;
+}
+.map-info-label {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px;
+}
+.map-info-text {
+  font-size: 11px; color: var(--mid); line-height: 1.8; font-weight: 300;
+}
+
+/* ══════════════════════════════════════
+   S3 — DETAILS
+══════════════════════════════════════ */
+.details-card {
+  width: min(400px, 94vw);
+  max-height: 88vh; overflow-y: auto;
+  padding: 26px 22px;
+}
+.det-section { margin-bottom: 16px; }
+.det-label {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px; font-weight: 500;
+}
+.det-body { font-size: 12px; color: var(--mid); line-height: 1.75; font-weight: 300; }
+.det-strong { color: var(--dark); font-weight: 500; }
+
+/* ══════════════════════════════════════
+   S4 — VILLA SLIDESHOW
+══════════════════════════════════════ */
+#s4 { background: transparent; }
+.villa-show-wrap {
+  position: relative; z-index: 1;
+  width: min(480px, 92vw);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+}
+.villa-show-wrap img {
+  width: 100%; display: block;
+  position: absolute; top: 0; left: 0;
+  opacity: 0;
+  transition: opacity 1.4s ease-in-out;
+  border-radius: 16px;
+  max-height: 72vh; object-fit: cover;
+}
+.villa-show-wrap img.active {
+  position: relative; opacity: 1;
+}
+.villa-show-dots {
+  position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px; z-index: 5;
+}
+.vdot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.45); transition: all 0.3s;
+}
+.vdot.on { background: white; transform: scale(1.3); }
+.villa-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.6));
+  padding: 28px 16px 12px;
+  text-align: center; z-index: 4;
+}
+.villa-caption-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(20px, 6vw, 28px);
+  font-weight: 300; font-style: italic;
+  color: rgba(255,248,235,0.95);
+  text-shadow: 0 2px 16px rgba(0,0,0,0.4);
+}
+.villa-caption-sub {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(255,235,180,0.7); margin-top: 4px;
+}
+
+/* ══════════════════════════════════════
+   S5 — TIMELINE
+══════════════════════════════════════ */
+.timeline-card {
+  width: min(380px, 92vw);
+  max-height: 88vh; overflow-y: auto;
+  padding: 28px 22px;
+}
+.tl-list { display: flex; flex-direction: column; }
+.tl-item {
+  display: grid; grid-template-columns: 56px 20px 1fr;
+  gap: 0 12px; min-height: 56px;
+}
+.tl-time {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px; color: var(--gold); text-align: right;
+  padding-top: 3px;
+}
+.tl-spine { display: flex; flex-direction: column; align-items: center; }
+.tl-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold); flex-shrink: 0; margin-top: 7px;
+  box-shadow: 0 0 0 3px rgba(184,148,42,0.18);
+}
+.tl-line { flex: 1; width: 1px; background: rgba(184,148,42,0.28); }
+.tl-item:last-child .tl-line { display: none; }
+.tl-content { padding: 3px 0 18px; }
+.tl-event { font-size: 12px; font-weight: 500; color: var(--dark); }
+.tl-desc { font-size: 11px; color: var(--light); margin-top: 2px; line-height: 1.5; font-weight: 300; }
+
+/* ══════════════════════════════════════
+   S6 — RSVP
+══════════════════════════════════════ */
+.rsvp-card {
+  width: min(400px, 94vw);
+  max-height: 92vh; overflow-y: auto;
+  padding: 28px 22px;
+}
+.rsvp-big {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(44px, 13vw, 60px);
+  font-weight: 300; color: var(--dark); letter-spacing: 8px; text-align: center;
+}
+.rsvp-sub { font-size: 10px; letter-spacing: 3px; color: var(--mid); text-align: center; margin-bottom: 4px; }
+.f-field { margin-bottom: 14px; }
+.f-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: var(--light); margin-bottom: 6px; }
+.f-input, .f-textarea {
+  width: 100%; padding: 11px 14px; border-radius: 10px;
+  border: 1px solid rgba(184,148,42,0.22);
+  background: rgba(255,255,255,0.7);
+  font-family: 'Raleway', sans-serif; font-size: 13px; color: var(--dark);
+  outline: none;
+}
+.f-textarea { min-height: 72px; resize: vertical; }
+.f-radios { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.f-radio {
+  padding: 11px 10px; border-radius: 10px; text-align: center;
+  border: 1px solid rgba(184,148,42,0.22); font-size: 11px;
+  cursor: pointer; background: rgba(255,255,255,0.55);
+  color: var(--mid); transition: all 0.25s;
+}
+.f-radio.active { background: var(--gold); color: white; border-color: var(--gold); }
+.stepper { display: flex; align-items: center; gap: 10px; }
+.stepper button {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid rgba(184,148,42,0.3); background: rgba(255,255,255,0.6);
+  font-size: 18px; color: var(--gold); cursor: pointer;
+}
+.stepper input {
+  width: 48px; text-align: center; font-size: 15px; color: var(--dark);
+  border: none; background: transparent; font-family: 'Raleway', sans-serif;
+}
+.f-submit {
+  width: 100%; padding: 14px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold), #9a7015);
+  color: white; font-family: 'Raleway', sans-serif;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  border: none; cursor: pointer; margin-top: 6px;
+  transition: all 0.3s;
+}
+.f-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(184,148,42,0.4); }
+
+/* ══════════════════════════════════════
+   S7 — CONTACT
+══════════════════════════════════════ */
+.contact-card {
+  width: min(380px, 92vw); padding: 28px 22px; text-align: center;
+}
+.contact-cc { margin-bottom: 16px; }
+.cc-role { font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); }
+.cc-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-style: italic; color: var(--dark); margin: 3px 0;
+}
+.cc-info { font-size: 12px; color: var(--mid); line-height: 1.8; font-weight: 300; }
+.cc-info a { color: var(--mid); text-decoration: none; }
+.contact-sig {
+  font-family: 'Playfair Display', serif;
+  font-size: 38px; font-style: italic; font-weight: 300;
+  color: var(--gold-light); margin-top: 12px;
+}
+
+/* ══════════════════════════════════════
+   MAIN PAGE
+══════════════════════════════════════ */
+#main {
+  position: fixed; inset: 0; z-index: 5;
+  display: none; flex-direction: column; align-items: center;
+  justify-content: center; overflow-y: auto;
+  padding: 24px 20px;
+}
+#main.visible { display: flex; }
+.main-header { text-align: center; margin-bottom: 16px; }
+.main-eyebrow {
+  font-size: 8px; letter-spacing: 6px; text-transform: uppercase;
+  color: rgba(255,240,190,0.7); margin-bottom: 10px;
+}
+.main-names {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(42px, 14vw, 68px);
+  font-weight: 300; color: rgba(255,248,230,0.96);
+  line-height: 1.05; text-shadow: 0 2px 30px rgba(0,0,0,0.35);
+}
+.main-amp { font-style: italic; color: var(--gold-light); }
+.main-date-line {
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(255,235,170,0.65); margin-top: 10px;
+}
+.cdown-wrap { width: min(420px, 92vw); margin: 12px auto; padding: 22px 20px; }
+.cdown-label { font-size: 8px; letter-spacing: 5px; text-transform: uppercase; color: var(--mid); text-align: center; margin-bottom: 14px; }
+.cdown-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; text-align: center; }
+.cdown-unit { display: flex; flex-direction: column; gap: 3px; }
+.cdown-num { font-family: 'Playfair Display', serif; font-size: clamp(30px, 9vw, 48px); font-weight: 300; color: var(--dark); line-height: 1; }
+.cdown-lbl { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: var(--light); }
+.main-msg-card { width: min(420px, 92vw); margin: 8px auto; padding: 22px 22px; text-align: center; }
+.main-msg { font-family: 'Playfair Display', serif; font-size: clamp(17px, 5vw, 21px); font-style: italic; color: var(--dark); font-weight: 300; line-height: 1.5; }
+.main-msg-sub { font-size: 10px; letter-spacing: 2px; color: var(--mid); margin-top: 10px; line-height: 1.8; font-weight: 300; }
+
+/* ══════════════════════════════════════
+   FAQ
+══════════════════════════════════════ */
+#faq-btn {
+  position: fixed; bottom: 24px; right: 20px; z-index: 300;
+  background: var(--glass); backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border); border-radius: 50px;
+  padding: 11px 18px; font-family: 'Raleway', sans-serif;
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--dark); cursor: pointer;
+  box-shadow: 0 4px 20px rgba(28,24,16,0.1);
+  transition: all 0.3s; display: none;
+}
+#faq-btn:hover { transform: translateY(-2px); }
+#faq-modal {
+  position: fixed; inset: 0; z-index: 400;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(28,24,16,0.5); backdrop-filter: blur(6px);
+  padding: 20px;
+}
+#faq-modal.open { display: flex; }
+.faq-box {
+  background: var(--cream); border-radius: 24px;
+  padding: 36px 28px; max-width: 420px; width: 100%;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(28,24,16,0.2); position: relative;
+}
+.faq-close { position: absolute; top: 18px; right: 18px; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--mid); }
+.faq-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 300; font-style: italic; color: var(--dark); margin-bottom: 20px; }
+.faq-q { font-size: 12px; font-weight: 500; color: var(--dark); margin-bottom: 4px; }
+.faq-a { font-size: 12px; color: var(--mid); line-height: 1.7; margin-bottom: 18px; font-weight: 300; }
+
+/* ══════════════════════════════════════
+   EDIT MODE
+══════════════════════════════════════ */
+#edit-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  background: linear-gradient(135deg, #c4a030, #9a7015);
+  color: white; padding: 0 20px;
+  height: 52px; display: none; align-items: center;
+  justify-content: center; gap: 14px;
+  box-shadow: 0 4px 24px rgba(154,112,21,0.5);
+}
+#edit-bar.on { display: flex; }
+.edit-bar-text { font-family: 'Raleway', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 500; }
+.edit-bar-btn {
+  border: none; border-radius: 20px; padding: 7px 16px;
+  font-family: 'Raleway', sans-serif; font-size: 9px;
+  letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+  transition: all 0.2s; font-weight: 500;
+}
+.edit-save { background: white; color: #9a7015; }
+.edit-exit { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.35); }
+.edit-rsvp { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); }
+.edit-save:hover, .edit-exit:hover, .edit-rsvp:hover { transform: scale(1.04); }
+body.editing .ed {
+  outline: 2px dashed rgba(184,148,42,0.65) !important;
+  border-radius: 3px; cursor: text;
+  background: rgba(255,248,220,0.18) !important;
+  min-height: 1em; padding: 2px 4px;
+}
+
+/* RSVP Dashboard */
+#rsvp-dash {
+  position: fixed; inset: 0; z-index: 9998;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(28,24,16,0.55); backdrop-filter: blur(8px);
+  padding: 20px;
+}
+#rsvp-dash.open { display: flex; }
+.rdash-box {
+  background: var(--cream); border-radius: 24px;
+  padding: 32px 28px; max-width: 460px; width: 100%;
+  max-height: 82vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(28,24,16,0.22); position: relative;
+}
+.rdash-close { position: absolute; top: 16px; right: 18px; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--mid); }
+.rdash-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 300; font-style: italic; color: var(--dark); margin-bottom: 4px; }
+.rdash-sub { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--light); margin-bottom: 22px; }
+.rdash-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+.rstat-card { border-radius: 16px; padding: 18px 16px; text-align: center; }
+.rstat-yes { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border: 1px solid #a5d6a7; }
+.rstat-no  { background: linear-gradient(135deg, #fce4ec, #f8bbd0); border: 1px solid #f48fb1; }
+.rstat-total { background: linear-gradient(135deg, #fff3e0, #ffe0b2); border: 1px solid #ffcc80; grid-column: 1/-1; }
+.rstat-num { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 300; color: var(--dark); line-height: 1; }
+.rstat-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-top: 4px; }
+.rstat-guests { font-size: 11px; color: var(--light); margin-top: 3px; }
+.rdash-list { display: flex; flex-direction: column; gap: 10px; }
+.rdash-entry { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; padding: 13px 14px; }
+.rdash-entry-header { display: flex; justify-content: space-between; align-items: center; }
+.rdash-entry-name { font-size: 13px; font-weight: 500; color: var(--dark); }
+.rdash-badge { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
+.badge-yes { background: #c8e6c9; color: #2e7d32; }
+.badge-no  { background: #f8bbd0; color: #ad1457; }
+.rdash-entry-info { font-size: 11px; color: var(--mid); margin-top: 5px; line-height: 1.6; }
+.rdash-entry-detail { margin-top: 6px; font-size: 10px; color: var(--light); display: none; border-top: 1px solid rgba(184,148,42,0.15); padding-top: 8px; line-height: 1.7; }
+.rdash-entry-detail.open { display: block; }
+.rdash-detail-btn { font-size: 9px; letter-spacing: 1px; color: var(--gold); background: none; border: none; cursor: pointer; text-transform: uppercase; margin-top: 5px; padding: 0; font-family: 'Raleway', sans-serif; }
+.rdash-empty { text-align: center; padding: 40px 0; font-family: 'Playfair Display', serif; font-style: italic; color: var(--light); font-size: 16px; }
+
+/* ══════════════════════════════════════
+   ANIM CONTROLS
+══════════════════════════════════════ */
+.anim-ctrl-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.anim-ctrl-lbl {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--light); min-width: 110px;
+}
+.anim-ctrl-row input[type=range] {
+  flex: 1; accent-color: var(--gold); height: 4px;
+}
+.anim-ctrl-row span {
+  font-size: 11px; color: var(--mid); min-width: 38px; text-align: right;
+}
+#animzone.has-anim {
+  border-color: var(--gold);
+  background: rgba(255,248,220,0.4);
+}
+#animzone.has-anim .imgm-upload-hint {
+  color: var(--gold); font-weight: 500;
+}
+
+/* ══════════════════════════════════════
+   IMAGE MANAGER
+══════════════════════════════════════ */
+.edit-img { background: rgba(255,255,255,0.12); color: white; border: 1px solid rgba(255,255,255,0.28); }
+#img-manager {
+  position: fixed; inset: 0; z-index: 9997;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(28,24,16,0.6); backdrop-filter: blur(8px);
+  padding: 20px;
+}
+#img-manager.open { display: flex; }
+.imgm-box {
+  background: var(--cream); border-radius: 24px;
+  padding: 32px 28px; max-width: 520px; width: 100%;
+  max-height: 88vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(28,24,16,0.28); position: relative;
+}
+.imgm-close {
+  position: absolute; top: 16px; right: 18px;
+  background: none; border: none; cursor: pointer;
+  font-size: 18px; color: var(--mid);
+}
+.imgm-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; font-weight: 300; font-style: italic;
+  color: var(--dark); margin-bottom: 2px;
+}
+.imgm-sub {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--light); margin-bottom: 20px;
+}
+.imgm-tabs {
+  display: flex; gap: 4px; margin-bottom: 20px;
+  background: rgba(184,148,42,0.08); border-radius: 12px; padding: 4px;
+}
+.imgm-tab {
+  flex: 1; padding: 9px; text-align: center; border-radius: 9px;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; color: var(--light); transition: all 0.2s;
+}
+.imgm-tab.active {
+  background: white; color: var(--dark); font-weight: 500;
+  box-shadow: 0 2px 8px rgba(28,24,16,0.08);
+}
+.imgm-section-label {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 10px; font-weight: 500;
+}
+.imgm-upload-zone {
+  border: 2px dashed rgba(184,148,42,0.35);
+  border-radius: 16px; padding: 24px 20px; text-align: center;
+  cursor: pointer; transition: all 0.25s; background: rgba(255,255,255,0.5);
+  position: relative; overflow: hidden; margin-bottom: 14px;
+}
+.imgm-upload-zone:hover {
+  border-color: var(--gold); background: rgba(255,248,220,0.5);
+}
+.imgm-upload-zone.has-image {
+  border-color: var(--gold); padding: 0;
+  min-height: 140px;
+}
+.imgm-upload-icon { font-size: 28px; margin-bottom: 8px; }
+.imgm-upload-hint { font-size: 12px; color: var(--mid); font-weight: 400; }
+.imgm-upload-hint2 { font-size: 10px; color: var(--light); margin-top: 4px; }
+.imgm-preview {
+  position: absolute; inset: 0; border-radius: 14px;
+  background-size: cover; background-position: center;
+  display: none;
+}
+.imgm-preview.visible { display: block; }
+.imgm-preview-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(28,24,16,0.7));
+  padding: 20px 12px 8px; border-radius: 0 0 14px 14px;
+  font-size: 10px; color: rgba(255,245,210,0.85); letter-spacing: 2px;
+  text-transform: uppercase; text-align: center;
+}
+.imgm-opacity-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+}
+.imgm-opacity-label {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--light); white-space: nowrap; min-width: 100px;
+}
+#bg-opacity-slider {
+  flex: 1; accent-color: var(--gold); height: 4px;
+}
+#bg-opacity-val {
+  font-size: 11px; color: var(--mid); min-width: 32px;
+}
+.imgm-clear-btn {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--light); background: none; border: 1px solid rgba(158,145,126,0.3);
+  border-radius: 8px; padding: 8px 16px; cursor: pointer;
+  transition: all 0.2s; font-family: 'Raleway', sans-serif;
+}
+.imgm-clear-btn:hover { color: #b04040; border-color: #b04040; }
+
+/* Slideshow grid */
+.imgm-slides-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.imgm-slide-slot {
+  border-radius: 12px; overflow: hidden; position: relative;
+  aspect-ratio: 16/10; cursor: pointer;
+  background: rgba(255,255,255,0.6);
+  border: 2px dashed rgba(184,148,42,0.3);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: all 0.25s;
+}
+.imgm-slide-slot:hover { border-color: var(--gold); background: rgba(255,248,220,0.5); }
+.imgm-slide-slot.has-image { border-style: solid; border-color: var(--gold); }
+.imgm-slide-thumb {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  border-radius: 10px;
+}
+.imgm-slide-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 300; color: var(--light); font-style: italic;
+}
+.imgm-slide-hint {
+  font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--light); margin-top: 4px;
+}
+.imgm-slide-overlay {
+  position: absolute; inset: 0; border-radius: 10px;
+  background: rgba(28,24,16,0.5);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s;
+  flex-direction: column; gap: 6px;
+}
+.imgm-slide-slot:hover .imgm-slide-overlay { opacity: 1; }
+.imgm-slide-overlay-text {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,245,210,0.9);
+}
+.imgm-slide-del {
+  position: absolute; top: 6px; right: 6px;
+  background: rgba(28,24,16,0.6); border: none; border-radius: 50%;
+  width: 22px; height: 22px; cursor: pointer;
+  color: rgba(255,200,180,0.9); font-size: 11px;
+  display: none; align-items: center; justify-content: center;
+  z-index: 2;
+}
+.imgm-slide-slot.has-image .imgm-slide-del { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- FIXED BACKGROUND -->
+<div id="bg-fixed"></div>
+
+<!-- EDIT BAR -->
+<div id="edit-bar">
+  <span class="edit-bar-text">✏️  Redigeringsmodus aktiv</span>
+  <button class="edit-bar-btn edit-save" onclick="saveEdits()">💾 Lagre</button>
+  <button class="edit-bar-btn edit-img" onclick="openImgManager()">🖼 Bilder</button>
+  <button class="edit-bar-btn edit-rsvp" onclick="openRsvpDash()">📋 Svar</button>
+  <button class="edit-bar-btn edit-exit" onclick="toggleEdit()">✕ Avslutt</button>
+</div>
+
+<!-- IMAGE MANAGER MODAL -->
+<div id="img-manager">
+  <div class="imgm-box">
+    <button class="imgm-close" onclick="closeImgManager()">✕</button>
+    <div class="imgm-title">Bildebehandling</div>
+    <div class="imgm-sub">Last opp og bytt ut bilder på invitasjonen</div>
+    <div class="imgm-tabs">
+      <div class="imgm-tab active" onclick="imgTab('bg')">Bakgrunn</div>
+      <div class="imgm-tab" onclick="imgTab('slideshow')">Slideshow</div>
+      <div class="imgm-tab" onclick="imgTab('anim')">Kart-anim.</div>
+    </div>
+    <div class="imgm-panel" id="imgm-bg">
+      <div class="imgm-section-label">Global bakgrunn (alle slides)</div>
+      <div class="imgm-upload-zone" onclick="triggerUpload('bg-global')" id="bgzone-global">
+        <div class="imgm-upload-icon">🌅</div>
+        <div class="imgm-upload-hint">Klikk for å laste opp bakgrunnsbilde</div>
+        <div class="imgm-upload-hint2">Anbefalt: mørkt, stemningsfullt bilde · JPG/PNG/WEBP</div>
+        <div class="imgm-preview" id="bgprev-global"></div>
+      </div>
+      <div class="imgm-opacity-row">
+        <label class="imgm-opacity-label">Gjennomsiktighet</label>
+        <input type="range" min="5" max="60" value="18" id="bg-opacity-slider" oninput="updateBgOpacity(this.value)">
+        <span id="bg-opacity-val">18%</span>
+      </div>
+      <button class="imgm-clear-btn" onclick="clearBg()">🗑 Fjern bakgrunn</button>
+    </div>
+    <div class="imgm-panel" id="imgm-slideshow" style="display:none">
+      <div class="imgm-section-label">Slideshow bilder (5 stk)</div>
+      <div class="imgm-slides-grid" id="imgm-slides-grid"></div>
+    </div>
+    <div class="imgm-panel" id="imgm-anim" style="display:none">
+      <div class="imgm-section-label">Animasjon på kart-slide (slide 3)</div>
+      <div class="imgm-upload-zone" onclick="triggerAnimUpload()" id="animzone">
+        <div class="imgm-upload-icon">🗺️</div>
+        <div class="imgm-upload-hint">Klikk for å laste opp .html-animasjon</div>
+        <div class="imgm-upload-hint2">Filen vises som en iframe på slide 3 · kun .html</div>
+      </div>
+      <div id="anim-controls" style="display:none">
+        <div class="imgm-section-label" style="margin-top:14px">Størrelse</div>
+        <div class="anim-ctrl-row">
+          <span class="anim-ctrl-lbl">Bredde</span>
+          <input type="range" min="20" max="100" value="80" id="anim-w-slider" oninput="updateAnimFrame()">
+          <span id="anim-w-val">80%</span>
+        </div>
+        <div class="anim-ctrl-row">
+          <span class="anim-ctrl-lbl">Høyde</span>
+          <input type="range" min="20" max="100" value="60" id="anim-h-slider" oninput="updateAnimFrame()">
+          <span id="anim-h-val">60%</span>
+        </div>
+        <div class="imgm-section-label" style="margin-top:14px">Posisjon</div>
+        <div class="anim-ctrl-row">
+          <span class="anim-ctrl-lbl">Venstre/Høyre</span>
+          <input type="range" min="0" max="100" value="50" id="anim-x-slider" oninput="updateAnimFrame()">
+          <span id="anim-x-val">50%</span>
+        </div>
+        <div class="anim-ctrl-row">
+          <span class="anim-ctrl-lbl">Opp/Ned</span>
+          <input type="range" min="0" max="100" value="50" id="anim-y-slider" oninput="updateAnimFrame()">
+          <span id="anim-y-val">50%</span>
+        </div>
+        <div class="anim-ctrl-row" style="margin-top:8px">
+          <span class="anim-ctrl-lbl">Gjennomsiktig</span>
+          <input type="range" min="10" max="100" value="100" id="anim-op-slider" oninput="updateAnimFrame()">
+          <span id="anim-op-val">100%</span>
+        </div>
+        <button class="imgm-clear-btn" style="margin-top:14px" onclick="clearAnim()">🗑 Fjern animasjon</button>
+      </div>
+    </div>
+    <input type="file" id="img-file-input" accept="image/*" style="display:none" onchange="handleImgUpload(event)">
+    <input type="file" id="img-file-input-slide" accept="image/*" style="display:none" onchange="handleSlideUpload(event)">
+    <input type="file" id="anim-file-input" accept=".html,text/html" style="display:none" onchange="handleAnimUpload(event)">
+  </div>
+</div>
+
+<!-- SLIDE DOTS -->
+<div id="slide-dots">
+  <div class="sdot on" onclick="go(0)"></div>
+  <div class="sdot" onclick="go(1)"></div>
+  <div class="sdot" onclick="go(2)"></div>
+  <div class="sdot" onclick="go(3)"></div>
+  <div class="sdot" onclick="go(4)"></div>
+  <div class="sdot" onclick="go(5)"></div>
+  <div class="sdot" onclick="go(6)"></div>
+  <div class="sdot" onclick="go(7)"></div>
+</div>
+
+<!-- ══════════════════ LANDING ══════════════════ -->
+<div id="landing">
+
+  <!-- S0: ENVELOPE -->
+  <div class="slide" id="s0" style="transform:translateY(0vh)">
+    <div aria-hidden="true">
+      <span class="float-heart" style="left:7%;--dur:15s;--delay:0s;--sz:24px;">♡</span>
+      <span class="float-heart" style="left:24%;--dur:19s;--delay:3s;--sz:18px;">🤍</span>
+      <span class="float-heart" style="left:44%;--dur:17s;--delay:7s;--sz:26px;">♡</span>
+      <span class="float-heart" style="left:68%;--dur:22s;--delay:1.5s;--sz:20px;">🤍</span>
+      <span class="float-heart" style="left:83%;--dur:14s;--delay:5s;--sz:16px;">♡</span>
+    </div>
+    <div class="env-outer" id="env-outer" onclick="openEnv()">
+      <div class="env-box">
+        <div class="env-body">
+          <div class="env-fold-left"></div>
+          <div class="env-fold-right"></div>
+          <div class="env-names">
+            <div class="env-name-line"></div>
+            <div class="env-names-text ed" id="ed-env-names">Benjamin &amp; Camilla</div>
+            <div class="env-name-line"></div>
+          </div>
+        </div>
+        <div class="env-flap" id="env-flap"></div>
+        <div class="wax" id="env-wax"><div class="wax-inner">✦</div></div>
+        <div class="env-letter" id="env-letter">
+          <p>Du er herved invitert til å feire<br>kjærligheten mellom</p>
+          <p class="env-letter-names" style="font-family:'Playfair Display',serif;font-style:italic;">Benjamin &amp; Camilla</p>
+          <div class="env-letter-date ed" id="ed-env-date">22.05.2027 · AEGINA, HELLAS</div>
+        </div>
+      </div>
+      <div class="env-hint" id="env-hint-text">Trykk for å åpne</div>
+    </div>
+    <div class="scroll-cue" id="s0-scroll-cue" style="opacity:0;transition:opacity 0.8s ease 0.5s;">
+      <div class="scroll-cue-text">Bla ned</div>
+      <div class="scroll-cue-line"></div>
+    </div>
+  </div>
+
+  <!-- S1: INVITATION -->
+  <div class="slide" id="s1" style="transform:translateY(100vh)">
+    <div class="invite-body">
+      <div class="invite-eyebrow ed" id="ed-invite-eye">Sammen med sine familier</div>
+      <div style="height:1px;width:32px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent)"></div>
+      <div class="invite-names ed" id="ed-invite-names">Benjamin<br><span class="invite-amp">&amp;</span><br>Camilla</div>
+      <div class="invite-rule"></div>
+      <div class="invite-sub ed" id="ed-invite-sub">inviterer deg til å feire<br>deres bryllup</div>
+    </div>
+    <div class="scroll-cue"><div class="scroll-cue-text">Bla ned</div><div class="scroll-cue-line"></div></div>
+  </div>
+
+  <!-- S2: MAP -->
+  <div class="slide" id="s2" style="transform:translateY(200vh)">
+    <div class="map-world-wrap">
+      <img id="map-world-img"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/World_map_-_low_resolution.svg/1200px-World_map_-_low_resolution.svg.png"
+        alt="Verdenskart">
+      <canvas id="map-canvas"></canvas>
+      <div class="map-overlay-top">
+        <div>
+          <div class="map-title ed" id="ed-map-title">Reisen til Aegina</div>
+          <div class="map-subtitle ed" id="ed-map-sub">Oslo → Athen</div>
+        </div>
+        <div class="map-info-card glass" id="map-info-card">
+          <div class="map-info-label ed" id="ed-map-info-lbl">Reiseinformasjon</div>
+          <div class="map-info-text ed" id="ed-map-info-txt">
+            ✈️ Fly: Oslo Gardermoen (OSL) → Athen (ATH)<br>
+            🚢 Ferge: Piraeus havn → Aegina (ca. 1 time)<br>
+            📍 Epitome Villa, Aegina, Hellas
+          </div>
+        </div>
+      </div>
+      <!-- Custom HTML animation overlay -->
+      <div id="anim-overlay" style="display:none;position:absolute;z-index:10;pointer-events:none;transition:all 0.3s;background:transparent;">
+        <iframe id="anim-iframe" scrolling="no" style="width:100%;height:100%;border:none;background:transparent;pointer-events:auto;" allowtransparency="true" allow="autoplay"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: DETAILS -->
+  <div class="slide" id="s3" style="transform:translateY(300vh)">
+    <div class="details-card glass">
+      <div class="section-title-big ed" id="ed-det-title">Detaljer</div>
+      <div class="gold-rule"></div>
+      <div class="det-section">
+        <div class="det-label">Reise</div>
+        <div class="det-body ed" id="ed-det-reise">
+          Vi anbefaler fly til Athen (ATH) senest <span class="det-strong">20. mai 2027</span>. Fra Piraeus havn tar fergen til Aegina ca. 1 time. Vi koordinerer felles transport fra Athen.
+        </div>
+      </div>
+      <div class="det-section">
+        <div class="det-label">Overnatting</div>
+        <div class="det-body ed" id="ed-det-hotel">
+          <span class="det-strong">Epitome Villa</span> — Noen rom er reservert for nærmeste familie. Kontakt oss.<br><br>
+          <span class="det-strong">Hotel Apollo</span> — 5 min gange. Bruk kode <span class="det-strong">BENCAM2027</span> for rabatt.<br><br>
+          <span class="det-strong">Aegina Town</span> — Mange hoteller og Airbnb tilgjengelig.
+        </div>
+      </div>
+      <div class="det-section">
+        <div class="det-label">Dresscode</div>
+        <div class="det-body ed" id="ed-det-dress">
+          <span class="det-strong">Formelt / semi-formelt.</span> Lyse, sommerlige farger ønskes. Unngå hvitt og lyseblått.
+        </div>
+      </div>
+      <div class="det-section">
+        <div class="det-label">Gaver</div>
+        <div class="det-body ed" id="ed-det-gifts">
+          Din tilstedeværelse er vår største gave. Ønsker du likevel å gi noe, setter vi pris på bidrag til bryllupsreisen. Kontonummer på forespørsel.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: VILLA SLIDESHOW -->
+  <div class="slide" id="s4" style="transform:translateY(400vh);align-items:center;justify-content:center;padding:20px 0;">
+    <div style="position:relative;z-index:1;width:min(500px,94vw);display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <div class="glass villa-info-card" style="padding:16px 20px;text-align:center;">
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(18px,5vw,22px);font-weight:300;font-style:italic;color:var(--dark);" class="ed" id="ed-villa-info-title">Epitome Villa</div>
+        <div style="height:1px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent);margin:8px 0;"></div>
+        <div style="font-size:11px;color:var(--mid);line-height:1.75;font-weight:300;" class="ed" id="ed-villa-info-body">
+          En eksklusiv privat villa med utsikt over Egeerhavet.<br>
+          Privat basseng, hage og terrasse for selskapet.
+        </div>
+      </div>
+      <div class="villa-show-wrap" id="villa-show">
+        <!-- Placeholder images — replace src with your own photos -->
+        <img id="vs-0" class="active" src="https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=900&auto=format&fit=crop" alt="Villa 1">
+        <img id="vs-1" src="https://images.unsplash.com/photo-1501183007986-d0d080b147f9?w=900&auto=format&fit=crop" alt="Villa 2">
+        <img id="vs-2" src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=900&auto=format&fit=crop" alt="Villa 3">
+        <img id="vs-3" src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=900&auto=format&fit=crop" alt="Villa 4">
+        <img id="vs-4" src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=900&auto=format&fit=crop" alt="Villa 5">
+        <div class="villa-caption">
+          <div class="villa-caption-title ed" id="ed-villa-title">Epitome Villa</div>
+          <div class="villa-caption-sub ed" id="ed-villa-sub">Aegina, Hellas</div>
+        </div>
+        <div class="villa-show-dots" id="villa-dots">
+          <div class="vdot on" onclick="vsGo(0)"></div>
+          <div class="vdot" onclick="vsGo(1)"></div>
+          <div class="vdot" onclick="vsGo(2)"></div>
+          <div class="vdot" onclick="vsGo(3)"></div>
+          <div class="vdot" onclick="vsGo(4)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5: TIMELINE -->
+  <div class="slide" id="s5" style="transform:translateY(500vh)">
+    <div class="timeline-card glass">
+      <div class="section-title-big ed" id="ed-tl-title">Programmet</div>
+      <div class="gold-rule"></div>
+      <div class="tl-list">
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl1-t">14:30</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl1-e">Gjestene ankommer</div><div class="tl-desc ed" id="ed-tl1-d">Velkommen med drinker og snacks</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl2-t">15:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl2-e">Seremoni</div><div class="tl-desc ed" id="ed-tl2-d">Borgerlig vielse i hagene ved villa</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl3-t">16:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl3-e">Cocktailtime</div><div class="tl-desc ed" id="ed-tl3-d">Fotografering, drinker og kanapeer</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl4-t">18:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl4-e">Middag</div><div class="tl-desc ed" id="ed-tl4-d">Treretters gresk bryllupsmiddag</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl5-t">20:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl5-e">Taler &amp; dans</div><div class="tl-desc ed" id="ed-tl5-d">Musikk, underholdning og feiring</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl6-t">00:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl6-e">Midnatt 🥂</div><div class="tl-desc ed" id="ed-tl6-d">Takk for en uforglemmelig kveld</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S6: RSVP -->
+  <div class="slide" id="s6" style="transform:translateY(600vh)">
+    <div class="rsvp-card glass">
+      <div class="rsvp-big">RSVP</div>
+      <div class="rsvp-sub ed" id="ed-rsvp-sub">Svar innen 1. februar 2027</div>
+      <div class="gold-rule"></div>
+      <div id="rsvp-form">
+        <div class="f-field"><div class="f-label">Ditt navn</div><input class="f-input" id="f-name" type="text" placeholder="For- og etternavn"></div>
+        <div class="f-field"><div class="f-label">Antall gjester</div><div class="stepper"><button onclick="step(-1)">−</button><input id="f-count" value="1" readonly><button onclick="step(1)">+</button></div></div>
+        <div class="f-field"><div class="f-label">Kommer du?</div><div class="f-radios"><div class="f-radio" id="f-yes" onclick="pickRsvp('yes')">✓ Ja, jeg kommer!</div><div class="f-radio" id="f-no" onclick="pickRsvp('no')">✗ Kan dessverre ikke</div></div></div>
+        <div class="f-field"><div class="f-label">Allergier / Kosthold</div><input class="f-input" id="f-allergy" type="text" placeholder="Eks: vegetar, nøttallergi..."></div>
+        <div class="f-field"><div class="f-label">Melding (valgfritt)</div><textarea class="f-textarea" id="f-msg" placeholder="Din hilsen..."></textarea></div>
+        <button class="f-submit" onclick="sendRsvp()">Send svar →</button>
+      </div>
+      <div id="rsvp-thanks" style="display:none;text-align:center;padding:24px 0">
+        <div style="font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-style:italic;">Tusen takk! 🌿</div>
+        <div style="font-size:12px;color:var(--mid);margin-top:8px;line-height:1.7;">Vi gleder oss enormt til å feire<br>denne dagen med deg.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: CONTACT -->
+  <div class="slide" id="s7" style="transform:translateY(700vh)">
+    <div class="contact-card glass">
+      <div class="section-title-big ed" id="ed-con-title">Kontakt</div>
+      <div class="gold-rule"></div>
+      <div style="font-size:11px;color:var(--mid);text-align:center;margin-bottom:16px;line-height:1.7;" class="ed" id="ed-con-sub">
+        Spørsmål om bryllupet, reisen eller overnatting?<br>Ta gjerne kontakt!
+      </div>
+      <div class="contact-cc">
+        <div class="cc-role">Brudgom</div>
+        <div class="cc-name ed" id="ed-b-name">Benjamin</div>
+        <div class="cc-info ed" id="ed-b-info">📱 +47 XXX XX XXX<br>✉️ benjamin@eksempel.no</div>
+      </div>
+      <div class="contact-cc">
+        <div class="cc-role">Brud</div>
+        <div class="cc-name ed" id="ed-c-name">Camilla</div>
+        <div class="cc-info ed" id="ed-c-info">📱 +47 XXX XX XXX<br>✉️ camilla@eksempel.no</div>
+      </div>
+      <div class="contact-sig">B &amp; C</div>
+      <div style="font-size:8px;letter-spacing:4px;color:var(--light);text-align:center;margin-top:4px;" class="ed" id="ed-con-date">22.05.2027 · Aegina, Hellas</div>
+    </div>
+  </div>
+
+</div><!-- /landing -->
+
+<!-- RSVP DASHBOARD -->
+<div id="rsvp-dash">
+  <div class="rdash-box">
+    <button class="rdash-close" onclick="document.getElementById('rsvp-dash').classList.remove('open')">✕</button>
+    <div class="rdash-title">Svar</div>
+    <div class="rdash-sub">Oversikt over RSVP</div>
+    <div class="rdash-stats" id="rdash-stats"></div>
+    <div class="rdash-list" id="rdash-list"></div>
+  </div>
+</div>
+
+<!-- MAIN PAGE -->
+<div id="main">
+  <div class="main-header">
+    <div class="main-eyebrow ed" id="ed-m-eye">Vi gifter oss</div>
+    <div class="main-names">Benjamin<br><span class="main-amp">&amp;</span><br>Camilla</div>
+    <div class="main-date-line ed" id="ed-m-date">22. Mai 2027 · Aegina, Hellas</div>
+  </div>
+  <div class="cdown-wrap glass">
+    <div class="cdown-label ed" id="ed-cd-lbl">Nedtelling til bryllupet</div>
+    <div class="cdown-grid">
+      <div class="cdown-unit"><div class="cdown-num" id="cd-d">—</div><div class="cdown-lbl">Dager</div></div>
+      <div class="cdown-unit"><div class="cdown-num" id="cd-h">—</div><div class="cdown-lbl">Timer</div></div>
+      <div class="cdown-unit"><div class="cdown-num" id="cd-m">—</div><div class="cdown-lbl">Min</div></div>
+      <div class="cdown-unit"><div class="cdown-num" id="cd-s">—</div><div class="cdown-lbl">Sek</div></div>
+    </div>
+  </div>
+  <div class="main-msg-card glass">
+    <div class="main-msg ed" id="ed-m-msg">Vi gleder oss enormt til å feire denne magiske dagen med deg</div>
+    <div style="height:1px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent);margin:14px 0;"></div>
+    <div class="main-msg-sub ed" id="ed-m-sub">Epitome Villa · Aegina, Hellas<br>22. Mai 2027</div>
+  </div>
+</div>
+
+<button id="faq-btn" onclick="document.getElementById('faq-modal').classList.add('open')">FAQ</button>
+<div id="faq-modal">
+  <div class="faq-box">
+    <button class="faq-close" onclick="document.getElementById('faq-modal').classList.remove('open')">✕</button>
+    <div class="faq-title">Spørsmål &amp; svar</div>
+    <div class="faq-q ed" id="ed-fq1">Når er svarfristen?</div>
+    <div class="faq-a ed" id="ed-fa1">Vi ønsker svar innen 1. februar 2027 så vi kan planlegge i detalj.</div>
+    <div class="faq-q ed" id="ed-fq2">Hva er dresscode?</div>
+    <div class="faq-a ed" id="ed-fa2">Formelt eller semi-formelt. Lyse sommerfarger er ønskelig — unngå hvitt og lyseblått.</div>
+    <div class="faq-q ed" id="ed-fq3">Transport til Aegina?</div>
+    <div class="faq-a ed" id="ed-fa3">Ferge fra Piraeus i Athen — ca. 1 time. Vi koordinerer felles transport fra Athen.</div>
+    <div class="faq-q ed" id="ed-fq4">Kan jeg ta med barn?</div>
+    <div class="faq-a ed" id="ed-fa4">Bryllupet er primært for voksne. Ta kontakt med oss om du har spørsmål.</div>
+    <div class="faq-q ed" id="ed-fq5">Er det allergihensyn i maten?</div>
+    <div class="faq-a ed" id="ed-fa5">Absolutt — oppgi allergier i RSVP-skjemaet så sørger vi for gode alternativer.</div>
+    <div class="faq-q ed" id="ed-fq6">Bilder på sosiale medier?</div>
+    <div class="faq-a ed" id="ed-fa6">Vi ber deg vente til vi har delt de offisielle bildene. Bruk gjerne #BenOgCamilla2027</div>
+  </div>
+</div>
+
+<script>
+'use strict';
+// ─── STATE ────────────────────────────────────────────
+const NSLIDES = 8;
+let cur = 0, busy = false, envDone = false, landed = false;
+let touchY = 0, lastWheel = 0;
+let mapInited = false, editOn = false, secretBuf = '';
+let vsIdx = 0, vsTimer = null;
+
+// ─── INDEXEDDB ────────────────────────────────────────
+const IDB_NAME = 'weddingSlides', IDB_STORE = 'slides', IDB_VER = 1;
+let _idb = null;
+
+function openIDB() {
+  return new Promise((resolve, reject) => {
+    try {
+      if (_idb) { resolve(_idb); return; }
+      if (!window.indexedDB) { reject(new Error('No IDB')); return; }
+      const req = indexedDB.open(IDB_NAME, IDB_VER);
+      req.onupgradeneeded = function(e) {
+        try { e.target.result.createObjectStore(IDB_STORE); } catch(err) {}
+      };
+      req.onsuccess = function(e) { _idb = e.target.result; resolve(_idb); };
+      req.onerror   = function(e) { reject(e.target.error); };
+      req.onblocked = function()  { reject(new Error('IDB blocked')); };
+    } catch(err) { reject(err); }
+  });
+}
+
+function idbSet(key, val) {
+  return openIDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      try {
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(val, key);
+        tx.oncomplete = resolve;
+        tx.onerror = function(e) { reject(e.target.error); };
+      } catch(err) { reject(err); }
+    });
+  });
+}
+
+function idbDel(key) {
+  return openIDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      try {
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).delete(key);
+        tx.oncomplete = resolve;
+        tx.onerror = function(e) { reject(e.target.error); };
+      } catch(err) { reject(err); }
+    });
+  });
+}
+
+function idbGetAll() {
+  return openIDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      try {
+        const store = db.transaction(IDB_STORE).objectStore(IDB_STORE);
+        const result = {};
+        const req = store.openCursor();
+        req.onsuccess = function(e) {
+          const cursor = e.target.result;
+          if (cursor) { result[cursor.key] = cursor.value; cursor.continue(); }
+          else resolve(result);
+        };
+        req.onerror = function(e) { reject(e.target.error); };
+      } catch(err) { reject(err); }
+    });
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────
+window.addEventListener('load', function() {
+  try { countdown(); } catch(e) {}
+  setInterval(function() { try { countdown(); } catch(e) {} }, 1000);
+  try { document.getElementById('slide-dots').classList.add('show'); } catch(e) {}
+  try { loadEdits(); } catch(e) {}
+  try { sizeMapCanvas(); } catch(e) {}
+  openIDB()
+    .then(function() { loadSavedImages(); })
+    .catch(function() { loadSavedImages(); }); // still try localStorage bg even if IDB fails
+});
+
+// ─── SECRET CODE ─────────────────────────────────────
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    if (secretBuf === 'tototuttis') toggleEdit();
+    secretBuf = ''; return;
+  }
+  if (e.key.length === 1) {
+    secretBuf += e.key.toLowerCase();
+    if (secretBuf.length > 20) secretBuf = secretBuf.slice(-20);
+  }
+});
+
+// ─── EDIT MODE ────────────────────────────────────────
+function toggleEdit() {
+  editOn = !editOn;
+  document.body.classList.toggle('editing', editOn);
+  document.getElementById('edit-bar').classList.toggle('on', editOn);
+  document.querySelectorAll('.ed').forEach(function(el) {
+    el.contentEditable = editOn ? 'true' : 'false';
+  });
+}
+function saveEdits() {
+  const data = {};
+  document.querySelectorAll('.ed').forEach(function(el) { data[el.id] = el.innerHTML; });
+  try { localStorage.setItem('weddingV3', JSON.stringify(data)); } catch(e) {}
+  const btn = document.querySelector('.edit-save');
+  if (btn) { btn.textContent = '✓ Lagret!'; setTimeout(function() { btn.textContent = '💾 Lagre'; }, 2000); }
+}
+function loadEdits() {
+  try {
+    const data = JSON.parse(localStorage.getItem('weddingV3') || '{}');
+    Object.entries(data).forEach(function(pair) {
+      const el = document.getElementById(pair[0]);
+      if (el) el.innerHTML = pair[1];
+    });
+  } catch(e) {}
+}
+
+// ─── IMAGE MANAGER ────────────────────────────────────
+let currentUploadTarget = null;
+
+function openImgManager() {
+  document.getElementById('img-manager').classList.add('open');
+  renderSlideshowGrid();
+  // Reload bg preview state
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    if (saved.bg) updateBgZonePreview(saved.bg);
+  } catch(e) {}
+}
+function closeImgManager() {
+  document.getElementById('img-manager').classList.remove('open');
+}
+function imgTab(tab) {
+  document.querySelectorAll('.imgm-tab').forEach(function(t, i) {
+    t.classList.toggle('active',
+      (i === 0 && tab === 'bg') ||
+      (i === 1 && tab === 'slideshow') ||
+      (i === 2 && tab === 'anim')
+    );
+  });
+  document.getElementById('imgm-bg').style.display        = tab === 'bg'        ? '' : 'none';
+  document.getElementById('imgm-slideshow').style.display = tab === 'slideshow' ? '' : 'none';
+  document.getElementById('imgm-anim').style.display      = tab === 'anim'      ? '' : 'none';
+}
+
+function triggerUpload(target) {
+  currentUploadTarget = target;
+  const inp = document.getElementById('img-file-input');
+  inp.value = '';
+  inp.click();
+}
+function triggerSlideUpload(idx) {
+  currentUploadTarget = 'slide-' + idx;
+  const inp = document.getElementById('img-file-input-slide');
+  inp.value = '';
+  inp.click();
+}
+
+function handleImgUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const dataUrl = ev.target.result;
+    if (currentUploadTarget === 'bg-global') {
+      applyBackground(dataUrl);
+      saveBgImage(dataUrl);
+      updateBgZonePreview(dataUrl);
+    }
+  };
+  reader.onerror = function() { alert('Kunne ikke lese filen. Prøv igjen.'); };
+  reader.readAsDataURL(file);
+}
+
+function handleSlideUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const dataUrl = ev.target.result;
+    if (currentUploadTarget && currentUploadTarget.startsWith('slide-')) {
+      const idx = parseInt(currentUploadTarget.split('-')[1]);
+      applySlideImage(idx, dataUrl);
+      idbSet('slide_' + idx, dataUrl)
+        .then(function() { renderSlideshowGrid(); })
+        .catch(function(err) {
+          console.warn('IDB save failed:', err);
+          // Fallback: save in sessionStorage so it survives the modal re-open at least
+          try { sessionStorage.setItem('slide_' + idx, dataUrl); } catch(se) {}
+          renderSlideshowGrid();
+        });
+    }
+  };
+  reader.onerror = function() { alert('Kunne ikke lese filen. Prøv igjen.'); };
+  reader.readAsDataURL(file);
+}
+
+// ─── BACKGROUND ───────────────────────────────────────
+function applyBackground(dataUrl) {
+  const slider = document.getElementById('bg-opacity-slider');
+  const opacity = slider ? slider.value / 100 : 0.18;
+  let overlay = document.getElementById('bg-img-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'bg-img-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:1;background-size:cover;background-position:center;pointer-events:none;transition:opacity 0.4s;';
+    const bgFixed = document.getElementById('bg-fixed');
+    if (bgFixed && bgFixed.parentNode) bgFixed.after(overlay);
+    else document.body.prepend(overlay);
+  }
+  overlay.style.backgroundImage = 'url(' + dataUrl + ')';
+  overlay.style.opacity = opacity;
+}
+
+function updateBgOpacity(val) {
+  const valEl = document.getElementById('bg-opacity-val');
+  if (valEl) valEl.textContent = val + '%';
+  const overlay = document.getElementById('bg-img-overlay');
+  if (overlay) overlay.style.opacity = val / 100;
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    saved.bgOpacity = val;
+    localStorage.setItem('weddingImages', JSON.stringify(saved));
+  } catch(e) {}
+}
+
+function saveBgImage(dataUrl) {
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    saved.bg = dataUrl;
+    const slider = document.getElementById('bg-opacity-slider');
+    saved.bgOpacity = slider ? slider.value : 18;
+    localStorage.setItem('weddingImages', JSON.stringify(saved));
+  } catch(e) { console.warn('Could not save bg image:', e); }
+}
+
+function clearBg() {
+  const overlay = document.getElementById('bg-img-overlay');
+  if (overlay) overlay.remove();
+  const prev = document.getElementById('bgprev-global');
+  if (prev) { prev.style.backgroundImage = ''; prev.classList.remove('visible'); }
+  const zone = document.getElementById('bgzone-global');
+  if (zone) {
+    zone.classList.remove('has-image');
+    const lbl = zone.querySelector('.imgm-preview-label');
+    if (lbl) lbl.remove();
+  }
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    delete saved.bg;
+    localStorage.setItem('weddingImages', JSON.stringify(saved));
+  } catch(e) {}
+}
+
+function updateBgZonePreview(dataUrl) {
+  const zone = document.getElementById('bgzone-global');
+  const prev = document.getElementById('bgprev-global');
+  if (!zone || !prev) return;
+  prev.style.backgroundImage = 'url(' + dataUrl + ')';
+  prev.classList.add('visible');
+  zone.classList.add('has-image');
+  if (!zone.querySelector('.imgm-preview-label')) {
+    const lbl = document.createElement('div');
+    lbl.className = 'imgm-preview-label';
+    lbl.textContent = 'Klikk for å bytte';
+    prev.appendChild(lbl);
+  }
+}
+
+// ─── HTML ANIMATION (S2) ──────────────────────────────
+let _animHTML = null; // stored in memory, iframe loaded only when slide 2 is reached
+
+function triggerAnimUpload() {
+  document.getElementById('anim-file-input').value = '';
+  document.getElementById('anim-file-input').click();
+}
+
+function handleAnimUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const html = ev.target.result;
+    _animHTML = html;
+    // If already on slide 2, load immediately; otherwise just store
+    if (cur === 2) loadAnimIframe();
+    showAnimOverlay();
+    saveAnimData(html);
+    const zone = document.getElementById('animzone');
+    zone.classList.add('has-anim');
+    zone.querySelector('.imgm-upload-hint').textContent = '✓ ' + file.name + ' lastet opp';
+    zone.querySelector('.imgm-upload-hint2').textContent = 'Klikk for å bytte fil';
+    document.getElementById('anim-controls').style.display = '';
+  };
+  reader.onerror = function() { alert('Kunne ikke lese filen.'); };
+  reader.readAsText(file);
+}
+
+function applyAnimHTML(html) {
+  // Called on load from IDB — just store, don't start iframe yet
+  _animHTML = html;
+  showAnimOverlay();
+  restoreAnimFrame();
+}
+
+function loadAnimIframe() {
+  if (!_animHTML) return;
+  const iframe = document.getElementById('anim-iframe');
+
+  const injected_style  = '<style>html,body{background:transparent!important;}</style>';
+  const injected_script = '<script>' +
+    '(function(){' +
+    '  var lastFwd=0;' +
+    '  window.addEventListener("wheel",function(e){' +
+    '    var now=Date.now();if(now-lastFwd<50)return;lastFwd=now;' +
+    '    try{window.parent.postMessage({type:"iframeWheel",deltaY:e.deltaY},"*");}catch(err){}' +
+    '  },{passive:true});' +
+    '  var _ty=0;' +
+    '  window.addEventListener("touchstart",function(e){_ty=e.touches[0].clientY;},{passive:true});' +
+    '  window.addEventListener("touchend",function(e){' +
+    '    var d=_ty-e.changedTouches[0].clientY;' +
+    '    try{window.parent.postMessage({type:"iframeSwipe",deltaY:d},"*");}catch(err){}' +
+    '  },{passive:true});' +
+    '})();' +
+    '<\/script>';
+
+  const withStyle  = _animHTML.replace(/<head([^>]*)>/i, '<head$1>' + injected_style);
+  const withScript = withStyle.replace(/<\/body>/i, injected_script + '</body>');
+  const finalHtml  = (withScript.includes('<head') ? withScript : injected_style + injected_script + withScript);
+
+  if (iframe._blobUrl) { try { URL.revokeObjectURL(iframe._blobUrl); } catch(e) {} }
+  const blob = new Blob([finalHtml], {type: 'text/html'});
+  const url  = URL.createObjectURL(blob);
+  iframe._blobUrl = url;
+  iframe.src = url;
+}
+
+function showAnimOverlay() {
+  const overlay = document.getElementById('anim-overlay');
+  overlay.style.display = '';
+  restoreAnimFrame();
+}
+
+function updateAnimFrame() {
+  const w  = document.getElementById('anim-w-slider').value;
+  const h  = document.getElementById('anim-h-slider').value;
+  const x  = document.getElementById('anim-x-slider').value;
+  const y  = document.getElementById('anim-y-slider').value;
+  const op = document.getElementById('anim-op-slider').value;
+  document.getElementById('anim-w-val').textContent  = w  + '%';
+  document.getElementById('anim-h-val').textContent  = h  + '%';
+  document.getElementById('anim-x-val').textContent  = x  + '%';
+  document.getElementById('anim-y-val').textContent  = y  + '%';
+  document.getElementById('anim-op-val').textContent = op + '%';
+
+  const overlay = document.getElementById('anim-overlay');
+  const pxW = (parseInt(w)  / 100) * window.innerWidth;
+  const pxH = (parseInt(h)  / 100) * window.innerHeight;
+  const pxX = (parseInt(x)  / 100) * (window.innerWidth  - pxW);
+  const pxY = (parseInt(y)  / 100) * (window.innerHeight - pxH);
+  overlay.style.width   = pxW + 'px';
+  overlay.style.height  = pxH + 'px';
+  overlay.style.left    = pxX + 'px';
+  overlay.style.top     = pxY + 'px';
+  overlay.style.opacity = op / 100;
+
+  // Persist layout
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingAnim') || '{}');
+    saved.w = w; saved.h = h; saved.x = x; saved.y = y; saved.op = op;
+    localStorage.setItem('weddingAnim', JSON.stringify(saved));
+  } catch(err) {}
+}
+
+function restoreAnimFrame() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingAnim') || '{}');
+    if (saved.w) { document.getElementById('anim-w-slider').value = saved.w; document.getElementById('anim-w-val').textContent = saved.w + '%'; }
+    if (saved.h) { document.getElementById('anim-h-slider').value = saved.h; document.getElementById('anim-h-val').textContent = saved.h + '%'; }
+    if (saved.x) { document.getElementById('anim-x-slider').value = saved.x; document.getElementById('anim-x-val').textContent = saved.x + '%'; }
+    if (saved.y) { document.getElementById('anim-y-slider').value = saved.y; document.getElementById('anim-y-val').textContent = saved.y + '%'; }
+    if (saved.op) { document.getElementById('anim-op-slider').value = saved.op; document.getElementById('anim-op-val').textContent = saved.op + '%'; }
+  } catch(err) {}
+  updateAnimFrame();
+}
+
+function saveAnimData(html) {
+  // Use IDB for HTML (can be large)
+  idbSet('anim_html', html).catch(function(err) {
+    console.warn('Could not save anim to IDB:', err);
+  });
+}
+
+function clearAnim() {
+  const overlay = document.getElementById('anim-overlay');
+  overlay.style.display = 'none';
+  document.getElementById('anim-iframe').src = '';
+  document.getElementById('anim-controls').style.display = 'none';
+  const zone = document.getElementById('animzone');
+  zone.classList.remove('has-anim');
+  zone.querySelector('.imgm-upload-hint').textContent = 'Klikk for å laste opp .html-animasjon';
+  zone.querySelector('.imgm-upload-hint2').textContent = 'Filen vises som en iframe på slide 3 · kun .html';
+  idbDel('anim_html').catch(function() {});
+  try {
+    localStorage.removeItem('weddingAnim');
+  } catch(e) {}
+}
+
+// ─── SLIDESHOW IMAGES ─────────────────────────────────
+const SLIDE_PLACEHOLDERS = [
+  'https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=900&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1501183007986-d0d080b147f9?w=900&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=900&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=900&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=900&auto=format&fit=crop'
+];
+
+function applySlideImage(idx, dataUrl) {
+  const img = document.getElementById('vs-' + idx);
+  if (img) img.src = dataUrl;
+}
+
+function clearSlideImage(idx) {
+  const img = document.getElementById('vs-' + idx);
+  if (img) img.src = SLIDE_PLACEHOLDERS[idx];
+  try { sessionStorage.removeItem('slide_' + idx); } catch(e) {}
+  idbDel('slide_' + idx).catch(function() {});
+  setTimeout(function() { renderSlideshowGrid(); }, 100);
+}
+
+function renderSlideshowGrid() {
+  const grid = document.getElementById('imgm-slides-grid');
+  if (!grid) return;
+
+  grid.innerHTML = Array.from({length: 5}, function(_, i) {
+    return '<div class="imgm-slide-slot" id="imgm-slot-' + i + '" onclick="triggerSlideUpload(' + i + ')">' +
+      '<div class="imgm-slide-thumb" id="imgm-thumb-' + i + '"></div>' +
+      '<div class="imgm-slide-overlay"><div class="imgm-slide-overlay-text">Bytt bilde</div></div>' +
+      '<div class="imgm-slide-num">' + (i + 1) + '</div>' +
+      '<div class="imgm-slide-hint">Last opp</div>' +
+      '<button class="imgm-slide-del" id="imgm-del-' + i + '" onclick="event.stopPropagation();clearSlideImage(' + i + ')">✕</button>' +
+      '</div>';
+  }).join('');
+
+  function applyToGrid(all) {
+    for (let i = 0; i < 5; i++) {
+      const dataUrl = (all && all['slide_' + i]) || null;
+      const slot  = document.getElementById('imgm-slot-' + i);
+      const thumb = document.getElementById('imgm-thumb-' + i);
+      const del   = document.getElementById('imgm-del-' + i);
+      if (!slot || !thumb) continue;
+      const num  = slot.querySelector('.imgm-slide-num');
+      const hint = slot.querySelector('.imgm-slide-hint');
+      if (dataUrl) {
+        thumb.style.backgroundImage = 'url(' + dataUrl + ')';
+        thumb.style.opacity = '1';
+        slot.classList.add('has-image');
+        if (num)  num.style.display  = 'none';
+        if (hint) hint.style.display = 'none';
+        if (del)  del.style.display  = 'flex';
+      } else {
+        const imgEl = document.getElementById('vs-' + i);
+        if (imgEl && imgEl.src) { thumb.style.backgroundImage = 'url(' + imgEl.src + ')'; thumb.style.opacity = '0.3'; }
+        slot.classList.remove('has-image');
+        if (num)  num.style.display  = '';
+        if (hint) hint.style.display = '';
+        if (del)  del.style.display  = 'none';
+      }
+    }
+  }
+
+  idbGetAll()
+    .then(function(all) { applyToGrid(all); })
+    .catch(function() { applyToGrid({}); });
+}
+
+function loadSavedImages() {
+  // Background from localStorage
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    if (saved.bg) {
+      const opacity = saved.bgOpacity || 18;
+      const slider = document.getElementById('bg-opacity-slider');
+      const valEl  = document.getElementById('bg-opacity-val');
+      if (slider) slider.value = opacity;
+      if (valEl)  valEl.textContent = opacity + '%';
+      applyBackground(saved.bg);
+    }
+  } catch(e) {}
+
+  // Animation HTML from IDB
+  idbGetAll()
+    .then(function(all) {
+      for (let i = 0; i < 5; i++) {
+        if (all['slide_' + i]) applySlideImage(i, all['slide_' + i]);
+      }
+      if (all['anim_html']) {
+        applyAnimHTML(all['anim_html']); // stores in _animHTML, no iframe load yet
+        document.getElementById('anim-controls').style.display = '';
+        const zone = document.getElementById('animzone');
+        if (zone) {
+          zone.classList.add('has-anim');
+          zone.querySelector('.imgm-upload-hint').textContent = '✓ Animasjon lastet';
+          zone.querySelector('.imgm-upload-hint2').textContent = 'Klikk for å bytte fil';
+        }
+      }
+    })
+    .catch(function() {});
+}
+
+// ─── RSVP STORAGE & DASHBOARD ─────────────────────────
+function getRsvps() {
+  try { return JSON.parse(localStorage.getItem('rsvpList') || '[]'); } catch(e) { return []; }
+}
+function openRsvpDash() {
+  const rsvps = getRsvps();
+  const statsEl = document.getElementById('rdash-stats');
+  const listEl  = document.getElementById('rdash-list');
+  const yesE = rsvps.filter(function(r) { return r.coming === 'yes'; });
+  const noE  = rsvps.filter(function(r) { return r.coming === 'no'; });
+  const totalG = yesE.reduce(function(s, r) { return s + (parseInt(r.count) || 1); }, 0);
+  statsEl.innerHTML =
+    '<div class="rstat-card rstat-yes"><div class="rstat-num">' + yesE.length + '</div><div class="rstat-lbl">Kommer</div><div class="rstat-guests">' + totalG + ' gjest' + (totalG !== 1 ? 'er' : '') + '</div></div>' +
+    '<div class="rstat-card rstat-no"><div class="rstat-num">' + noE.length + '</div><div class="rstat-lbl">Kan ikke</div></div>' +
+    '<div class="rstat-card rstat-total"><div class="rstat-num">' + rsvps.length + '</div><div class="rstat-lbl">Totalt svar</div></div>';
+  listEl.innerHTML = rsvps.length === 0 ? '<div class="rdash-empty">Ingen svar ennå 🌿</div>' :
+    rsvps.map(function(r, i) {
+      return '<div class="rdash-entry">' +
+        '<div class="rdash-entry-header"><span class="rdash-entry-name">' + escHtml(r.name) + '</span>' +
+        '<span class="rdash-badge ' + (r.coming === 'yes' ? 'badge-yes' : 'badge-no') + '">' + (r.coming === 'yes' ? '✓ Kommer' : '✗ Kan ikke') + '</span></div>' +
+        '<div class="rdash-entry-info">' + (r.coming === 'yes' ? r.count + ' person' + (r.count > 1 ? 'er' : '') : '') + '</div>' +
+        ((r.allergy || r.msg) ?
+          '<button class="rdash-detail-btn" onclick="toggleDetail(' + i + ')">Detaljer ▾</button>' +
+          '<div class="rdash-entry-detail" id="rdash-det-' + i + '">' +
+          (r.allergy ? '<b>Allergier:</b> ' + escHtml(r.allergy) + '<br>' : '') +
+          (r.msg ? '<b>Melding:</b> ' + escHtml(r.msg) : '') + '</div>' : '') +
+        '</div>';
+    }).join('');
+  document.getElementById('rsvp-dash').classList.add('open');
+}
+function toggleDetail(i) { const el = document.getElementById('rdash-det-' + i); if (el) el.classList.toggle('open'); }
+function escHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+// ─── ENVELOPE ─────────────────────────────────────────
+function openEnv() {
+  if (envDone) return;
+  envDone = true;
+  const hint = document.getElementById('env-hint-text');
+  const wax  = document.getElementById('env-wax');
+  const flap = document.getElementById('env-flap');
+  const ltr  = document.getElementById('env-letter');
+  const cue  = document.getElementById('s0-scroll-cue');
+  hint.style.transition = 'opacity 0.3s'; hint.style.opacity = '0';
+  wax.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+  wax.style.transform = 'translate(-50%,-50%) scale(0) rotate(20deg)'; wax.style.opacity = '0';
+  setTimeout(function() {
+    flap.classList.add('open');
+    setTimeout(function() {
+      ltr.classList.add('rising');
+      setTimeout(function() {
+        ltr.classList.remove('rising');
+        ltr.classList.add('settled');
+        setTimeout(function() { cue.style.opacity = '1'; }, 400);
+      }, 950);
+    }, 650);
+  }, 280);
+}
+
+// ─── SLIDESHOW (S4) ───────────────────────────────────
+function vsGo(idx) {
+  document.getElementById('vs-' + vsIdx).classList.remove('active');
+  document.querySelectorAll('.vdot')[vsIdx].classList.remove('on');
+  vsIdx = idx;
+  document.getElementById('vs-' + vsIdx).classList.add('active');
+  document.querySelectorAll('.vdot')[vsIdx].classList.add('on');
+}
+function vsStart() {
+  if (vsTimer) clearInterval(vsTimer);
+  vsTimer = setInterval(function() { vsGo((vsIdx + 1) % 5); }, 4000);
+}
+function vsStop() { if (vsTimer) { clearInterval(vsTimer); vsTimer = null; } }
+
+// ─── SLIDE NAVIGATION ─────────────────────────────────
+let mapInfoTimer = null;
+
+function go(idx) {
+  if (busy || idx === cur) return;
+  if (!envDone && idx > 0) return;
+  if (idx < 0 || idx >= NSLIDES) return;
+  if (cur === 4) vsStop();
+
+  // Cancel pending map-info reveal if leaving slide 2
+  if (mapInfoTimer) { clearTimeout(mapInfoTimer); mapInfoTimer = null; }
+  // Hide card immediately when leaving slide 2
+  if (cur === 2 && idx !== 2) {
+    const card = document.getElementById('map-info-card');
+    if (card) card.style.opacity = '0';
+  }
+
+  busy = true;
+  cur = idx;
+
+  for (let i = 0; i < NSLIDES; i++) {
+    const el = document.getElementById('s' + i);
+    if (!el) continue;
+    el.style.transition = 'transform 0.9s cubic-bezier(0.77,0,0.175,1)';
+    el.style.transform = 'translateY(' + ((i - idx) * 100) + 'vh)';
+  }
+  document.querySelectorAll('.sdot').forEach(function(d, i) { d.classList.toggle('on', i === idx); });
+
+  if (idx === 2 && !mapInited) { mapInited = true; setTimeout(startMapAnim, 400); }
+
+  // Load (or reload) animation when arriving at slide 2
+  if (idx === 2 && _animHTML) {
+    loadAnimIframe();
+  }
+
+  if (idx === 2) {
+    mapInfoTimer = setTimeout(function() {
+      const card = document.getElementById('map-info-card');
+      if (card) card.style.opacity = '1';
+      mapInfoTimer = null;
+    }, 5000);
+  }
+
+  if (idx === 4) { vsGo(0); setTimeout(vsStart, 600); }
+
+  setTimeout(function() {
+    busy = false;
+  }, 950);
+}
+
+// ─── SCROLL / TOUCH ───────────────────────────────────
+
+// Receive forwarded wheel/swipe events from animation iframe
+window.addEventListener('message', function(e) {
+  if (!e.data || typeof e.data !== 'object') return;
+  if (e.data.type === 'iframeWheel') {
+    handleScroll(e.data.deltaY);
+  } else if (e.data.type === 'iframeSwipe') {
+    handleSwipe(e.data.deltaY);
+  }
+});
+
+function handleScroll(deltaY) {
+  if (landed) { if (deltaY < -40) reviveLanding(); return; }
+  const now = Date.now();
+  if (now - lastWheel < 950) return;
+  if (deltaY > 20) {
+    if (!envDone) return;
+    lastWheel = now;
+    if (cur < NSLIDES - 1) go(cur + 1); else exitLanding();
+  } else if (deltaY < -20) {
+    lastWheel = now;
+    if (cur > 1) go(cur - 1); else if (cur === 1) go(0);
+  }
+}
+
+function handleSwipe(d) {
+  if (landed) { if (d < -50) reviveLanding(); return; }
+  if (Math.abs(d) < 38) return;
+  if (d > 0) { if (!envDone) return; if (cur < NSLIDES - 1) go(cur + 1); else exitLanding(); }
+  else { if (cur > 1) go(cur - 1); else if (cur === 1) go(0); }
+}
+
+window.addEventListener('wheel', function(e) {
+  handleScroll(e.deltaY);
+}, {passive: true});
+
+window.addEventListener('touchstart', function(e) { touchY = e.touches[0].clientY; }, {passive: true});
+window.addEventListener('touchend', function(e) {
+  handleSwipe(touchY - e.changedTouches[0].clientY);
+}, {passive: true});
+
+function exitLanding() {
+  if (landed) return; landed = true;
+  document.getElementById('landing').classList.add('exiting');
+  document.getElementById('slide-dots').classList.remove('show');
+  document.getElementById('faq-btn').style.display = 'block';
+  document.getElementById('main').classList.add('visible');
+}
+function reviveLanding() {
+  if (!landed) return; landed = false;
+  document.getElementById('landing').classList.remove('exiting');
+  document.getElementById('slide-dots').classList.add('show');
+  document.getElementById('faq-btn').style.display = 'none';
+  document.getElementById('main').classList.remove('visible');
+  cur = NSLIDES - 1;
+  for (let i = 0; i < NSLIDES; i++) {
+    const el = document.getElementById('s' + i);
+    if (el) { el.style.transition = 'none'; el.style.transform = 'translateY(' + ((i - cur) * 100) + 'vh)'; }
+  }
+  document.querySelectorAll('.sdot').forEach(function(d, i) { d.classList.toggle('on', i === cur); });
+}
+
+// ─── COUNTDOWN ────────────────────────────────────────
+function countdown() {
+  const diff = new Date('2027-05-22T15:00:00') - new Date();
+  if (diff <= 0) return;
+  document.getElementById('cd-d').textContent = Math.floor(diff / 86400000);
+  document.getElementById('cd-h').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+  document.getElementById('cd-m').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+  document.getElementById('cd-s').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+}
+
+// ─── RSVP ─────────────────────────────────────────────
+function pickRsvp(v) {
+  document.getElementById('f-yes').classList.toggle('active', v === 'yes');
+  document.getElementById('f-no').classList.toggle('active', v === 'no');
+}
+function step(d) {
+  const el = document.getElementById('f-count');
+  el.value = Math.max(1, Math.min(10, parseInt(el.value) + d));
+}
+function sendRsvp() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Vennligst skriv inn ditt navn.'); return; }
+  const coming = document.getElementById('f-yes').classList.contains('active') ? 'yes'
+    : document.getElementById('f-no').classList.contains('active') ? 'no' : null;
+  if (!coming) { alert('Vennligst velg om du kommer.'); return; }
+  const entry = {
+    name: name, coming: coming,
+    count: parseInt(document.getElementById('f-count').value) || 1,
+    allergy: document.getElementById('f-allergy').value.trim(),
+    msg: document.getElementById('f-msg').value.trim(),
+    ts: new Date().toISOString()
+  };
+  const rsvps = getRsvps(); rsvps.push(entry);
+  try { localStorage.setItem('rsvpList', JSON.stringify(rsvps)); } catch(e) {}
+  document.getElementById('rsvp-form').style.display = 'none';
+  document.getElementById('rsvp-thanks').style.display = 'block';
+}
+
+// ─── MAP ANIMATION ────────────────────────────────────
+function sizeMapCanvas() {
+  const s2 = document.getElementById('s2');
+  const c  = document.getElementById('map-canvas');
+  if (!s2 || !c) return;
+  c.width  = s2.offsetWidth  || window.innerWidth;
+  c.height = s2.offsetHeight || window.innerHeight;
+}
+window.addEventListener('resize', function() { try { sizeMapCanvas(); } catch(e) {} });
+
+function startMapAnim() {
+  try {
+    sizeMapCanvas();
+    const canvas = document.getElementById('map-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const imgEl = document.getElementById('map-world-img');
+    const rect  = imgEl.getBoundingClientRect();
+    const imgW  = rect.width  || Math.min(680, W * 0.96);
+    const imgH  = rect.height || imgW * 0.56;
+    const imgX  = rect.left;
+    const imgY  = rect.top;
+
+    function mapPt(fx, fy) { return [imgX + fx * imgW, imgY + fy * imgH]; }
+    const OSLO   = mapPt(0.522, 0.232);
+    const ATHENS = mapPt(0.556, 0.388);
+    const TOTAL_MS = 9000;
+    const startT = performance.now();
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function drawPlane(x, y, angle) {
+      ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+      ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 4;
+      ctx.fillStyle = '#fff5e0';
+      ctx.beginPath(); ctx.moveTo(13,0); ctx.lineTo(-5,-4); ctx.lineTo(-3,0); ctx.lineTo(-5,4); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(0,-1); ctx.lineTo(-2,-8); ctx.lineTo(-5,-6); ctx.lineTo(-3,0); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(0,1);  ctx.lineTo(-2,8);  ctx.lineTo(-5,6);  ctx.lineTo(-3,0); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(-3,-1); ctx.lineTo(-5,-4); ctx.lineTo(-6,-2); ctx.lineTo(-4,0); ctx.fill();
+      ctx.shadowBlur = 0; ctx.restore();
+    }
+
+    function drawCityLabel(x, y, name, color) {
+      ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = color; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,248,220,0.95)';
+      ctx.font = 'bold 11px Raleway, sans-serif'; ctx.textAlign = 'center';
+      ctx.shadowColor = 'rgba(0,0,0,0.7)'; ctx.shadowBlur = 3;
+      ctx.fillText(name, x, y - 10);
+      ctx.shadowBlur = 0;
+    }
+
+    function frame(now) {
+      const t = Math.min((now - startT) / TOTAL_MS, 1);
+      ctx.clearRect(0, 0, W, H);
+      const steps = Math.floor(t * 60);
+      if (steps > 1) {
+        ctx.save(); ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = 'rgba(255,200,60,0.75)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(OSLO[0], OSLO[1]);
+        for (let i = 1; i <= steps; i++) {
+          const p = (i / 60) * t;
+          ctx.lineTo(lerp(OSLO[0], ATHENS[0], p), lerp(OSLO[1], ATHENS[1], p));
+        }
+        ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+      }
+      drawCityLabel(OSLO[0], OSLO[1], 'Oslo', '#f0c040');
+      if (t > 0.85) drawCityLabel(ATHENS[0], ATHENS[1], 'Athen', '#f0c040');
+      if (t > 0 && t < 1) {
+        drawPlane(lerp(OSLO[0], ATHENS[0], t), lerp(OSLO[1], ATHENS[1], t),
+          Math.atan2(ATHENS[1] - OSLO[1], ATHENS[0] - OSLO[0]));
+      }
+      if (t >= 1) {
+        drawCityLabel(ATHENS[0], ATHENS[1], 'Athen', '#f0c040');
+        ctx.fillStyle = 'rgba(255,200,60,0.95)'; ctx.font = 'bold 18px serif';
+        ctx.textAlign = 'center'; ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 5;
+        ctx.fillText('✦', ATHENS[0], ATHENS[1] - 22); ctx.shadowBlur = 0;
+      }
+      if (t < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  } catch(e) { console.warn('Map anim error:', e); }
+}
+</script>
+</body>
+</html>
