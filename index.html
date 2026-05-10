@@ -1,0 +1,3013 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a160c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Benjamin &amp; Camilla · 22.05.2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   BASE / RESET / VARIABLES
+══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #b8922a;
+  --gold-light: #d4aa3a;
+  --gold-dark: #9a7015;
+  --gold-rgb: 184, 148, 42;
+  --cream: #f8f3ec;
+  --dark: #2c2416;
+  --mid: #6e6455;
+  --light: #9e917e;
+  --glass: rgba(248,243,236,0.75);
+  --glass-border: rgba(var(--gold-rgb), 0.18);
+}
+html, body { scrollbar-width: none; scrollbar-gutter: stable; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; }
+* { scrollbar-width: none; }
+*::-webkit-scrollbar { display: none; width: 0; height: 0; }
+html, body { height: 100%; overflow: hidden; }
+html {
+  background: #1c1810;
+  min-height: -webkit-fill-available;
+}
+body {
+  font-family: 'Raleway', sans-serif;
+  background: #1c1810;
+  color: var(--dark);
+  min-height: -webkit-fill-available;
+}
+
+/* ══════════════════════════════════════
+   FIREBASE SYNC INDICATOR
+══════════════════════════════════════ */
+#fb-status {
+  position: fixed; bottom: max(14px, env(safe-area-inset-bottom));
+  left: 50%; transform: translateX(-50%);
+  z-index: 9999; pointer-events: none;
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(28,24,16,0.82); backdrop-filter: blur(12px);
+  border: 1px solid rgba(184,148,42,0.25); border-radius: 40px;
+  padding: 8px 16px;
+  font-family: 'Raleway', sans-serif; font-size: 10px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,245,210,0.85);
+  opacity: 0; transition: opacity 0.4s ease;
+}
+#fb-status.show { opacity: 1; }
+#fb-status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold-light);
+  flex-shrink: 0;
+}
+#fb-status.saving  #fb-status-dot { background: #f0c040; animation: fbPulse 0.8s infinite; }
+#fb-status.saved   #fb-status-dot { background: #6abf69; }
+#fb-status.error   #fb-status-dot { background: #e57373; }
+@keyframes fbPulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+/* ══════════════════════════════════════
+   FIXED BACKGROUND
+══════════════════════════════════════ */
+#bg-fixed {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  /* Fallback for eldre nettlesere */
+  height: 100vh;
+  /* dvh dekker hele skjermen inkl. Safari dynamisk adresselinje */
+  height: 100dvh;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(var(--gold-rgb),0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(var(--gold-rgb),0.06) 0%, transparent 50%),
+    linear-gradient(160deg, #1e1a10 0%, #2a2214 40%, #1a160c 100%);
+}
+
+/* ══════════════════════════════════════
+   SLIDE SYSTEM
+══════════════════════════════════════ */
+#landing {
+  position: fixed; inset: 0;
+  height: 100vh; height: 100dvh;
+  z-index: 10;
+  transition: transform 1.1s cubic-bezier(0.77,0,0.175,1), opacity 0.8s ease;
+}
+#landing.exiting {
+  transform: translateY(-100vh);
+  transform: translateY(-100dvh);
+  opacity: 0;
+  pointer-events: none;
+}
+.slide {
+  position: fixed; inset: 0;
+  height: 100vh; height: 100dvh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  will-change: transform;
+}
+
+/* ══════════════════════════════════════
+   GLASS CARDS
+══════════════════════════════════════ */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: 0 12px 48px rgba(28,24,16,0.18), 0 2px 8px rgba(28,24,16,0.08);
+}
+
+/* ══════════════════════════════════════
+   SLIDE DOTS
+══════════════════════════════════════ */
+#slide-dots {
+  position: fixed; right: 18px; top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 8px;
+  z-index: 200; opacity: 0; transition: opacity 0.6s;
+}
+#slide-dots.show { opacity: 1; }
+.sdot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(var(--gold-rgb),0.18); cursor: pointer;
+  transition: all 0.3s;
+}
+.sdot.on { background: var(--gold-light); transform: scale(1.4); }
+
+/* ══════════════════════════════════════
+   SECTION TITLE / GOLD RULE
+══════════════════════════════════════ */
+.section-title-big {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 8vw, 38px);
+  font-weight: 300; font-style: italic;
+  color: var(--dark); margin-bottom: 4px;
+}
+.gold-rule {
+  width: 36px; height: 1px; margin: 10px 0 18px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ══════════════════════════════════════
+   SCROLL CUE
+══════════════════════════════════════ */
+.scroll-cue {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.scroll-cue-text {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.35);
+}
+.scroll-cue-line {
+  width: 1px; height: 32px;
+  background: linear-gradient(to bottom, rgba(var(--gold-rgb),0.5), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%,100% { opacity: 0.4; transform: scaleY(1); }
+  50%      { opacity: 1; transform: scaleY(1.2); }
+}
+
+/* ══════════════════════════════════════
+   S0 — ENVELOPE
+══════════════════════════════════════ */
+.env-outer {
+  cursor: pointer; display: flex; flex-direction: column;
+  align-items: center; gap: 20px;
+  transition: transform 0.3s ease;
+}
+.env-box {
+  position: relative;
+  width: min(380px, 88vw); height: min(260px, 60vw);
+  overflow: visible;
+}
+.env-body {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #f6ede0, #ecdcc8);
+  border-radius: 5px;
+  box-shadow: 0 20px 60px rgba(28,24,16,0.3), 0 4px 16px rgba(28,24,16,0.15);
+  border: 1px solid rgba(var(--gold-rgb),0.3);
+  overflow: hidden;
+  z-index: 1;
+}
+.env-fold-left {
+  position: absolute; bottom: 0; left: 0;
+  width: 0; height: 0;
+  border-bottom: min(130px, 30vw) solid rgba(220,205,178,0.6);
+  border-right: min(190px, 44vw) solid transparent;
+}
+.env-fold-right {
+  position: absolute; bottom: 0; right: 0;
+  width: 0; height: 0;
+  border-bottom: min(130px, 30vw) solid rgba(210,195,168,0.5);
+  border-left: min(190px, 44vw) solid transparent;
+}
+.env-names {
+  position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+  text-align: center; white-space: nowrap;
+  z-index: 5;
+  transition: opacity 0.4s ease;
+}
+.env-names-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(14px, 3.5vw, 18px);
+  font-style: italic; color: rgba(110,100,88,0.8);
+}
+.env-name-line {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb),0.4), transparent);
+  margin: 5px 0;
+}
+.env-flap {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 55%;
+  background: linear-gradient(175deg, #eeded0, #e6d4bc);
+  clip-path: polygon(0 0, 100% 0, 50% 68%);
+  transform-origin: top center;
+  transition: transform 0.75s cubic-bezier(0.4,0,0.2,1);
+  z-index: 4;
+  border-bottom: 1px solid rgba(var(--gold-rgb),0.15);
+}
+.env-flap.open {
+  transform: perspective(600px) rotateX(-180deg);
+  z-index: 0;
+}
+.wax {
+  position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: clamp(56px, 14vw, 72px); height: clamp(56px, 14vw, 72px);
+  background: radial-gradient(circle at 38% 35%, var(--gold-light), var(--gold), var(--gold-dark));
+  border-radius: 50%;
+  box-shadow: 0 4px 18px rgba(139,100,0,0.5), inset 0 1px 3px rgba(255,230,100,0.2);
+  z-index: 5; display: flex; align-items: center; justify-content: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  animation: waxPulse 3.5s ease-in-out infinite;
+}
+@keyframes waxPulse {
+  0%,100% { box-shadow: 0 4px 18px rgba(139,100,0,0.5), 0 0 0 0 rgba(var(--gold-rgb),0.3); }
+  50%      { box-shadow: 0 4px 18px rgba(139,100,0,0.5), 0 0 0 10px rgba(var(--gold-rgb),0); }
+}
+.wax-inner {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(10px, 2.5vw, 13px);
+  color: rgba(255,245,210,0.95);
+  letter-spacing: 1px; user-select: none;
+}
+.env-letter {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%) translateY(-8%);
+  width: 82%; height: 85%;
+  z-index: 2;
+  background: transparent;
+  border-radius: 3px 3px 0 0;
+  padding: 12px 12px 10px;
+  box-shadow: 0 -3px 20px rgba(28,24,16,0.25);
+  border: 1px solid rgba(var(--gold-rgb),0.28);
+  text-align: center;
+  transition: transform 0.75s cubic-bezier(0.4,0,0.2,1);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.env-letter.peek {
+  transform: translateX(-50%) translateY(-8%);
+}
+.env-letter.rising {
+  transform: translateX(-50%) translateY(-115%);
+  transition: transform 0.85s cubic-bezier(0.3,0,0.1,1);
+}
+.env-letter.settled {
+  transform: translateX(-50%) translateY(-10%);
+  transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
+  z-index: 6;
+}
+.env-front {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #f6ede0, #ecdcc8);
+  border-radius: 5px;
+  border: 1px solid rgba(var(--gold-rgb),0.3);
+  overflow: hidden;
+  z-index: 3;
+  pointer-events: none;
+  clip-path: polygon(50% 37.4%, 0% 0%, 0% 100%, 100% 100%, 100% 0%);
+}
+.env-front .env-fold-left {
+  position: absolute; bottom: 0; left: 0;
+  width: 0; height: 0;
+  border-bottom: min(130px, 30vw) solid rgba(220,205,178,0.6);
+  border-right: min(190px, 44vw) solid transparent;
+}
+.env-front .env-fold-right {
+  position: absolute; bottom: 0; right: 0;
+  width: 0; height: 0;
+  border-bottom: min(130px, 30vw) solid rgba(210,195,168,0.5);
+  border-left: min(190px, 44vw) solid transparent;
+}
+.env-letter-eyebrow {
+  font-family: 'Raleway', sans-serif;
+  font-size: 7px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.8); margin-bottom: 8px;
+  position: relative;
+}
+.env-letter-names {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(16px, 4.5vw, 22px);
+  font-weight: 300; color: #fff8ee;
+  line-height: 1.1; letter-spacing: -0.5px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  position: relative;
+}
+.env-letter-amp {
+  font-style: italic; color: rgba(var(--gold-rgb),0.9);
+  font-size: 0.75em; display: block;
+}
+.env-letter-rule {
+  width: 28px; height: 1px; margin: 7px auto;
+  background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb),0.6), transparent);
+  position: relative;
+}
+.env-letter-sub {
+  font-family: 'Raleway', sans-serif;
+  font-size: 9px; letter-spacing: 2px;
+  color: rgba(255,245,220,0.65);
+  line-height: 1.8; font-weight: 300;
+  position: relative;
+}
+#env-letter-bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ══════════════════════════════════════
+   MORPH TRANSITION OVERLAY
+══════════════════════════════════════ */
+#morph-overlay {
+  position: fixed; z-index: 50; pointer-events: none;
+  background: transparent;
+  border: 1px solid rgba(var(--gold-rgb),0.28);
+  border-radius: 3px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  overflow: hidden;
+  opacity: 0;
+  top: 0; left: 0; width: 0; height: 0;
+}
+#morph-overlay-bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+  z-index: 0;
+}
+#morph-overlay .mo-names {
+  font-family: 'Playfair Display', serif;
+  font-weight: 300; color: #fff8ee;
+  line-height: 1.05; letter-spacing: -0.5px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  text-align: center;
+  position: relative;
+}
+#morph-overlay .mo-amp {
+  font-style: italic; color: rgba(var(--gold-rgb),0.9);
+  font-size: 0.75em; display: block;
+}
+#morph-overlay .mo-rule {
+  height: 1px; margin: 0 auto;
+  background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb),0.6), transparent);
+  position: relative;
+}
+#morph-overlay .mo-sub {
+  font-family: 'Raleway', sans-serif;
+  letter-spacing: 2px;
+  color: rgba(255,245,220,0.65);
+  line-height: 1.8; font-weight: 300;
+  text-align: center;
+  position: relative;
+}
+.env-hint {
+  font-family: 'Raleway', sans-serif;
+  font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.55); opacity: 0;
+  animation: fadeInHint 2s ease 1.2s forwards;
+}
+@keyframes fadeInHint { to { opacity: 0.85; } }
+.float-heart {
+  position: absolute; pointer-events: none; opacity: 0;
+  animation: heartFloat var(--dur, 16s) ease-in-out var(--delay, 0s) infinite;
+  font-size: var(--sz, 22px); color: rgba(255,220,120,0.25);
+  user-select: none;
+}
+@keyframes heartFloat {
+  0%   { opacity: 0; transform: translateY(105vh) rotate(-10deg) scale(0.7); }
+  8%   { opacity: 1; }
+  92%  { opacity: 0.5; }
+  100% { opacity: 0; transform: translateY(-10vh) rotate(15deg) scale(1.1); }
+}
+
+/* ══════════════════════════════════════
+   S1 — INVITATION
+══════════════════════════════════════ */
+.invite-bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center 20%;
+  opacity: 0.15; filter: grayscale(40%) saturate(0.7);
+  z-index: 0;
+}
+.invite-vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(28,20,10,0.55) 100%);
+}
+.invite-body {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; text-align: center; padding: 24px;
+}
+.invite-eyebrow {
+  font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+  color: var(--gold-light); opacity: 0.85;
+}
+.invite-names {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(44px, 14vw, 72px);
+  font-weight: 300; color: #fff8ee;
+  line-height: 1.05; letter-spacing: -1px;
+  text-shadow: 0 2px 30px rgba(0,0,0,0.4);
+}
+.invite-amp {
+  font-style: italic; color: var(--gold-light);
+  font-size: 0.75em; display: block;
+}
+.invite-rule {
+  width: 40px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+}
+.invite-sub {
+  font-size: 11px; letter-spacing: 2px; color: rgba(255,245,220,0.75);
+  line-height: 1.8; font-weight: 300;
+}
+
+/* ══════════════════════════════════════
+   S2 — MAP
+══════════════════════════════════════ */
+#s2 { padding: 0; overflow: hidden; }
+.map-world-wrap {
+  position: relative; width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+#map-world-img {
+  width: min(700px, 95vw);
+  opacity: 0.22; filter: grayscale(30%) sepia(30%);
+  display: block; pointer-events: none;
+  user-select: none;
+}
+.map-overlay-top {
+  position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
+  text-align: center; z-index: 3;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+.map-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 6vw, 32px); font-weight: 300; font-style: italic;
+  color: rgba(255,245,215,0.92); text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+}
+.map-subtitle {
+  font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.75); margin-top: 4px;
+}
+.map-info-card {
+  padding: 14px 20px; text-align: center; z-index: 3;
+  min-width: min(300px, 88vw);
+  opacity: 0; transition: opacity 0.8s ease;
+}
+.map-info-label {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px;
+}
+.map-info-text {
+  font-size: 11px; color: var(--mid); line-height: 1.8; font-weight: 300;
+}
+
+/* ══════════════════════════════════════
+   S3 — DETAILS
+══════════════════════════════════════ */
+.details-card {
+  width: min(400px, 94vw);
+  max-height: 88vh; overflow-y: auto;
+  padding: 26px 22px;
+}
+.det-section { margin-bottom: 16px; }
+.det-label {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px; font-weight: 500;
+}
+.det-body { font-size: 12px; color: var(--mid); line-height: 1.75; font-weight: 300; }
+.det-strong { color: var(--dark); font-weight: 500; }
+
+/* ══════════════════════════════════════
+   S4 — VILLA SLIDESHOW
+══════════════════════════════════════ */
+#s4 { background: transparent; }
+.villa-show-wrap {
+  position: relative; z-index: 1;
+  width: min(480px, 92vw);
+  aspect-ratio: 4 / 3;
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  background: var(--dark);
+}
+.villa-show-wrap img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px;
+  will-change: opacity;
+}
+.villa-show-wrap img.active    { opacity: 1; }
+.villa-show-wrap img.fade-out  { opacity: 0; transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.villa-show-dots {
+  display: flex; justify-content: center; gap: 8px;
+  margin-top: 12px;
+}
+.vdot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.35); transition: all 0.3s; cursor: pointer;
+}
+.vdot.on { background: rgba(255,255,255,0.9); transform: scale(1.4); }
+.villa-caption-block {
+  text-align: center; padding: 6px 0 2px;
+}
+.villa-caption-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 300; font-style: italic;
+  color: var(--gold-light);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+.villa-caption-sub {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.5); margin-top: 4px;
+}
+
+/* ══════════════════════════════════════
+   S5 — TIMELINE
+══════════════════════════════════════ */
+.timeline-card {
+  width: min(380px, 92vw);
+  max-height: 88vh; overflow-y: auto;
+  padding: 28px 22px;
+}
+.tl-list { display: flex; flex-direction: column; }
+.tl-item {
+  display: grid; grid-template-columns: 56px 20px 1fr;
+  gap: 0 12px; min-height: 56px;
+}
+.tl-time {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px; color: var(--gold); text-align: right;
+  padding-top: 3px;
+}
+.tl-spine { display: flex; flex-direction: column; align-items: center; }
+.tl-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold); flex-shrink: 0; margin-top: 7px;
+  box-shadow: 0 0 0 3px rgba(var(--gold-rgb),0.18);
+}
+.tl-line { flex: 1; width: 1px; background: rgba(var(--gold-rgb),0.28); }
+.tl-item:last-child .tl-line { display: none; }
+.tl-content { padding: 3px 0 18px; }
+.tl-event { font-size: 12px; font-weight: 500; color: var(--dark); }
+.tl-desc { font-size: 11px; color: var(--light); margin-top: 2px; line-height: 1.5; font-weight: 300; }
+
+/* ══════════════════════════════════════
+   S6 — RSVP
+══════════════════════════════════════ */
+.rsvp-card {
+  width: min(400px, 94vw);
+  max-height: 92vh; overflow-y: auto;
+  padding: 28px 22px;
+}
+.rsvp-big {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(44px, 13vw, 60px);
+  font-weight: 300; color: var(--dark); letter-spacing: 8px; text-align: center;
+}
+.rsvp-sub { font-size: 10px; letter-spacing: 3px; color: var(--mid); text-align: center; margin-bottom: 4px; }
+.f-field { margin-bottom: 14px; }
+.f-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: var(--light); margin-bottom: 6px; }
+.f-input, .f-textarea {
+  width: 100%; padding: 11px 14px; border-radius: 10px;
+  border: 1px solid rgba(var(--gold-rgb),0.22);
+  background: rgba(255,255,255,0.7);
+  font-family: 'Raleway', sans-serif; font-size: 13px; color: var(--dark);
+  outline: none;
+}
+.f-textarea { min-height: 72px; resize: vertical; }
+.f-radios { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.f-radio {
+  padding: 11px 10px; border-radius: 10px; text-align: center;
+  border: 1px solid rgba(var(--gold-rgb),0.22); font-size: 11px;
+  cursor: pointer; background: rgba(255,255,255,0.55);
+  color: var(--mid); transition: all 0.25s;
+}
+.f-radio.active { background: var(--gold); color: white; border-color: var(--gold); }
+.stepper { display: flex; align-items: center; gap: 10px; }
+.stepper button {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid rgba(var(--gold-rgb),0.3); background: rgba(255,255,255,0.6);
+  font-size: 18px; color: var(--gold); cursor: pointer;
+}
+.stepper input {
+  width: 48px; text-align: center; font-size: 15px; color: var(--dark);
+  border: none; background: transparent; font-family: 'Raleway', sans-serif;
+}
+.f-submit {
+  width: 100%; padding: 14px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: white; font-family: 'Raleway', sans-serif;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  border: none; cursor: pointer; margin-top: 6px;
+  transition: all 0.3s;
+}
+.f-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(var(--gold-rgb),0.4); }
+#f-guest-names { overflow: hidden; }
+.f-guest-entry {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px; animation: fadeSlideIn 0.3s ease;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.f-guest-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px; font-style: italic; color: var(--gold);
+  min-width: 22px; text-align: center; flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════
+   S7 — CONTACT
+══════════════════════════════════════ */
+.contact-card {
+  width: min(380px, 92vw); padding: 28px 22px; text-align: center;
+}
+.contact-cc { margin-bottom: 16px; }
+.cc-role { font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); }
+.cc-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-style: italic; color: var(--dark); margin: 3px 0;
+}
+.cc-info { font-size: 12px; color: var(--mid); line-height: 1.8; font-weight: 300; }
+.cc-info a { color: var(--mid); text-decoration: none; }
+.contact-sig {
+  font-family: 'Playfair Display', serif;
+  font-size: 38px; font-style: italic; font-weight: 300;
+  color: var(--gold-light); margin-top: 12px;
+}
+
+/* ══════════════════════════════════════
+   MAIN PAGE
+══════════════════════════════════════ */
+#main {
+  position: fixed; inset: 0; z-index: 5;
+  display: none; flex-direction: column; align-items: center;
+  justify-content: center; overflow-y: auto;
+  padding: 24px 20px;
+}
+#main.visible { display: flex; }
+.main-header { text-align: center; margin-bottom: 16px; }
+.main-eyebrow {
+  font-size: 8px; letter-spacing: 6px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.55); margin-bottom: 10px;
+}
+.main-names {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(42px, 14vw, 68px);
+  font-weight: 300; color: rgba(255,248,230,0.96);
+  line-height: 1.05; text-shadow: 0 2px 30px rgba(0,0,0,0.35);
+}
+.main-amp { font-style: italic; color: var(--gold-light); }
+.main-date-line {
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.5); margin-top: 10px;
+}
+.cdown-wrap { width: min(420px, 92vw); margin: 12px auto; padding: 22px 20px; }
+.cdown-label { font-size: 8px; letter-spacing: 5px; text-transform: uppercase; color: var(--mid); text-align: center; margin-bottom: 14px; }
+.cdown-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; text-align: center; }
+.cdown-unit { display: flex; flex-direction: column; gap: 3px; }
+.cdown-num { font-family: 'Playfair Display', serif; font-size: clamp(30px, 9vw, 48px); font-weight: 300; color: var(--dark); line-height: 1; }
+.cdown-lbl { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: var(--light); }
+.main-msg-card { width: min(420px, 92vw); margin: 8px auto; padding: 22px 22px; text-align: center; }
+.main-msg { font-family: 'Playfair Display', serif; font-size: clamp(17px, 5vw, 21px); font-style: italic; color: var(--dark); font-weight: 300; line-height: 1.5; }
+.main-msg-sub { font-size: 10px; letter-spacing: 2px; color: var(--mid); margin-top: 10px; line-height: 1.8; font-weight: 300; }
+
+/* ══════════════════════════════════════
+   FAQ
+══════════════════════════════════════ */
+#faq-btn {
+  position: fixed; bottom: 24px; right: 20px; z-index: 300;
+  background: var(--glass); backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border); border-radius: 50px;
+  padding: 11px 18px; font-family: 'Raleway', sans-serif;
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--dark); cursor: pointer;
+  box-shadow: 0 4px 20px rgba(28,24,16,0.1);
+  transition: all 0.3s; display: none;
+}
+#faq-btn:hover { transform: translateY(-2px); }
+#faq-modal {
+  position: fixed; inset: 0; z-index: 400;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(28,24,16,0.5); backdrop-filter: blur(6px);
+  padding: 20px;
+}
+#faq-modal.open { display: flex; }
+.faq-box {
+  background: var(--cream); border-radius: 24px;
+  padding: 36px 28px; max-width: 420px; width: 100%;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(28,24,16,0.2); position: relative;
+}
+.faq-close { position: absolute; top: 18px; right: 18px; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--mid); }
+.faq-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 300; font-style: italic; color: var(--dark); margin-bottom: 20px; }
+.faq-q { font-size: 12px; font-weight: 500; color: var(--dark); margin-bottom: 4px; }
+.faq-a { font-size: 12px; color: var(--mid); line-height: 1.7; margin-bottom: 18px; font-weight: 300; }
+
+/* ══════════════════════════════════════
+   EDIT MODE
+══════════════════════════════════════ */
+#edit-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+  color: white; padding: 0 20px;
+  height: 52px; display: none; align-items: center;
+  justify-content: center; gap: 14px;
+  box-shadow: 0 4px 24px rgba(var(--gold-rgb), 0.5);
+}
+#edit-bar.on { display: flex; }
+.edit-bar-text { font-family: 'Raleway', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 500; }
+.edit-bar-btn {
+  border: none; border-radius: 20px; padding: 7px 16px;
+  font-family: 'Raleway', sans-serif; font-size: 9px;
+  letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+  transition: all 0.2s; font-weight: 500;
+}
+.edit-save { background: white; color: var(--gold-dark); }
+.edit-exit { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.35); }
+.edit-rsvp { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); }
+.edit-save:hover, .edit-exit:hover, .edit-rsvp:hover { transform: scale(1.04); }
+.edit-timer-row {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px; padding: 5px 12px;
+}
+.edit-timer-lbl { font-family: 'Raleway', sans-serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: white; }
+.edit-timer-btn {
+  background: rgba(255,255,255,0.2); border: none; border-radius: 50%;
+  width: 20px; height: 20px; color: white; font-size: 14px; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.edit-timer-btn:hover { background: rgba(255,255,255,0.35); }
+#edit-timer-val { font-family: 'Raleway', sans-serif; font-size: 11px; color: white; min-width: 24px; text-align: center; font-weight: 500; }
+body.editing .ed {
+  outline: 2px dashed rgba(var(--gold-rgb),0.65) !important;
+  border-radius: 3px; cursor: text;
+  background: rgba(255,248,220,0.18) !important;
+  min-height: 1em; padding: 2px 4px;
+}
+
+/* RSVP Dashboard */
+#rsvp-dash {
+  position: fixed; inset: 0; z-index: 9998;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(28,24,16,0.55); backdrop-filter: blur(8px);
+  padding: 20px;
+}
+#rsvp-dash.open { display: flex; }
+.rdash-box {
+  background: var(--cream); border-radius: 24px;
+  padding: 32px 28px; max-width: 460px; width: 100%;
+  max-height: 82vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(28,24,16,0.22); position: relative;
+}
+.rdash-close { position: absolute; top: 16px; right: 18px; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--mid); }
+.rdash-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 300; font-style: italic; color: var(--dark); margin-bottom: 4px; }
+.rdash-sub { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--light); margin-bottom: 22px; }
+.rdash-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+.rstat-card { border-radius: 16px; padding: 18px 16px; text-align: center; }
+.rstat-yes { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border: 1px solid #a5d6a7; }
+.rstat-no  { background: linear-gradient(135deg, #fce4ec, #f8bbd0); border: 1px solid #f48fb1; }
+.rstat-total { background: linear-gradient(135deg, #fff3e0, #ffe0b2); border: 1px solid #ffcc80; grid-column: 1/-1; }
+.rstat-num { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 300; color: var(--dark); line-height: 1; }
+.rstat-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-top: 4px; }
+.rstat-guests { font-size: 11px; color: var(--light); margin-top: 3px; }
+.rdash-list { display: flex; flex-direction: column; gap: 10px; }
+.rdash-entry { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; padding: 13px 14px; }
+.rdash-entry-header { display: flex; justify-content: space-between; align-items: center; }
+.rdash-entry-name { font-size: 13px; font-weight: 500; color: var(--dark); }
+.rdash-badge { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
+.badge-yes { background: #c8e6c9; color: #2e7d32; }
+.badge-no  { background: #f8bbd0; color: #ad1457; }
+.rdash-entry-info { font-size: 11px; color: var(--mid); margin-top: 5px; line-height: 1.6; }
+.rdash-entry-detail { margin-top: 6px; font-size: 10px; color: var(--light); display: none; border-top: 1px solid rgba(var(--gold-rgb),0.15); padding-top: 8px; line-height: 1.7; }
+.rdash-entry-detail.open { display: block; }
+.rdash-detail-btn { font-size: 9px; letter-spacing: 1px; color: var(--gold); background: none; border: none; cursor: pointer; text-transform: uppercase; margin-top: 5px; padding: 0; font-family: 'Raleway', sans-serif; }
+.rdash-empty { text-align: center; padding: 40px 0; font-family: 'Playfair Display', serif; font-style: italic; color: var(--light); font-size: 16px; }
+
+/* ══════════════════════════════════════
+   ANIM CONTROLS
+══════════════════════════════════════ */
+.anim-ctrl-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.anim-ctrl-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); min-width: 110px; }
+.anim-ctrl-row input[type=range] { flex: 1; accent-color: var(--gold); height: 4px; }
+.anim-ctrl-row span { font-size: 11px; color: var(--mid); min-width: 38px; text-align: right; }
+#animzone.has-anim { border-color: var(--gold); background: rgba(255,248,220,0.4); }
+#animzone.has-anim .imgm-upload-hint { color: var(--gold); font-weight: 500; }
+
+/* ══════════════════════════════════════
+   IMAGE MANAGER
+══════════════════════════════════════ */
+.edit-img { background: rgba(255,255,255,0.12); color: white; border: 1px solid rgba(255,255,255,0.28); }
+#img-manager {
+  position: fixed; inset: 0; z-index: 9997;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(28,24,16,0.6); backdrop-filter: blur(8px);
+  padding: 20px;
+}
+#img-manager.open { display: flex; }
+.imgm-box {
+  background: var(--cream); border-radius: 24px;
+  padding: 32px 28px; max-width: 520px; width: 100%;
+  max-height: 88vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(28,24,16,0.28); position: relative;
+}
+.imgm-close { position: absolute; top: 16px; right: 18px; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--mid); }
+.imgm-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 300; font-style: italic; color: var(--dark); margin-bottom: 2px; }
+.imgm-sub { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); margin-bottom: 20px; }
+.imgm-tabs { display: flex; gap: 4px; margin-bottom: 20px; background: rgba(var(--gold-rgb),0.08); border-radius: 12px; padding: 4px; }
+.imgm-tab { flex: 1; padding: 9px; text-align: center; border-radius: 9px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; color: var(--light); transition: all 0.2s; }
+.imgm-tab.active { background: white; color: var(--dark); font-weight: 500; box-shadow: 0 2px 8px rgba(28,24,16,0.08); }
+.imgm-section-label { font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-weight: 500; }
+.imgm-upload-zone { border: 2px dashed rgba(var(--gold-rgb),0.35); border-radius: 16px; padding: 24px 20px; text-align: center; cursor: pointer; transition: all 0.25s; background: rgba(255,255,255,0.5); position: relative; overflow: hidden; margin-bottom: 14px; }
+.imgm-upload-zone:hover { border-color: var(--gold); background: rgba(255,248,220,0.5); }
+.imgm-upload-zone.has-image { border-color: var(--gold); padding: 0; min-height: 140px; }
+.imgm-upload-icon { font-size: 28px; margin-bottom: 8px; }
+.imgm-upload-hint { font-size: 12px; color: var(--mid); font-weight: 400; }
+.imgm-upload-hint2 { font-size: 10px; color: var(--light); margin-top: 4px; }
+.imgm-preview { position: absolute; inset: 0; border-radius: 14px; background-size: cover; background-position: center; display: none; }
+.imgm-preview.visible { display: block; }
+.imgm-preview-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(28,24,16,0.7)); padding: 20px 12px 8px; border-radius: 0 0 14px 14px; font-size: 10px; color: rgba(255,245,210,0.85); letter-spacing: 2px; text-transform: uppercase; text-align: center; }
+.imgm-opacity-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.imgm-opacity-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); white-space: nowrap; min-width: 100px; }
+#bg-opacity-slider { flex: 1; accent-color: var(--gold); height: 4px; }
+#bg-opacity-val { font-size: 11px; color: var(--mid); min-width: 32px; }
+.imgm-clear-btn { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); background: none; border: 1px solid rgba(158,145,126,0.3); border-radius: 8px; padding: 8px 16px; cursor: pointer; transition: all 0.2s; font-family: 'Raleway', sans-serif; }
+.imgm-clear-btn:hover { color: #b04040; border-color: #b04040; }
+.imgm-slides-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.imgm-slide-slot { border-radius: 12px; overflow: hidden; position: relative; aspect-ratio: 16/10; cursor: pointer; background: rgba(255,255,255,0.6); border: 2px dashed rgba(var(--gold-rgb),0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.25s; }
+.imgm-slide-slot:hover { border-color: var(--gold); background: rgba(255,248,220,0.5); }
+.imgm-slide-slot.has-image { border-style: solid; border-color: var(--gold); }
+.imgm-slide-thumb { position: absolute; inset: 0; background-size: cover; background-position: center; border-radius: 10px; }
+.imgm-slide-num { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 300; color: var(--light); font-style: italic; }
+.imgm-slide-hint { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); margin-top: 4px; }
+.imgm-slide-overlay { position: absolute; inset: 0; border-radius: 10px; background: rgba(28,24,16,0.5); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; flex-direction: column; gap: 6px; }
+.imgm-slide-slot:hover .imgm-slide-overlay { opacity: 1; }
+.imgm-slide-overlay-text { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,245,210,0.9); }
+.imgm-slide-del { position: absolute; top: 6px; right: 6px; background: rgba(28,24,16,0.6); border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; color: rgba(255,200,180,0.9); font-size: 11px; display: none; align-items: center; justify-content: center; z-index: 2; }
+.imgm-slide-slot.has-image .imgm-slide-del { display: flex; }
+
+/* ══════════════════════════════════════
+   COLOR PICKER
+══════════════════════════════════════ */
+.edit-color { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); }
+#color-modal { position: fixed; inset: 0; z-index: 9997; display: none; align-items: center; justify-content: center; background: rgba(28,24,16,0.55); backdrop-filter: blur(8px); padding: 20px; }
+#color-modal.open { display: flex; }
+.color-box { background: var(--cream); border-radius: 24px; padding: 32px 28px; max-width: 380px; width: 100%; box-shadow: 0 24px 80px rgba(28,24,16,0.28); position: relative; }
+.color-close { position: absolute; top: 16px; right: 18px; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--mid); }
+.color-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 300; font-style: italic; color: var(--dark); margin-bottom: 4px; }
+.color-sub { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); margin-bottom: 22px; line-height: 1.6; }
+.color-presets { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 22px; }
+.color-preset { aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s, border-color 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.color-preset:hover { transform: scale(1.15); }
+.color-preset.selected { border-color: var(--dark); transform: scale(1.15); }
+.color-custom-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 12px 14px; background: rgba(255,255,255,0.6); border-radius: 12px; border: 1px solid rgba(var(--gold-rgb),0.2); }
+.color-custom-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--light); flex: 1; }
+.color-swatch-preview { width: 28px; height: 28px; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 2px solid rgba(255,255,255,0.8); flex-shrink: 0; }
+#color-custom-input { width: 36px; height: 36px; border: none; border-radius: 50%; cursor: pointer; padding: 0; background: none; opacity: 0; position: absolute; }
+.color-custom-row { position: relative; }
+.color-apply-btn { width: 100%; padding: 14px; border-radius: 12px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: white; font-family: 'Raleway', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.3s; }
+.color-apply-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(var(--gold-rgb),0.4); }
+
+/* ══════════════════════════════════════
+   LOADING SCREEN
+══════════════════════════════════════ */
+#loading-screen {
+  position: fixed; inset: 0; z-index: 99999;
+  height: 100vh;
+  height: 100dvh;
+  background: linear-gradient(160deg, #1e1a10 0%, #2a2214 40%, #1a160c 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0;
+  transition: opacity 0.9s ease, visibility 0.9s ease;
+}
+#loading-screen.hidden {
+  opacity: 0; visibility: hidden; pointer-events: none;
+}
+.ls-rings {
+  position: relative; width: 110px; height: 110px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 32px;
+}
+.ls-ring {
+  position: absolute; border-radius: 50%;
+  border: 1px solid transparent;
+}
+.ls-ring-1 {
+  width: 110px; height: 110px;
+  border-color: rgba(184,148,42,0.15);
+  animation: lsRotate 8s linear infinite;
+}
+.ls-ring-2 {
+  width: 82px; height: 82px;
+  border-color: rgba(184,148,42,0.25);
+  animation: lsRotate 5s linear infinite reverse;
+}
+.ls-ring-3 {
+  width: 56px; height: 56px;
+  border-color: rgba(184,148,42,0.4);
+  animation: lsRotate 3s linear infinite;
+}
+.ls-ring-1::after, .ls-ring-2::after, .ls-ring-3::after {
+  content: '';
+  position: absolute; top: -3px; left: 50%;
+  transform: translateX(-50%);
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold-light);
+  box-shadow: 0 0 8px 2px rgba(var(--gold-rgb), 0.6);
+}
+.ls-ring-2::after { top: -2px; width: 4px; height: 4px; }
+.ls-ring-3::after { top: -2px; width: 3px; height: 3px; }
+.ls-heart {
+  position: absolute;
+  font-size: 18px;
+  animation: lsHeartbeat 2.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(var(--gold-rgb), 0.5));
+}
+@keyframes lsHeartbeat {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  15%       { transform: scale(1.18); opacity: 1; }
+  30%       { transform: scale(0.95); opacity: 0.8; }
+  45%       { transform: scale(1.1); opacity: 1; }
+}
+@keyframes lsRotate { to { transform: rotate(360deg); } }
+.ls-names {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 6vw, 30px);
+  font-weight: 300; color: rgba(255,245,210,0.92);
+  letter-spacing: -0.5px; text-align: center;
+  line-height: 1.15;
+  animation: lsFadeIn 1.2s ease forwards;
+}
+.ls-amp {
+  font-style: italic; color: rgba(var(--gold-rgb), 0.9);
+  font-size: 0.75em; display: block;
+}
+.ls-rule {
+  width: 32px; height: 1px; margin: 14px auto 16px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  animation: lsFadeIn 1.4s ease forwards;
+}
+.ls-date {
+  font-family: 'Raleway', sans-serif;
+  font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb), 0.6);
+  animation: lsFadeIn 1.6s ease forwards;
+}
+.ls-dots {
+  display: flex; gap: 8px; margin-top: 36px;
+  animation: lsFadeIn 1.8s ease forwards;
+}
+.ls-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(var(--gold-rgb), 0.25);
+}
+.ls-dot.active {
+  background: var(--gold-light);
+  box-shadow: 0 0 6px rgba(var(--gold-rgb), 0.6);
+  animation: lsDotPulse 1.2s ease-in-out infinite;
+}
+.ls-dot:nth-child(2) { animation-delay: 0.2s; }
+.ls-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes lsDotPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.4); }
+}
+@keyframes lsFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ls-float {
+  position: absolute; pointer-events: none; opacity: 0;
+  font-size: var(--sz, 14px);
+  color: rgba(255,220,120,0.15);
+  animation: lsFloat var(--dur, 12s) ease-in-out var(--delay, 0s) infinite;
+  user-select: none;
+}
+@keyframes lsFloat {
+  0%   { opacity: 0; transform: translateY(100vh) rotate(-8deg); }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.4; }
+  100% { opacity: 0; transform: translateY(-10vh) rotate(10deg); }
+}
+
+#edit-bar   { padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
+#faq-btn    { bottom: max(24px, env(safe-area-inset-bottom)); right: max(20px, env(safe-area-inset-right)); }
+#slide-dots { right: max(18px, env(safe-area-inset-right)); }
+#main       { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+.scroll-cue { bottom: max(28px, env(safe-area-inset-bottom)); }
+@media (hover: none) {
+  .f-submit:hover, #faq-btn:hover, .edit-bar-btn:hover,
+  .imgm-upload-zone:hover, .imgm-slide-slot:hover,
+  .color-preset:hover, .color-apply-btn:hover,
+  .imgm-clear-btn:hover { transform: none !important; box-shadow: none !important; }
+}
+.f-input, .f-textarea, .stepper input { font-size: max(16px, 13px) !important; }
+.details-card, .timeline-card, .rsvp-card,
+.contact-card, .faq-box, .rdash-box, .imgm-box, .color-box { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+#edit-bar { flex-wrap: wrap; height: auto; min-height: 52px; padding-top: 8px; padding-bottom: 8px; gap: 8px; }
+.edit-bar-text { width: 100%; text-align: center; margin-bottom: 2px; }
+@media (max-width: 480px) {
+  .env-box { width: min(340px, 92vw) !important; height: min(230px, 56vw) !important; }
+  .details-card, .rsvp-card, .contact-card, .timeline-card { width: min(100%, 96vw); padding: 18px 14px; }
+  .villa-show-wrap { width: min(100%, 96vw); }
+  #map-world-img { width: 100vw; }
+  .map-overlay-top { top: 16px; width: 94vw; }
+  #main { padding: 16px 14px; }
+  .cdown-wrap { padding: 16px 14px; margin: 8px auto; }
+  .main-msg-card { padding: 16px 14px; margin: 6px auto; }
+  .main-msg { font-size: clamp(15px, 4.5vw, 19px); }
+  .f-radios { grid-template-columns: 1fr; }
+  #slide-dots { right: max(10px, env(safe-area-inset-right)); gap: 10px; }
+  .edit-bar-text { display: none; }
+  .edit-bar-btn { padding: 8px 11px; font-size: 8px; }
+  .color-presets { grid-template-columns: repeat(4, 1fr); }
+  .color-box, .imgm-box { padding: 22px 16px; border-radius: 18px; }
+}
+@media (min-width: 481px) and (max-width: 1024px) {
+  .details-card, .rsvp-card { width: min(480px, 90vw); }
+  .timeline-card { width: min(460px, 88vw); }
+  .contact-card { width: min(440px, 88vw); }
+  .villa-show-wrap { width: min(560px, 88vw); }
+  #map-world-img { width: min(700px, 90vw); }
+}
+@media (min-width: 1025px) {
+  .details-card  { width: 460px; padding: 32px 28px; }
+  .timeline-card { width: 440px; padding: 32px 28px; }
+  .rsvp-card     { width: 460px; padding: 32px 28px; }
+  .contact-card  { width: 420px; padding: 32px 28px; }
+  .villa-show-wrap { width: min(600px, 80vw); }
+  .env-box { width: 420px !important; height: 288px !important; }
+  #edit-bar { flex-wrap: nowrap; height: 52px; padding-top: 0; padding-bottom: 0; }
+  .edit-bar-text { width: auto; margin-bottom: 0; }
+  .cdown-wrap { padding: 28px 32px; }
+  .main-msg-card { padding: 28px 32px; }
+  .main-names { font-size: clamp(52px, 8vw, 80px); }
+  .imgm-slides-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .env-box { width: min(280px, 48vw) !important; height: min(190px, 36vw) !important; }
+  .env-outer { gap: 10px; }
+  .scroll-cue { display: none; }
+  .invite-names { font-size: clamp(32px, 10vw, 52px); }
+  .timeline-card, .rsvp-card, .details-card { max-height: 82vh; padding: 14px 16px; }
+  #main { justify-content: flex-start; padding-top: 12px; overflow-y: scroll; }
+  .cdown-num { font-size: clamp(22px, 6vw, 34px); }
+  .main-names { font-size: clamp(34px, 10vw, 52px); }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen">
+  <span class="ls-float" style="--sz:12px;--dur:14s;--delay:0s;left:10%">♡</span>
+  <span class="ls-float" style="--sz:18px;--dur:18s;--delay:2s;left:25%">♡</span>
+  <span class="ls-float" style="--sz:10px;--dur:11s;--delay:4s;left:50%">♡</span>
+  <span class="ls-float" style="--sz:16px;--dur:16s;--delay:1s;left:72%">♡</span>
+  <span class="ls-float" style="--sz:12px;--dur:13s;--delay:3s;left:88%">♡</span>
+  <div class="ls-rings">
+    <div class="ls-ring ls-ring-1"></div>
+    <div class="ls-ring ls-ring-2"></div>
+    <div class="ls-ring ls-ring-3"></div>
+    <div class="ls-heart">♡</div>
+  </div>
+  <div class="ls-names">
+    Benjamin<br>
+    <span class="ls-amp">&amp;</span>
+    Camilla
+  </div>
+  <div class="ls-rule"></div>
+  <div class="ls-date">22 · Mai · 2027</div>
+  <div class="ls-dots">
+    <div class="ls-dot active"></div>
+    <div class="ls-dot active" style="animation-delay:0.2s"></div>
+    <div class="ls-dot active" style="animation-delay:0.4s"></div>
+  </div>
+</div>
+
+
+<div id="fb-status">
+  <div id="fb-status-dot"></div>
+  <span id="fb-status-text">Lagrer...</span>
+</div>
+
+<!-- FIXED BACKGROUND -->
+<div id="bg-fixed"></div>
+
+<!-- EDIT BAR -->
+<div id="edit-bar">
+  <span class="edit-bar-text">✏️  Redigeringsmodus aktiv</span>
+  <button class="edit-bar-btn edit-save" onclick="saveEdits()">💾 Lagre</button>
+  <button class="edit-bar-btn edit-img" onclick="openImgManager()">🖼 Bilder</button>
+  <button class="edit-bar-btn edit-color" onclick="openColorPicker()">🎨 Farge</button>
+  <button class="edit-bar-btn edit-rsvp" onclick="openRsvpDash()">📋 Svar</button>
+  <div class="edit-timer-row">
+    <span class="edit-timer-lbl">⏱ Auto-bla</span>
+    <button class="edit-timer-btn" onclick="changeAutoTimer(-1)">−</button>
+    <span id="edit-timer-val">7s</span>
+    <button class="edit-timer-btn" onclick="changeAutoTimer(1)">+</button>
+  </div>
+  <button class="edit-bar-btn edit-exit" onclick="toggleEdit()">✕ Avslutt</button>
+</div>
+
+<!-- COLOR PICKER MODAL -->
+<div id="color-modal">
+  <div class="color-box">
+    <button class="color-close" onclick="closeColorPicker()">✕</button>
+    <div class="color-title">Primærfarge</div>
+    <div class="color-sub">Velg farge for gull-elementer på hele siden</div>
+    <div class="color-presets" id="color-presets"></div>
+    <div class="color-custom-row">
+      <label class="color-custom-label">Egendefinert</label>
+      <div class="color-swatch-preview" id="color-swatch-preview"></div>
+      <input type="color" id="color-custom-input" oninput="applyPrimaryColor(this.value, false)" onchange="applyPrimaryColor(this.value, false)">
+    </div>
+    <button class="color-apply-btn" onclick="savePrimaryColor()">✓ Lagre farge</button>
+  </div>
+</div>
+
+<!-- IMAGE MANAGER MODAL -->
+<div id="img-manager">
+  <div class="imgm-box">
+    <button class="imgm-close" onclick="closeImgManager()">✕</button>
+    <div class="imgm-title">Bildebehandling</div>
+    <div class="imgm-sub">Last opp og bytt ut bilder på invitasjonen</div>
+    <div class="imgm-tabs">
+      <div class="imgm-tab active" onclick="imgTab('bg')">Bakgrunn</div>
+      <div class="imgm-tab" onclick="imgTab('slideshow')">Slideshow</div>
+      <div class="imgm-tab" onclick="imgTab('anim')">Kart-anim.</div>
+    </div>
+    <div class="imgm-panel" id="imgm-bg">
+      <div class="imgm-section-label">Global bakgrunn (alle slides)</div>
+      <div class="imgm-upload-zone" onclick="triggerUpload('bg-global')" id="bgzone-global">
+        <div class="imgm-upload-icon">🌅</div>
+        <div class="imgm-upload-hint">Klikk for å laste opp bakgrunnsbilde</div>
+        <div class="imgm-upload-hint2">Anbefalt: mørkt, stemningsfullt bilde · JPG/PNG/WEBP</div>
+        <div class="imgm-preview" id="bgprev-global"></div>
+      </div>
+      <div class="imgm-opacity-row">
+        <label class="imgm-opacity-label">Gjennomsiktighet</label>
+        <input type="range" min="5" max="60" value="18" id="bg-opacity-slider" oninput="updateBgOpacity(this.value)">
+        <span id="bg-opacity-val">18%</span>
+      </div>
+      <button class="imgm-clear-btn" onclick="clearBg()">🗑 Fjern bakgrunn</button>
+    </div>
+    <div class="imgm-panel" id="imgm-slideshow" style="display:none">
+      <div class="imgm-section-label">Slideshow bilder (5 stk)</div>
+      <div class="imgm-slides-grid" id="imgm-slides-grid"></div>
+    </div>
+    <div class="imgm-panel" id="imgm-anim" style="display:none">
+      <div class="imgm-section-label">Animasjon på kart-slide (slide 3)</div>
+      <div class="imgm-upload-zone" onclick="triggerAnimUpload()" id="animzone">
+        <div class="imgm-upload-icon">🗺️</div>
+        <div class="imgm-upload-hint">Klikk for å laste opp .html-animasjon</div>
+        <div class="imgm-upload-hint2">Filen vises som en iframe på slide 3 · kun .html</div>
+      </div>
+      <div id="anim-controls" style="display:none">
+        <div class="imgm-section-label" style="margin-top:14px">Størrelse</div>
+        <div class="anim-ctrl-row">
+          <span class="anim-ctrl-lbl">Bredde</span>
+          <input type="range" min="20" max="100" value="80" id="anim-w-slider" oninput="updateAnimFrame()">
+          <span id="anim-w-val">80%</span>
+        </div>
+        <div class="anim-ctrl-row">
+          <span class="anim-ctrl-lbl">Høyde</span>
+          <input type="range" min="20" max="100" value="60" id="anim-h-slider" oninput="updateAnimFrame()">
+          <span id="anim-h-val">60%</span>
+        </div>
+        <div class="anim-ctrl-row" style="margin-top:14px">
+          <span class="anim-ctrl-lbl">Gjennomsiktig</span>
+          <input type="range" min="10" max="100" value="100" id="anim-op-slider" oninput="updateAnimFrame()">
+          <span id="anim-op-val">100%</span>
+        </div>
+        <button class="imgm-clear-btn" style="margin-top:14px" onclick="clearAnim()">🗑 Fjern animasjon</button>
+      </div>
+    </div>
+    <input type="file" id="img-file-input" accept="image/*" style="display:none" onchange="handleImgUpload(event)">
+    <input type="file" id="img-file-input-slide" accept="image/*" style="display:none" onchange="handleSlideUpload(event)">
+    <input type="file" id="anim-file-input" accept=".html,text/html" style="display:none" onchange="handleAnimUpload(event)">
+  </div>
+</div>
+
+<!-- SLIDE DOTS -->
+<div id="slide-dots">
+  <div class="sdot on" onclick="go(0)"></div>
+  <div class="sdot" onclick="go(1)"></div>
+  <div class="sdot" onclick="go(2)"></div>
+  <div class="sdot" onclick="go(3)"></div>
+  <div class="sdot" onclick="go(4)"></div>
+  <div class="sdot" onclick="go(5)"></div>
+  <div class="sdot" onclick="go(6)"></div>
+  <div class="sdot" onclick="go(7)"></div>
+</div>
+
+<!-- ══════════════════ LANDING ══════════════════ -->
+<div id="landing">
+
+  <!-- S0: ENVELOPE -->
+  <div class="slide" id="s0" style="transform:translateY(0vh)">
+    <div aria-hidden="true">
+      <span class="float-heart" style="left:7%;--dur:15s;--delay:0s;--sz:24px;">♡</span>
+      <span class="float-heart" style="left:24%;--dur:19s;--delay:3s;--sz:18px;">🤍</span>
+      <span class="float-heart" style="left:44%;--dur:17s;--delay:7s;--sz:26px;">♡</span>
+      <span class="float-heart" style="left:68%;--dur:22s;--delay:1.5s;--sz:20px;">🤍</span>
+      <span class="float-heart" style="left:83%;--dur:14s;--delay:5s;--sz:16px;">♡</span>
+    </div>
+    <div class="env-outer" id="env-outer" onclick="openEnv()">
+      <div class="env-box">
+        <div class="env-body">
+          <div class="env-fold-left"></div>
+          <div class="env-fold-right"></div>
+        </div>
+        <div class="env-names">
+          <div class="env-name-line"></div>
+          <div class="env-names-text ed" id="ed-env-names">Benjamin &amp; Camilla</div>
+          <div class="env-name-line"></div>
+        </div>
+        <div class="env-letter" id="env-letter">
+          <div id="env-letter-bg"></div>
+          <div class="env-letter-names" style="position:relative;">
+            Benjamin<br>
+            <span class="env-letter-amp">&amp;</span><br>
+            Camilla
+          </div>
+          <div class="env-letter-rule" style="position:relative;"></div>
+          <div class="env-letter-sub" style="position:relative;">inviterer deg til å feire<br>deres bryllup</div>
+        </div>
+        <div class="env-front" id="env-front">
+          <div class="env-fold-left"></div>
+          <div class="env-fold-right"></div>
+        </div>
+        <div class="env-flap" id="env-flap"></div>
+        <div class="wax" id="env-wax"><div class="wax-inner">✦</div></div>
+      </div>
+      <div class="env-hint" id="env-hint-text">Trykk for å åpne</div>
+    </div>
+    <div class="scroll-cue" id="s0-scroll-cue" style="opacity:0;transition:opacity 0.8s ease 0.5s;">
+      <div class="scroll-cue-text">Bla ned</div>
+      <div class="scroll-cue-line"></div>
+    </div>
+  </div>
+
+  <!-- S1: INVITATION -->
+  <div class="slide" id="s1" style="transform:translateY(100vh)">
+    <div class="invite-body">
+      <div class="invite-eyebrow ed" id="ed-invite-eye">Sammen med sine familier</div>
+      <div style="height:1px;width:32px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent)"></div>
+      <div class="invite-names ed" id="ed-invite-names">Benjamin<br><span class="invite-amp">&amp;</span><br>Camilla</div>
+      <div class="invite-rule"></div>
+      <div class="invite-sub ed" id="ed-invite-sub">inviterer deg til å feire<br>deres bryllup</div>
+    </div>
+    <div class="scroll-cue"><div class="scroll-cue-text">Bla ned</div><div class="scroll-cue-line"></div></div>
+  </div>
+
+  <!-- S2: MAP -->
+  <div class="slide" id="s2" style="transform:translateY(200vh)">
+    <div class="map-world-wrap">
+      <div class="map-overlay-top">
+        <div>
+          <div class="map-title ed" id="ed-map-title">Reisen til Aegina</div>
+          <div class="map-subtitle ed" id="ed-map-sub">Oslo → Athen</div>
+        </div>
+        <div class="map-info-card glass" id="map-info-card">
+          <div class="map-info-label ed" id="ed-map-info-lbl">Reiseinformasjon</div>
+          <div class="map-info-text ed" id="ed-map-info-txt">
+            ✈️ Fly: Oslo Gardermoen (OSL) → Athen (ATH)<br>
+            🚢 Ferge: Piraeus havn → Aegina (ca. 1 time)<br>
+            📍 Epitome Villa, Aegina, Hellas
+          </div>
+        </div>
+      </div>
+      <div id="anim-overlay" style="display:none;position:absolute;inset:0;z-index:10;pointer-events:none;background:transparent;box-shadow:none;">
+        <iframe id="anim-iframe" scrolling="no" style="width:100%;height:100%;border:none;outline:none;background:transparent;pointer-events:auto;box-shadow:none;filter:none;border-radius:0;display:block;" allowtransparency="true" allow="autoplay"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: DETAILS -->
+  <div class="slide" id="s3" style="transform:translateY(300vh)">
+    <div class="details-card glass">
+      <div class="section-title-big ed" id="ed-det-title">Detaljer</div>
+      <div class="gold-rule"></div>
+      <div class="det-section">
+        <div class="det-label">Reise</div>
+        <div class="det-body ed" id="ed-det-reise">Vi anbefaler fly til Athen (ATH) senest <span class="det-strong">20. mai 2027</span>. Fra Piraeus havn tar fergen til Aegina ca. 1 time. Vi koordinerer felles transport fra Athen.</div>
+      </div>
+      <div class="det-section">
+        <div class="det-label">Overnatting</div>
+        <div class="det-body ed" id="ed-det-hotel"><span class="det-strong">Epitome Villa</span> — Noen rom er reservert for nærmeste familie. Kontakt oss.<br><br><span class="det-strong">Hotel Apollo</span> — 5 min gange. Bruk kode <span class="det-strong">BENCAM2027</span> for rabatt.<br><br><span class="det-strong">Aegina Town</span> — Mange hoteller og Airbnb tilgjengelig.</div>
+      </div>
+      <div class="det-section">
+        <div class="det-label">Dresscode</div>
+        <div class="det-body ed" id="ed-det-dress"><span class="det-strong">Formelt / semi-formelt.</span> Lyse, sommerlige farger ønskes. Unngå hvitt og lyseblått.</div>
+      </div>
+      <div class="det-section">
+        <div class="det-label">Gaver</div>
+        <div class="det-body ed" id="ed-det-gifts">Din tilstedeværelse er vår største gave. Ønsker du likevel å gi noe, setter vi pris på bidrag til bryllupsreisen. Kontonummer på forespørsel.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: VILLA SLIDESHOW -->
+  <div class="slide" id="s4" style="transform:translateY(400vh);align-items:center;justify-content:center;padding:20px 0;">
+    <div style="position:relative;z-index:1;width:min(500px,94vw);display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <div class="glass villa-info-card" style="padding:16px 20px;text-align:center;">
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(18px,5vw,22px);font-weight:300;font-style:italic;color:var(--dark);" class="ed" id="ed-villa-info-title">Epitome Villa</div>
+        <div style="height:1px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent);margin:8px 0;"></div>
+        <div style="font-size:11px;color:var(--mid);line-height:1.75;font-weight:300;" class="ed" id="ed-villa-info-body">En eksklusiv privat villa med utsikt over Egeerhavet.<br>Privat basseng, hage og terrasse for selskapet.</div>
+      </div>
+      <div class="villa-show-wrap" id="villa-show">
+        <img id="vs-0" class="active" src="https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=900&auto=format&fit=crop" alt="Villa 1">
+        <img id="vs-1" src="https://images.unsplash.com/photo-1501183007986-d0d080b147f9?w=900&auto=format&fit=crop" alt="Villa 2">
+        <img id="vs-2" src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=900&auto=format&fit=crop" alt="Villa 3">
+        <img id="vs-3" src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=900&auto=format&fit=crop" alt="Villa 4">
+        <img id="vs-4" src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=900&auto=format&fit=crop" alt="Villa 5">
+      </div>
+      <div class="villa-show-dots" id="villa-dots">
+        <div class="vdot on" onclick="vsGo(0)"></div>
+        <div class="vdot" onclick="vsGo(1)"></div>
+        <div class="vdot" onclick="vsGo(2)"></div>
+        <div class="vdot" onclick="vsGo(3)"></div>
+        <div class="vdot" onclick="vsGo(4)"></div>
+      </div>
+      <div class="villa-caption-block">
+        <div class="villa-caption-title ed" id="ed-villa-title">Epitome Villa</div>
+        <div class="villa-caption-sub ed" id="ed-villa-sub">Aegina, Hellas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5: TIMELINE -->
+  <div class="slide" id="s5" style="transform:translateY(500vh)">
+    <div class="timeline-card glass">
+      <div class="section-title-big ed" id="ed-tl-title">Programmet</div>
+      <div class="gold-rule"></div>
+      <div class="tl-list">
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl1-t">14:30</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl1-e">Gjestene ankommer</div><div class="tl-desc ed" id="ed-tl1-d">Velkommen med drinker og snacks</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl2-t">15:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl2-e">Seremoni</div><div class="tl-desc ed" id="ed-tl2-d">Borgerlig vielse i hagene ved villa</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl3-t">16:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl3-e">Cocktailtime</div><div class="tl-desc ed" id="ed-tl3-d">Fotografering, drinker og kanapeer</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl4-t">18:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl4-e">Middag</div><div class="tl-desc ed" id="ed-tl4-d">Treretters gresk bryllupsmiddag</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl5-t">20:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl5-e">Taler &amp; dans</div><div class="tl-desc ed" id="ed-tl5-d">Musikk, underholdning og feiring</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl6-t">00:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl6-e">Midnatt 🥂</div><div class="tl-desc ed" id="ed-tl6-d">Takk for en uforglemmelig kveld</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S6: RSVP -->
+  <div class="slide" id="s6" style="transform:translateY(600vh)">
+    <div class="rsvp-card glass">
+      <div class="rsvp-big">RSVP</div>
+      <div class="rsvp-sub ed" id="ed-rsvp-sub">Svar innen 1. februar 2027</div>
+      <div class="gold-rule"></div>
+      <div id="rsvp-form">
+        <div class="f-field"><div class="f-label">Ditt navn</div><input class="f-input" id="f-name" type="text" placeholder="For- og etternavn"></div>
+        <div class="f-field"><div class="f-label">Antall gjester</div><div class="stepper"><button onclick="step(-1)">−</button><input id="f-count" value="1" readonly><button onclick="step(1)">+</button></div></div>
+        <div id="f-guest-names"></div>
+        <div class="f-field"><div class="f-label">Kommer du?</div><div class="f-radios"><div class="f-radio" id="f-yes" onclick="pickRsvp('yes')">✓ Ja, jeg kommer!</div><div class="f-radio" id="f-no" onclick="pickRsvp('no')">✗ Kan dessverre ikke</div></div></div>
+        <div class="f-field"><div class="f-label">Allergier / Kosthold</div><input class="f-input" id="f-allergy" type="text" placeholder="Eks: vegetar, nøttallergi..."></div>
+        <div class="f-field"><div class="f-label">Melding (valgfritt)</div><textarea class="f-textarea" id="f-msg" placeholder="Din hilsen..."></textarea></div>
+        <button class="f-submit" onclick="sendRsvp()">Send svar →</button>
+      </div>
+      <div id="rsvp-thanks" style="display:none;text-align:center;padding:24px 0">
+        <div style="font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-style:italic;">Tusen takk! 🌿</div>
+        <div style="font-size:12px;color:var(--mid);margin-top:8px;line-height:1.7;">Vi gleder oss enormt til å feire<br>denne dagen med deg.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: CONTACT -->
+  <div class="slide" id="s7" style="transform:translateY(700vh)">
+    <div class="contact-card glass">
+      <div class="section-title-big ed" id="ed-con-title">Kontakt</div>
+      <div class="gold-rule"></div>
+      <div style="font-size:11px;color:var(--mid);text-align:center;margin-bottom:16px;line-height:1.7;" class="ed" id="ed-con-sub">Spørsmål om bryllupet, reisen eller overnatting?<br>Ta gjerne kontakt!</div>
+      <div class="contact-cc">
+        <div class="cc-role">Brudgom</div>
+        <div class="cc-name ed" id="ed-b-name">Benjamin</div>
+        <div class="cc-info ed" id="ed-b-info">📱 +47 XXX XX XXX<br>✉️ benjamin@eksempel.no</div>
+      </div>
+      <div class="contact-cc">
+        <div class="cc-role">Brud</div>
+        <div class="cc-name ed" id="ed-c-name">Camilla</div>
+        <div class="cc-info ed" id="ed-c-info">📱 +47 XXX XX XXX<br>✉️ camilla@eksempel.no</div>
+      </div>
+      <div class="contact-sig">B &amp; C</div>
+      <div style="font-size:8px;letter-spacing:4px;color:var(--light);text-align:center;margin-top:4px;" class="ed" id="ed-con-date">22.05.2027 · Aegina, Hellas</div>
+    </div>
+  </div>
+
+</div><!-- /landing -->
+
+<!-- RSVP DASHBOARD -->
+<div id="rsvp-dash">
+  <div class="rdash-box">
+    <button class="rdash-close" onclick="document.getElementById('rsvp-dash').classList.remove('open')">✕</button>
+    <div class="rdash-title">Svar</div>
+    <div class="rdash-sub">Oversikt over RSVP</div>
+    <div class="rdash-stats" id="rdash-stats"></div>
+    <div class="rdash-list" id="rdash-list"></div>
+  </div>
+</div>
+
+<!-- MAIN PAGE -->
+<div id="main">
+  <div class="main-header">
+    <div class="main-eyebrow ed" id="ed-m-eye">Vi gifter oss</div>
+    <div class="main-names">Benjamin<br><span class="main-amp">&amp;</span><br>Camilla</div>
+    <div class="main-date-line ed" id="ed-m-date">22. Mai 2027 · Aegina, Hellas</div>
+  </div>
+  <div class="cdown-wrap glass">
+    <div class="cdown-label ed" id="ed-cd-lbl">Nedtelling til bryllupet</div>
+    <div class="cdown-grid">
+      <div class="cdown-unit"><div class="cdown-num" id="cd-d">—</div><div class="cdown-lbl">Dager</div></div>
+      <div class="cdown-unit"><div class="cdown-num" id="cd-h">—</div><div class="cdown-lbl">Timer</div></div>
+      <div class="cdown-unit"><div class="cdown-num" id="cd-m">—</div><div class="cdown-lbl">Min</div></div>
+      <div class="cdown-unit"><div class="cdown-num" id="cd-s">—</div><div class="cdown-lbl">Sek</div></div>
+    </div>
+  </div>
+  <div class="main-msg-card glass">
+    <div class="main-msg ed" id="ed-m-msg">Vi gleder oss enormt til å feire denne magiske dagen med deg</div>
+    <div style="height:1px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent);margin:14px 0;"></div>
+    <div class="main-msg-sub ed" id="ed-m-sub">Epitome Villa · Aegina, Hellas<br>22. Mai 2027</div>
+  </div>
+</div>
+
+<button id="faq-btn" onclick="document.getElementById('faq-modal').classList.add('open')">FAQ</button>
+<div id="faq-modal">
+  <div class="faq-box">
+    <button class="faq-close" onclick="document.getElementById('faq-modal').classList.remove('open')">✕</button>
+    <div class="faq-title">Spørsmål &amp; svar</div>
+    <div class="faq-q ed" id="ed-fq1">Når er svarfristen?</div>
+    <div class="faq-a ed" id="ed-fa1">Vi ønsker svar innen 1. februar 2027 så vi kan planlegge i detalj.</div>
+    <div class="faq-q ed" id="ed-fq2">Hva er dresscode?</div>
+    <div class="faq-a ed" id="ed-fa2">Formelt eller semi-formelt. Lyse sommerfarger er ønskelig — unngå hvitt og lyseblått.</div>
+    <div class="faq-q ed" id="ed-fq3">Transport til Aegina?</div>
+    <div class="faq-a ed" id="ed-fa3">Ferge fra Piraeus i Athen — ca. 1 time. Vi koordinerer felles transport fra Athen.</div>
+    <div class="faq-q ed" id="ed-fq4">Kan jeg ta med barn?</div>
+    <div class="faq-a ed" id="ed-fa4">Bryllupet er primært for voksne. Ta kontakt med oss om du har spørsmål.</div>
+    <div class="faq-q ed" id="ed-fq5">Er det allergihensyn i maten?</div>
+    <div class="faq-a ed" id="ed-fa5">Absolutt — oppgi allergier i RSVP-skjemaet så sørger vi for gode alternativer.</div>
+    <div class="faq-q ed" id="ed-fq6">Bilder på sosiale medier?</div>
+    <div class="faq-a ed" id="ed-fa6">Vi ber deg vente til vi har delt de offisielle bildene. Bruk gjerne #BenOgCamilla2027</div>
+  </div>
+</div>
+
+<!-- MORPH TRANSITION OVERLAY -->
+<div id="morph-overlay">
+  <div id="morph-overlay-bg"></div>
+  <div class="mo-names" style="position:relative;">Benjamin<br><span class="mo-amp">&amp;</span><br>Camilla</div>
+  <div class="mo-rule" style="position:relative;"></div>
+  <div class="mo-sub" style="position:relative;">inviterer deg til å feire<br>deres bryllup</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     FIREBASE SDK (ESM via CDN)
+══════════════════════════════════════ -->
+<script type="module">
+// ─── FIREBASE INIT ────────────────────────────────────
+import { initializeApp }           from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, serverTimestamp }
+                                   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getStorage, ref, uploadString, getDownloadURL, deleteObject }
+                                   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyBxw05fd7FCkTuVvUV6GZc7MHYmpEziFUM",
+  authDomain:        "bryllup-59330.firebaseapp.com",
+  projectId:         "bryllup-59330",
+  storageBucket:     "bryllup-59330.firebasestorage.app",
+  messagingSenderId: "289056136917",
+  appId:             "1:289056136917:web:4357d74fe8e596ba2f0c5c",
+  measurementId:     "G-P4EG9W9Z5G"
+};
+
+const app     = initializeApp(firebaseConfig);
+const db      = getFirestore(app);
+const storage = getStorage(app);
+
+// ─── STATUS HELPER ────────────────────────────────────
+let _statusTimer = null;
+function fbStatus(state, text) {
+  const el    = document.getElementById('fb-status');
+  const dot   = document.getElementById('fb-status-dot');
+  const label = document.getElementById('fb-status-text');
+  if (!el) return;
+  el.className = 'show ' + state;
+  label.textContent = text;
+  if (_statusTimer) clearTimeout(_statusTimer);
+  if (state !== 'saving') {
+    _statusTimer = setTimeout(function() { el.classList.remove('show'); }, 3000);
+  }
+}
+
+// ══════════════════════════════════════
+// FIRESTORE — RSVP
+// ══════════════════════════════════════
+
+/**
+ * Lagre RSVP-svar til Firestore.
+ * Kalles av window.sendRsvpToFirebase (satt nedenfor).
+ */
+async function saveRsvpFirestore(entry) {
+  try {
+    fbStatus('saving', 'Sender svar...');
+    await addDoc(collection(db, 'rsvp'), {
+      ...entry,
+      createdAt: serverTimestamp()
+    });
+    fbStatus('saved', 'Svar sendt ✓');
+  } catch (err) {
+    console.error('Firestore RSVP error:', err);
+    fbStatus('error', 'Feil ved sending');
+  }
+}
+
+/**
+ * Hent alle RSVP-svar fra Firestore (brukes av dashboardet).
+ */
+async function loadRsvpsFirestore() {
+  try {
+    const snap = await getDocs(collection(db, 'rsvp'));
+    return snap.docs.map(function(d) { return { id: d.id, ...d.data() }; });
+  } catch (err) {
+    console.error('Firestore load RSVP error:', err);
+    return [];
+  }
+}
+
+// ══════════════════════════════════════
+// FIRESTORE — INNSTILLINGER / TEKST
+// ══════════════════════════════════════
+
+/**
+ * Lagre alle redigerbare tekster + innstillinger (farge, timer, bgOpacity)
+ * til Firestore under dokumentet settings/main.
+ * Bilder lagres IKKE her — de går til Storage (se under).
+ */
+async function saveSettingsFirestore(data) {
+  try {
+    fbStatus('saving', 'Lagrer innstillinger...');
+    await setDoc(doc(db, 'settings', 'main'), {
+      ...data,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    fbStatus('saved', 'Lagret i skyen ✓');
+  } catch (err) {
+    console.error('Firestore settings error:', err);
+    fbStatus('error', 'Feil ved lagring');
+    throw err;
+  }
+}
+
+/**
+ * Hent innstillinger fra Firestore ved oppstart.
+ */
+async function loadSettingsFirestore() {
+  try {
+    const snap = await getDoc(doc(db, 'settings', 'main'));
+    if (snap.exists()) return snap.data();
+    return null;
+  } catch (err) {
+    console.error('Firestore load settings error:', err);
+    return null;
+  }
+}
+
+// ══════════════════════════════════════
+// STORAGE — BILDER & ANIMASJON
+// ══════════════════════════════════════
+
+/**
+ * Last opp en base64 data-URL til Firebase Storage.
+ * Returnerer den offentlige nedlastings-URL-en.
+ */
+async function uploadImageToStorage(path, dataUrl) {
+  // Finn ut content type fra data-URL
+  const mimeMatch = dataUrl.match(/^data:([^;]+);base64,/);
+  const mimeType  = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+  const base64    = dataUrl.split(',')[1];
+
+  const storageRef = ref(storage, path);
+  await uploadString(storageRef, base64, 'base64', { contentType: mimeType });
+  return await getDownloadURL(storageRef);
+}
+
+/**
+ * Slett fil fra Storage.
+ */
+async function deleteFromStorage(path) {
+  try {
+    await deleteObject(ref(storage, path));
+  } catch (err) {
+    // Ignorer "not found"-feil
+    if (err.code !== 'storage/object-not-found') console.warn('Storage delete error:', err);
+  }
+}
+
+/**
+ * Last opp bakgrunnsbilde.
+ * Lagrer URL-en tilbake i settings/main.bgImageUrl
+ */
+async function uploadBgImage(dataUrl) {
+  fbStatus('saving', 'Laster opp bilde...');
+  try {
+    const url = await uploadImageToStorage('images/bg-global', dataUrl);
+    // Oppdater settings-dokumentet med ny URL
+    await setDoc(doc(db, 'settings', 'main'),
+      { bgImageUrl: url, updatedAt: serverTimestamp() },
+      { merge: true }
+    );
+    fbStatus('saved', 'Bilde lastet opp ✓');
+    return url;
+  } catch (err) {
+    console.error('Storage bg upload error:', err);
+    fbStatus('error', 'Feil ved bildeopplasting');
+    throw err;
+  }
+}
+
+/**
+ * Last opp ett slideshow-bilde (index 0–4).
+ */
+async function uploadSlideImage(idx, dataUrl) {
+  fbStatus('saving', 'Laster opp bilde ' + (idx + 1) + '...');
+  try {
+    const url = await uploadImageToStorage('images/slide-' + idx, dataUrl);
+    // Lagre URL i settings
+    const field = 'slideUrl_' + idx;
+    await setDoc(doc(db, 'settings', 'main'),
+      { [field]: url, updatedAt: serverTimestamp() },
+      { merge: true }
+    );
+    fbStatus('saved', 'Slide ' + (idx + 1) + ' lastet opp ✓');
+    return url;
+  } catch (err) {
+    console.error('Storage slide upload error:', err);
+    fbStatus('error', 'Feil ved bildeopplasting');
+    throw err;
+  }
+}
+
+/**
+ * Last opp HTML-animasjonsfil.
+ */
+async function uploadAnimHtml(htmlText) {
+  fbStatus('saving', 'Laster opp animasjon...');
+  try {
+    const storageRef = ref(storage, 'anim/map-anim.html');
+    await uploadString(storageRef, htmlText, 'raw', { contentType: 'text/html' });
+    const url = await getDownloadURL(storageRef);
+    await setDoc(doc(db, 'settings', 'main'),
+      { animUrl: url, updatedAt: serverTimestamp() },
+      { merge: true }
+    );
+    fbStatus('saved', 'Animasjon lastet opp ✓');
+    return url;
+  } catch (err) {
+    console.error('Storage anim upload error:', err);
+    fbStatus('error', 'Feil ved animasjonsopplasting');
+    throw err;
+  }
+}
+
+/**
+ * Slett bakgrunnsbilde fra Storage og settings.
+ */
+async function deleteBgImage() {
+  await deleteFromStorage('images/bg-global');
+  await setDoc(doc(db, 'settings', 'main'),
+    { bgImageUrl: null, updatedAt: serverTimestamp() },
+    { merge: true }
+  );
+}
+
+/**
+ * Slett ett slideshow-bilde.
+ */
+async function deleteSlideImage(idx) {
+  await deleteFromStorage('images/slide-' + idx);
+  const field = 'slideUrl_' + idx;
+  await setDoc(doc(db, 'settings', 'main'),
+    { [field]: null, updatedAt: serverTimestamp() },
+    { merge: true }
+  );
+}
+
+/**
+ * Slett animasjonsfil.
+ */
+async function deleteAnimFile() {
+  await deleteFromStorage('anim/map-anim.html');
+  await setDoc(doc(db, 'settings', 'main'),
+    { animUrl: null, updatedAt: serverTimestamp() },
+    { merge: true }
+  );
+}
+
+// ══════════════════════════════════════
+// OPPSTARTS-LASTING
+// ══════════════════════════════════════
+
+async function loadAllFromFirebase() {
+  const data = await loadSettingsFirestore();
+  if (!data) return; // ingen data ennå
+
+  // Tekst og innstillinger
+  document.querySelectorAll('.ed').forEach(function(el) {
+    if (data[el.id] !== undefined && data[el.id] !== null) {
+      el.innerHTML = data[el.id];
+    }
+  });
+
+  // Auto-timer
+  if (data.__autoTimer != null) {
+    window._autoTimerSec = parseInt(data.__autoTimer) || 7;
+    const el = document.getElementById('edit-timer-val');
+    if (el) el.textContent = window._autoTimerSec + 's';
+  }
+
+  // Primærfarge
+  if (data.__primaryColor) {
+    if (window.applyPrimaryColor) window.applyPrimaryColor(data.__primaryColor, true);
+  }
+
+  // Bakgrunnsopasitet
+  if (data.bgOpacity != null) {
+    const slider = document.getElementById('bg-opacity-slider');
+    const valEl  = document.getElementById('bg-opacity-val');
+    if (slider) slider.value = data.bgOpacity;
+    if (valEl)  valEl.textContent = data.bgOpacity + '%';
+  }
+
+  // Bakgrunnsbilde fra Storage-URL
+  if (data.bgImageUrl) {
+    applyBackgroundFromUrl(data.bgImageUrl, data.bgOpacity || 18);
+  }
+
+  // Oppdater visuell cache for øyeblikkelig lasting ved neste besøk
+  try {
+    const cache = {
+      primaryColor: data.__primaryColor || null,
+      bgImageUrl:   data.bgImageUrl || null,
+      bgOpacity:    data.bgOpacity || 18
+    };
+    localStorage.setItem('weddingVisualCache', JSON.stringify(cache));
+  } catch(e) {}
+
+  // Slideshow-bilder fra Storage-URL
+  for (let i = 0; i < 5; i++) {
+    const url = data['slideUrl_' + i];
+    if (url) {
+      const img = document.getElementById('vs-' + i);
+      if (img) img.src = url;
+    }
+  }
+
+  // Animasjon fra Storage-URL
+  if (data.animUrl) {
+    loadAnimFromUrl(data.animUrl);
+  }
+
+  // Skjul loading-skjermen nå som alt er lastet
+  if (window.hideLoadingScreen) window.hideLoadingScreen();
+}
+
+function applyBackgroundFromUrl(url, opacity) {
+  let overlay = document.getElementById('bg-img-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'bg-img-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;height:100vh;height:100dvh;z-index:1;background-size:cover;background-position:center;pointer-events:none;transition:opacity 0.4s;';
+    const bgFixed = document.getElementById('bg-fixed');
+    if (bgFixed && bgFixed.parentNode) bgFixed.after(overlay);
+    else document.body.prepend(overlay);
+  }
+  overlay.style.backgroundImage = 'url(' + url + ')';
+  overlay.style.opacity = (opacity || 18) / 100;
+  if (window.syncLetterBg) window.syncLetterBg();
+  // Update preview in manager
+  updateBgZonePreview(url);
+}
+
+function loadAnimFromUrl(url) {
+  fetch(url)
+    .then(function(r) { return r.text(); })
+    .then(function(html) {
+      window._animHTML = html;
+      window._animURL  = url;
+      if (window.cur === 2) {
+        window.loadAnimIframe && window.loadAnimIframe();
+        window.showAnimOverlay && window.showAnimOverlay();
+      }
+      document.getElementById('anim-controls').style.display = '';
+      const zone = document.getElementById('animzone');
+      if (zone) {
+        zone.classList.add('has-anim');
+        zone.querySelector('.imgm-upload-hint').textContent = '✓ Animasjon lastet';
+      }
+      window.restoreAnimFrame && window.restoreAnimFrame();
+    })
+    .catch(function(err) { console.warn('Could not fetch anim HTML:', err); });
+}
+
+function updateBgZonePreview(url) {
+  const zone = document.getElementById('bgzone-global');
+  const prev = document.getElementById('bgprev-global');
+  if (!zone || !prev) return;
+  prev.style.backgroundImage = 'url(' + url + ')';
+  prev.classList.add('visible');
+  zone.classList.add('has-image');
+  if (!zone.querySelector('.imgm-preview-label')) {
+    const lbl = document.createElement('div');
+    lbl.className = 'imgm-preview-label';
+    lbl.textContent = 'Klikk for å bytte';
+    prev.appendChild(lbl);
+  }
+}
+
+// ══════════════════════════════════════
+// EKSPONÉR TIL GLOBAL SCOPE
+// (kalles fra de ikke-module script-funksjonene nedenfor)
+// ══════════════════════════════════════
+window._fb = {
+  saveSettingsFirestore,
+  loadRsvpsFirestore,
+  saveRsvpFirestore,
+  uploadBgImage,
+  uploadSlideImage,
+  uploadAnimHtml,
+  deleteBgImage,
+  deleteSlideImage,
+  deleteAnimFile,
+};
+
+// Start opp
+window.addEventListener('load', function() {
+  loadAllFromFirebase().catch(function(err) {
+    console.warn('Firebase load failed, continuing with localStorage:', err);
+    if (window.hideLoadingScreen) window.hideLoadingScreen();
+  });
+});
+
+</script>
+
+<!-- ══════════════════════════════════════
+     HOVED-SCRIPT (non-module, samme som original + Firebase-hooks)
+══════════════════════════════════════ -->
+<script>
+// ─── STATE ────────────────────────────────────────────
+const NSLIDES = 8;
+let cur = 0, busy = false, envDone = false, landed = false;
+window.cur = cur; // eksponér for Firebase-modul
+let autoTimerSec = 7;
+let touchY = 0, lastWheel = 0;
+let editOn = false, secretBuf = '';
+let vsIdx = 0, vsTimer = null;
+
+// ─── INDEXEDDB (lokal fallback for store filer) ────────
+const IDB_NAME = 'weddingSlides', IDB_STORE = 'slides', IDB_VER = 1;
+let _idb = null;
+
+function openIDB() {
+  return new Promise(function(resolve, reject) {
+    try {
+      if (_idb) { resolve(_idb); return; }
+      if (!window.indexedDB) { reject(new Error('No IDB')); return; }
+      const req = indexedDB.open(IDB_NAME, IDB_VER);
+      req.onupgradeneeded = function(e) {
+        try { e.target.result.createObjectStore(IDB_STORE); } catch(err) {}
+      };
+      req.onsuccess = function(e) { _idb = e.target.result; resolve(_idb); };
+      req.onerror   = function(e) { reject(e.target.error); };
+    } catch(err) { reject(err); }
+  });
+}
+function idbSet(key, val) {
+  return openIDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put(val, key);
+      tx.oncomplete = resolve;
+      tx.onerror = function(e) { reject(e.target.error); };
+    });
+  });
+}
+function idbDel(key) {
+  return openIDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).delete(key);
+      tx.oncomplete = resolve;
+      tx.onerror = function(e) { reject(e.target.error); };
+    });
+  });
+}
+function idbGetAll() {
+  return openIDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      const store = db.transaction(IDB_STORE).objectStore(IDB_STORE);
+      const result = {};
+      const req = store.openCursor();
+      req.onsuccess = function(e) {
+        const cursor = e.target.result;
+        if (cursor) { result[cursor.key] = cursor.value; cursor.continue(); }
+        else resolve(result);
+      };
+      req.onerror = function(e) { reject(e.target.error); };
+    });
+  });
+}
+
+// ─── LOADING SCREEN ───────────────────────────────────
+window.hideLoadingScreen = function() {
+  const ls = document.getElementById('loading-screen');
+  if (!ls || ls.classList.contains('hidden')) return;
+  ls.classList.add('hidden');
+  setTimeout(function() { ls.style.display = 'none'; }, 1000);
+};
+// Fallback: skjul uansett etter 6 sekunder
+setTimeout(function() {
+  if (window.hideLoadingScreen) window.hideLoadingScreen();
+}, 6000);
+
+// ─── VISUELL CACHE (øyeblikkelig lasting) ────────────
+// Laster farge og bakgrunn fra localStorage-cache FØR Firebase svarer.
+// Firebase oppdaterer cachen i bakgrunnen slik at neste besøk er à jour.
+function loadVisualCache() {
+  try {
+    const cache = JSON.parse(localStorage.getItem('weddingVisualCache') || '{}');
+    if (cache.primaryColor) applyPrimaryColor(cache.primaryColor, true);
+    if (cache.bgImageUrl) applyBackgroundFromUrl(cache.bgImageUrl, cache.bgOpacity || 18);
+  } catch(e) {}
+}
+loadVisualCache();
+
+// ─── INIT ─────────────────────────────────────────────
+window.addEventListener('load', function() {
+  try { countdown(); } catch(e) {}
+  setInterval(function() { try { countdown(); } catch(e) {} }, 1000);
+  try { document.getElementById('slide-dots').classList.add('show'); } catch(e) {}
+  try { loadEditsLocal(); } catch(e) {}
+  try { loadPrimaryColor(); } catch(e) {}
+  openIDB()
+    .then(function() { loadSavedImagesLocal(); })
+    .catch(function() { loadSavedImagesLocal(); });
+});
+
+// ─── SECRET CODE ─────────────────────────────────────
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    if (secretBuf === 'tototuttis') toggleEdit();
+    secretBuf = ''; return;
+  }
+  if (e.key.length === 1) {
+    secretBuf += e.key.toLowerCase();
+    if (secretBuf.length > 20) secretBuf = secretBuf.slice(-20);
+  }
+});
+
+// ─── EDIT MODE ────────────────────────────────────────
+function changeAutoTimer(d) {
+  autoTimerSec = Math.max(1, Math.min(60, autoTimerSec + d));
+  const el = document.getElementById('edit-timer-val');
+  if (el) el.textContent = autoTimerSec + 's';
+}
+
+function toggleEdit() {
+  editOn = !editOn;
+  document.body.classList.toggle('editing', editOn);
+  document.getElementById('edit-bar').classList.toggle('on', editOn);
+  document.querySelectorAll('.ed').forEach(function(el) {
+    el.contentEditable = editOn ? 'true' : 'false';
+  });
+}
+
+/**
+ * Lagre redigeringer:
+ * 1. Lokal localStorage (øyeblikkelig)
+ * 2. Firebase Firestore (asynkront)
+ */
+function saveEdits() {
+  const data = {};
+  document.querySelectorAll('.ed').forEach(function(el) { data[el.id] = el.innerHTML; });
+
+  // Bevar eksisterende fargeinnstilling
+  try {
+    const existing = JSON.parse(localStorage.getItem('weddingV3') || '{}');
+    if (existing.__primaryColor) data.__primaryColor = existing.__primaryColor;
+    const current = document.documentElement.style.getPropertyValue('--gold').trim();
+    if (current) data.__primaryColor = current;
+  } catch(e) {}
+  data.__autoTimer = autoTimerSec;
+
+  // Legg til bgOpacity fra slider (må skje FØR lagring til Firebase)
+  const slider = document.getElementById('bg-opacity-slider');
+  if (slider) data.bgOpacity = parseInt(slider.value);
+
+  // Lagre lokalt
+  try { localStorage.setItem('weddingV3', JSON.stringify(data)); } catch(e) {}
+
+  // Lagre til Firebase
+  if (window._fb && window._fb.saveSettingsFirestore) {
+    window._fb.saveSettingsFirestore(data).catch(function(err) {
+      console.warn('Firebase save failed:', err);
+    });
+  }
+
+  const btn = document.querySelector('.edit-save');
+  if (btn) { btn.textContent = '✓ Lagret!'; setTimeout(function() { btn.textContent = '💾 Lagre'; }, 2000); }
+}
+
+function loadEditsLocal() {
+  try {
+    const data = JSON.parse(localStorage.getItem('weddingV3') || '{}');
+    Object.entries(data).forEach(function(pair) {
+      const el = document.getElementById(pair[0]);
+      if (el) el.innerHTML = pair[1];
+    });
+    if (data.__autoTimer != null) {
+      autoTimerSec = parseInt(data.__autoTimer) || 7;
+      const el = document.getElementById('edit-timer-val');
+      if (el) el.textContent = autoTimerSec + 's';
+    }
+  } catch(e) {}
+}
+
+// ─── PRIMARY COLOR ────────────────────────────────────
+const COLOR_PRESETS = [
+  { hex: '#b8922a', name: 'Gull' },
+  { hex: '#a0784a', name: 'Bronse' },
+  { hex: '#7a9e7e', name: 'Salvie' },
+  { hex: '#8a7ab0', name: 'Lavendel' },
+  { hex: '#b07878', name: 'Rosatre' },
+  { hex: '#4a8fa8', name: 'Stålblå' },
+  { hex: '#c4784a', name: 'Terrakotta' },
+  { hex: '#6e9e6e', name: 'Myk grønn' },
+  { hex: '#a85858', name: 'Burgunder' },
+  { hex: '#888878', name: 'Skifer' },
+  { hex: '#9e7858', name: 'Varm mocca' },
+  { hex: '#5888a8', name: 'Dypblå' },
+];
+
+function hexToRgb(hex) {
+  return { r: parseInt(hex.slice(1,3),16), g: parseInt(hex.slice(3,5),16), b: parseInt(hex.slice(5,7),16) };
+}
+function lightenHex(hex, amount) {
+  const { r, g, b } = hexToRgb(hex);
+  return '#' + [r,g,b].map(function(v) { return Math.min(255, Math.round(v + (255-v)*amount)).toString(16).padStart(2,'0'); }).join('');
+}
+function darkenHex(hex, amount) {
+  const { r, g, b } = hexToRgb(hex);
+  return '#' + [r,g,b].map(function(v) { return Math.max(0, Math.round(v*(1-amount))).toString(16).padStart(2,'0'); }).join('');
+}
+
+function applyPrimaryColor(hex, updateInput) {
+  const light = lightenHex(hex, 0.22);
+  const dark  = darkenHex(hex, 0.25);
+  const { r, g, b } = hexToRgb(hex);
+  const root = document.documentElement;
+  root.style.setProperty('--gold',         hex);
+  root.style.setProperty('--gold-light',   light);
+  root.style.setProperty('--gold-dark',    dark);
+  root.style.setProperty('--gold-rgb',     r + ', ' + g + ', ' + b);
+  root.style.setProperty('--glass-border', 'rgba('+r+','+g+','+b+',0.18)');
+  const bgFixed = document.getElementById('bg-fixed');
+  if (bgFixed) {
+    bgFixed.style.background =
+      'radial-gradient(ellipse at 20% 50%, rgba('+r+','+g+','+b+',0.08) 0%, transparent 60%),' +
+      'radial-gradient(ellipse at 80% 20%, rgba('+r+','+g+','+b+',0.06) 0%, transparent 50%),' +
+      'linear-gradient(160deg, #1e1a10 0%, #2a2214 40%, #1a160c 100%)';
+  }
+  const swatch = document.getElementById('color-swatch-preview');
+  if (swatch) swatch.style.background = hex;
+  if (updateInput !== false) {
+    const inp = document.getElementById('color-custom-input');
+    if (inp) inp.value = hex;
+  }
+  document.querySelectorAll('.color-preset').forEach(function(el) {
+    el.classList.toggle('selected', el.dataset.hex === hex);
+  });
+  syncLetterBg();
+}
+
+function savePrimaryColor() {
+  const hex = document.documentElement.style.getPropertyValue('--gold').trim() || '#b8922a';
+  try {
+    const data = JSON.parse(localStorage.getItem('weddingV3') || '{}');
+    data.__primaryColor = hex;
+    localStorage.setItem('weddingV3', JSON.stringify(data));
+  } catch(e) {}
+  // Oppdater visuell cache
+  try {
+    const cache = JSON.parse(localStorage.getItem('weddingVisualCache') || '{}');
+    cache.primaryColor = hex;
+    localStorage.setItem('weddingVisualCache', JSON.stringify(cache));
+  } catch(e) {}
+  // Lagre til Firebase
+  if (window._fb && window._fb.saveSettingsFirestore) {
+    window._fb.saveSettingsFirestore({ __primaryColor: hex }).catch(function() {});
+  }
+  closeColorPicker();
+  const btn = document.querySelector('.edit-save');
+  if (btn) { btn.textContent = '✓ Lagret!'; setTimeout(function(){ btn.textContent = '💾 Lagre'; }, 2000); }
+}
+
+function loadPrimaryColor() {
+  try {
+    const data = JSON.parse(localStorage.getItem('weddingV3') || '{}');
+    if (data.__primaryColor) applyPrimaryColor(data.__primaryColor, true);
+  } catch(e) {}
+}
+
+function openColorPicker() {
+  const modal = document.getElementById('color-modal');
+  const grid  = document.getElementById('color-presets');
+  grid.innerHTML = COLOR_PRESETS.map(function(p) {
+    return '<div class="color-preset" data-hex="'+p.hex+'" title="'+p.name+'" style="background:'+p.hex+'" onclick="applyPrimaryColor(\''+p.hex+'\', true)"></div>';
+  }).join('');
+  const current = document.documentElement.style.getPropertyValue('--gold').trim() || '#b8922a';
+  applyPrimaryColor(current, true);
+  modal.classList.add('open');
+}
+function closeColorPicker() {
+  document.getElementById('color-modal').classList.remove('open');
+}
+
+// ─── IMAGE MANAGER ────────────────────────────────────
+let currentUploadTarget = null;
+
+function openImgManager() {
+  document.getElementById('img-manager').classList.add('open');
+  renderSlideshowGrid();
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    if (saved.bg) updateBgZonePreviewLocal(saved.bg);
+  } catch(e) {}
+}
+function closeImgManager() {
+  document.getElementById('img-manager').classList.remove('open');
+}
+function imgTab(tab) {
+  document.querySelectorAll('.imgm-tab').forEach(function(t, i) {
+    t.classList.toggle('active',
+      (i === 0 && tab === 'bg') || (i === 1 && tab === 'slideshow') || (i === 2 && tab === 'anim')
+    );
+  });
+  document.getElementById('imgm-bg').style.display        = tab === 'bg'        ? '' : 'none';
+  document.getElementById('imgm-slideshow').style.display = tab === 'slideshow' ? '' : 'none';
+  document.getElementById('imgm-anim').style.display      = tab === 'anim'      ? '' : 'none';
+}
+
+function triggerUpload(target) {
+  currentUploadTarget = target;
+  const inp = document.getElementById('img-file-input');
+  inp.value = ''; inp.click();
+}
+function triggerSlideUpload(idx) {
+  currentUploadTarget = 'slide-' + idx;
+  const inp = document.getElementById('img-file-input-slide');
+  inp.value = ''; inp.click();
+}
+
+function handleImgUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const dataUrl = ev.target.result;
+    if (currentUploadTarget === 'bg-global') {
+      // Vis lokalt umiddelbart
+      applyBackground(dataUrl);
+      saveBgImageLocal(dataUrl);
+      updateBgZonePreviewLocal(dataUrl);
+      // Last opp til Firebase Storage
+      if (window._fb && window._fb.uploadBgImage) {
+        window._fb.uploadBgImage(dataUrl).then(function(url) {
+          // Oppdater visuell cache med Storage-URL
+          try {
+            const slider = document.getElementById('bg-opacity-slider');
+            const cache = JSON.parse(localStorage.getItem('weddingVisualCache') || '{}');
+            cache.bgImageUrl = url;
+            cache.bgOpacity  = slider ? parseInt(slider.value) : 18;
+            localStorage.setItem('weddingVisualCache', JSON.stringify(cache));
+          } catch(e) {}
+        }).catch(function(err) {
+          console.warn('Firebase bg upload failed:', err);
+        });
+      }
+    }
+  };
+  reader.onerror = function() { alert('Kunne ikke lese filen. Prøv igjen.'); };
+  reader.readAsDataURL(file);
+}
+
+function handleSlideUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const dataUrl = ev.target.result;
+    if (currentUploadTarget && currentUploadTarget.startsWith('slide-')) {
+      const idx = parseInt(currentUploadTarget.split('-')[1]);
+      applySlideImage(idx, dataUrl);
+      // Lagre lokalt (IndexedDB)
+      idbSet('slide_' + idx, dataUrl)
+        .then(function() { renderSlideshowGrid(); })
+        .catch(function() {
+          try { sessionStorage.setItem('slide_' + idx, dataUrl); } catch(se) {}
+          renderSlideshowGrid();
+        });
+      // Last opp til Firebase Storage
+      if (window._fb && window._fb.uploadSlideImage) {
+        window._fb.uploadSlideImage(idx, dataUrl).catch(function(err) {
+          console.warn('Firebase slide upload failed:', err);
+        });
+      }
+    }
+  };
+  reader.onerror = function() { alert('Kunne ikke lese filen. Prøv igjen.'); };
+  reader.readAsDataURL(file);
+}
+
+// ─── BACKGROUND ───────────────────────────────────────
+function getBgFixed() {
+  const rgb = getComputedStyle(document.documentElement).getPropertyValue('--gold-rgb').trim() || '184, 148, 42';
+  return (
+    'radial-gradient(ellipse at 20% 50%, rgba(' + rgb + ',0.08) 0%, transparent 60%),' +
+    'radial-gradient(ellipse at 80% 20%, rgba(' + rgb + ',0.06) 0%, transparent 50%),' +
+    'linear-gradient(160deg, #1e1a10 0%, #2a2214 40%, #1a160c 100%)'
+  );
+}
+
+function syncLetterBg() {
+  const bgOverlay = document.getElementById('bg-img-overlay');
+  const ltrBg     = document.getElementById('env-letter-bg');
+  const ltr       = document.getElementById('env-letter');
+  if (!ltrBg || !ltr) return;
+  ltrBg.style.background = getBgFixed();
+  ltrBg.style.opacity = '1';
+  let imgLayer = document.getElementById('env-letter-img');
+  if (!bgOverlay || !bgOverlay.style.backgroundImage || bgOverlay.style.backgroundImage === 'none') {
+    if (imgLayer) imgLayer.style.backgroundImage = 'none';
+    return;
+  }
+  const r   = ltr.getBoundingClientRect();
+  const W   = window.innerWidth, H = window.innerHeight;
+  const pctX = (r.left / Math.max(W - r.width,  1)) * 100;
+  const pctY = (r.top  / Math.max(H - r.height, 1)) * 100;
+  const imgOpacity = parseFloat(bgOverlay.style.opacity) || 0.18;
+  if (!imgLayer) {
+    imgLayer = document.createElement('div');
+    imgLayer.id = 'env-letter-img';
+    imgLayer.style.cssText = 'position:absolute;inset:0;background-size:cover;pointer-events:none;z-index:1;';
+    ltr.insertBefore(imgLayer, ltr.firstChild);
+  }
+  imgLayer.style.backgroundImage    = bgOverlay.style.backgroundImage;
+  imgLayer.style.backgroundPosition = pctX + '% ' + pctY + '%';
+  imgLayer.style.backgroundSize     = 'cover';
+  imgLayer.style.opacity            = imgOpacity;
+}
+
+function applyBackground(dataUrl) {
+  const slider = document.getElementById('bg-opacity-slider');
+  const opacity = slider ? slider.value / 100 : 0.18;
+  let overlay = document.getElementById('bg-img-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'bg-img-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;height:100vh;height:100dvh;z-index:1;background-size:cover;background-position:center;pointer-events:none;transition:opacity 0.4s;';
+    const bgFixed = document.getElementById('bg-fixed');
+    if (bgFixed && bgFixed.parentNode) bgFixed.after(overlay);
+    else document.body.prepend(overlay);
+  }
+  overlay.style.backgroundImage = 'url(' + dataUrl + ')';
+  overlay.style.opacity = opacity;
+  syncLetterBg();
+}
+
+function applyBackgroundFromUrl(url, opacity) {
+  let overlay = document.getElementById('bg-img-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'bg-img-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;height:100vh;height:100dvh;z-index:1;background-size:cover;background-position:center;pointer-events:none;transition:opacity 0.4s;';
+    const bgFixed = document.getElementById('bg-fixed');
+    if (bgFixed && bgFixed.parentNode) bgFixed.after(overlay);
+    else document.body.prepend(overlay);
+  }
+  overlay.style.backgroundImage = 'url(' + url + ')';
+  overlay.style.opacity = (opacity || 18) / 100;
+  syncLetterBg();
+}
+
+function updateBgOpacity(val) {
+  const valEl = document.getElementById('bg-opacity-val');
+  if (valEl) valEl.textContent = val + '%';
+  const overlay = document.getElementById('bg-img-overlay');
+  if (overlay) overlay.style.opacity = val / 100;
+  syncLetterBg();
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    saved.bgOpacity = val;
+    localStorage.setItem('weddingImages', JSON.stringify(saved));
+  } catch(e) {}
+  // Oppdater visuell cache
+  try {
+    const cache = JSON.parse(localStorage.getItem('weddingVisualCache') || '{}');
+    cache.bgOpacity = parseInt(val);
+    localStorage.setItem('weddingVisualCache', JSON.stringify(cache));
+  } catch(e) {}
+  // Oppdater Firebase
+  if (window._fb && window._fb.saveSettingsFirestore) {
+    window._fb.saveSettingsFirestore({ bgOpacity: parseInt(val) }).catch(function() {});
+  }
+}
+
+function saveBgImageLocal(dataUrl) {
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    saved.bg = dataUrl;
+    const slider = document.getElementById('bg-opacity-slider');
+    saved.bgOpacity = slider ? slider.value : 18;
+    localStorage.setItem('weddingImages', JSON.stringify(saved));
+  } catch(e) {}
+}
+
+function clearBg() {
+  const overlay = document.getElementById('bg-img-overlay');
+  if (overlay) overlay.remove();
+  const prev = document.getElementById('bgprev-global');
+  if (prev) { prev.style.backgroundImage = ''; prev.classList.remove('visible'); }
+  const zone = document.getElementById('bgzone-global');
+  if (zone) {
+    zone.classList.remove('has-image');
+    const lbl = zone.querySelector('.imgm-preview-label');
+    if (lbl) lbl.remove();
+  }
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    delete saved.bg;
+    localStorage.setItem('weddingImages', JSON.stringify(saved));
+  } catch(e) {}
+  // Slett fra Firebase
+  if (window._fb && window._fb.deleteBgImage) {
+    window._fb.deleteBgImage().catch(function() {});
+  }
+}
+
+function updateBgZonePreviewLocal(url) {
+  const zone = document.getElementById('bgzone-global');
+  const prev = document.getElementById('bgprev-global');
+  if (!zone || !prev) return;
+  prev.style.backgroundImage = 'url(' + url + ')';
+  prev.classList.add('visible');
+  zone.classList.add('has-image');
+  if (!zone.querySelector('.imgm-preview-label')) {
+    const lbl = document.createElement('div');
+    lbl.className = 'imgm-preview-label';
+    lbl.textContent = 'Klikk for å bytte';
+    prev.appendChild(lbl);
+  }
+}
+
+// ─── HTML ANIMATION (S2) ──────────────────────────────
+// window._animHTML brukes slik at Firebase-modulen kan sette verdien og
+// det ikke-module scriptet kan lese den (lokal variabel ville vært isolert)
+window._animHTML = window._animHTML || null;
+
+function triggerAnimUpload() {
+  document.getElementById('anim-file-input').value = '';
+  document.getElementById('anim-file-input').click();
+}
+
+function handleAnimUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const html = ev.target.result;
+    window._animHTML = html;
+    if (cur === 2) { loadAnimIframe(); showAnimOverlay(); }
+    // Lagre lokalt (IDB)
+    idbSet('anim_html', html).catch(function() {});
+    // Last opp til Firebase
+    if (window._fb && window._fb.uploadAnimHtml) {
+      window._fb.uploadAnimHtml(html).catch(function(err) {
+        console.warn('Firebase anim upload failed:', err);
+      });
+    }
+    const zone = document.getElementById('animzone');
+    zone.classList.add('has-anim');
+    zone.querySelector('.imgm-upload-hint').textContent = '✓ ' + file.name + ' lastet opp';
+    zone.querySelector('.imgm-upload-hint2').textContent = 'Klikk for å bytte fil';
+    document.getElementById('anim-controls').style.display = '';
+  };
+  reader.onerror = function() { alert('Kunne ikke lese filen.'); };
+  reader.readAsText(file);
+}
+
+function applyAnimHTML(html) {
+  window._animHTML = html;
+  if (cur === 2) { showAnimOverlay(); restoreAnimFrame(); }
+}
+
+function loadAnimIframe() {
+  if (!window._animHTML) return;
+  const iframe = document.getElementById('anim-iframe');
+  const injected_style  = '<style>html,body{background:transparent!important;margin:0!important;padding:0!important;}*{box-shadow:none!important;}</style>';
+  const injected_script = '<script>(function(){var lastFwd=0;window.addEventListener("wheel",function(e){var now=Date.now();if(now-lastFwd<50)return;lastFwd=now;try{window.parent.postMessage({type:"iframeWheel",deltaY:e.deltaY},"*");}catch(err){}},{passive:true});var _ty=0;window.addEventListener("touchstart",function(e){_ty=e.touches[0].clientY;},{passive:true});window.addEventListener("touchend",function(e){var d=_ty-e.changedTouches[0].clientY;try{window.parent.postMessage({type:"iframeSwipe",deltaY:d},"*");}catch(err){}},{passive:true});})();<\/script>';
+  const withStyle  = window._animHTML.replace(/<head([^>]*)>/i, '<head$1>' + injected_style);
+  const withScript = withStyle.replace(/<\/body>/i, injected_script + '</body>');
+  const finalHtml  = (withScript.includes('<head') ? withScript : injected_style + injected_script + withScript);
+  if (iframe._blobUrl) { try { URL.revokeObjectURL(iframe._blobUrl); } catch(e) {} }
+  const blob = new Blob([finalHtml], {type: 'text/html'});
+  const url  = URL.createObjectURL(blob);
+  iframe._blobUrl = url;
+  iframe.src = url;
+}
+
+function showAnimOverlay() {
+  const overlay = document.getElementById('anim-overlay');
+  overlay.style.display = '';
+  overlay.style.background = 'transparent';
+  restoreAnimFrame();
+}
+
+function loadAnimIframeFromUrl(url) {
+  const iframe = document.getElementById('anim-iframe');
+  if (!iframe) return;
+  iframe.style.pointerEvents = 'none';
+  iframe.src = url;
+}
+
+function updateAnimFrame() {
+  const w  = document.getElementById('anim-w-slider').value;
+  const h  = document.getElementById('anim-h-slider').value;
+  const op = document.getElementById('anim-op-slider').value;
+  document.getElementById('anim-w-val').textContent  = w  + '%';
+  document.getElementById('anim-h-val').textContent  = h  + '%';
+  document.getElementById('anim-op-val').textContent = op + '%';
+  const overlay = document.getElementById('anim-overlay');
+  if (!overlay) return;
+  overlay.style.background = 'transparent';
+  overlay.style.opacity    = op / 100;
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingAnim') || '{}');
+    saved.w = w; saved.h = h; saved.op = op;
+    localStorage.setItem('weddingAnim', JSON.stringify(saved));
+  } catch(err) {}
+}
+
+function restoreAnimFrame() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingAnim') || '{}');
+    if (saved.w  != null) { document.getElementById('anim-w-slider').value  = saved.w;  document.getElementById('anim-w-val').textContent  = saved.w  + '%'; }
+    if (saved.h  != null) { document.getElementById('anim-h-slider').value  = saved.h;  document.getElementById('anim-h-val').textContent  = saved.h  + '%'; }
+    if (saved.op != null) { document.getElementById('anim-op-slider').value = saved.op; document.getElementById('anim-op-val').textContent = saved.op + '%'; }
+  } catch(err) {}
+  updateAnimFrame();
+}
+
+function clearAnim() {
+  const overlay = document.getElementById('anim-overlay');
+  overlay.style.display = 'none';
+  document.getElementById('anim-iframe').src = '';
+  document.getElementById('anim-controls').style.display = 'none';
+  const zone = document.getElementById('animzone');
+  zone.classList.remove('has-anim');
+  zone.querySelector('.imgm-upload-hint').textContent = 'Klikk for å laste opp .html-animasjon';
+  zone.querySelector('.imgm-upload-hint2').textContent = 'Filen vises som en iframe på slide 3 · kun .html';
+  idbDel('anim_html').catch(function() {});
+  try { localStorage.removeItem('weddingAnim'); } catch(e) {}
+  // Slett fra Firebase
+  if (window._fb && window._fb.deleteAnimFile) {
+    window._fb.deleteAnimFile().catch(function() {});
+  }
+}
+
+// ─── SLIDESHOW IMAGES ─────────────────────────────────
+const SLIDE_PLACEHOLDERS = [
+  'https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=900&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1501183007986-d0d080b147f9?w=900&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=900&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=900&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=900&auto=format&fit=crop'
+];
+
+function applySlideImage(idx, dataUrl) {
+  const img = document.getElementById('vs-' + idx);
+  if (img) img.src = dataUrl;
+}
+
+function clearSlideImage(idx) {
+  const img = document.getElementById('vs-' + idx);
+  if (img) img.src = SLIDE_PLACEHOLDERS[idx];
+  try { sessionStorage.removeItem('slide_' + idx); } catch(e) {}
+  idbDel('slide_' + idx).catch(function() {});
+  // Slett fra Firebase
+  if (window._fb && window._fb.deleteSlideImage) {
+    window._fb.deleteSlideImage(idx).catch(function() {});
+  }
+  setTimeout(function() { renderSlideshowGrid(); }, 100);
+}
+
+function renderSlideshowGrid() {
+  const grid = document.getElementById('imgm-slides-grid');
+  if (!grid) return;
+  grid.innerHTML = Array.from({length: 5}, function(_, i) {
+    return '<div class="imgm-slide-slot" id="imgm-slot-' + i + '" onclick="triggerSlideUpload(' + i + ')">' +
+      '<div class="imgm-slide-thumb" id="imgm-thumb-' + i + '"></div>' +
+      '<div class="imgm-slide-overlay"><div class="imgm-slide-overlay-text">Bytt bilde</div></div>' +
+      '<div class="imgm-slide-num">' + (i + 1) + '</div>' +
+      '<div class="imgm-slide-hint">Last opp</div>' +
+      '<button class="imgm-slide-del" id="imgm-del-' + i + '" onclick="event.stopPropagation();clearSlideImage(' + i + ')">✕</button>' +
+      '</div>';
+  }).join('');
+
+  function applyToGrid(all) {
+    for (let i = 0; i < 5; i++) {
+      const dataUrl = (all && all['slide_' + i]) || null;
+      const slot  = document.getElementById('imgm-slot-' + i);
+      const thumb = document.getElementById('imgm-thumb-' + i);
+      const del   = document.getElementById('imgm-del-' + i);
+      if (!slot || !thumb) continue;
+      const num  = slot.querySelector('.imgm-slide-num');
+      const hint = slot.querySelector('.imgm-slide-hint');
+      if (dataUrl) {
+        thumb.style.backgroundImage = 'url(' + dataUrl + ')';
+        thumb.style.opacity = '1';
+        slot.classList.add('has-image');
+        if (num)  num.style.display  = 'none';
+        if (hint) hint.style.display = 'none';
+        if (del)  del.style.display  = 'flex';
+      } else {
+        const imgEl = document.getElementById('vs-' + i);
+        if (imgEl && imgEl.src) { thumb.style.backgroundImage = 'url(' + imgEl.src + ')'; thumb.style.opacity = '0.3'; }
+        slot.classList.remove('has-image');
+        if (num)  num.style.display  = '';
+        if (hint) hint.style.display = '';
+        if (del)  del.style.display  = 'none';
+      }
+    }
+  }
+  idbGetAll().then(function(all) { applyToGrid(all); }).catch(function() { applyToGrid({}); });
+}
+
+function loadSavedImagesLocal() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    if (saved.bg) {
+      const opacity = saved.bgOpacity || 18;
+      const slider = document.getElementById('bg-opacity-slider');
+      const valEl  = document.getElementById('bg-opacity-val');
+      if (slider) slider.value = opacity;
+      if (valEl)  valEl.textContent = opacity + '%';
+      applyBackground(saved.bg);
+    }
+  } catch(e) {}
+  idbGetAll()
+    .then(function(all) {
+      for (let i = 0; i < 5; i++) {
+        if (all['slide_' + i]) applySlideImage(i, all['slide_' + i]);
+      }
+      if (all['anim_html']) {
+        applyAnimHTML(all['anim_html']);
+        document.getElementById('anim-controls').style.display = '';
+        const zone = document.getElementById('animzone');
+        if (zone) {
+          zone.classList.add('has-anim');
+          zone.querySelector('.imgm-upload-hint').textContent = '✓ Animasjon lastet';
+        }
+      }
+    })
+    .catch(function() {});
+}
+
+// ─── RSVP ─────────────────────────────────────────────
+function getRsvpsLocal() {
+  try { return JSON.parse(localStorage.getItem('rsvpList') || '[]'); } catch(e) { return []; }
+}
+
+/**
+ * Åpne RSVP-dashboardet.
+ * Henter fra Firebase for å vise alle svar (inkl. fra andre enheter).
+ */
+async function openRsvpDash() {
+  document.getElementById('rsvp-dash').classList.add('open');
+  // Vis lokale data umiddelbart
+  renderRsvpDash(getRsvpsLocal());
+  // Oppdater med Firebase-data
+  if (window._fb && window._fb.loadRsvpsFirestore) {
+    try {
+      const rsvps = await window._fb.loadRsvpsFirestore();
+      if (rsvps.length > 0) renderRsvpDash(rsvps);
+    } catch(err) {
+      console.warn('Could not load RSVP from Firebase:', err);
+    }
+  }
+}
+
+function renderRsvpDash(rsvps) {
+  const statsEl = document.getElementById('rdash-stats');
+  const listEl  = document.getElementById('rdash-list');
+  const yesE = rsvps.filter(function(r) { return r.coming === 'yes'; });
+  const noE  = rsvps.filter(function(r) { return r.coming === 'no'; });
+  const totalG = yesE.reduce(function(s, r) { return s + (parseInt(r.count) || 1); }, 0);
+  statsEl.innerHTML =
+    '<div class="rstat-card rstat-yes"><div class="rstat-num">' + yesE.length + '</div><div class="rstat-lbl">Kommer</div><div class="rstat-guests">' + totalG + ' gjest' + (totalG !== 1 ? 'er' : '') + '</div></div>' +
+    '<div class="rstat-card rstat-no"><div class="rstat-num">' + noE.length + '</div><div class="rstat-lbl">Kan ikke</div></div>' +
+    '<div class="rstat-card rstat-total"><div class="rstat-num">' + rsvps.length + '</div><div class="rstat-lbl">Totalt svar</div></div>';
+  listEl.innerHTML = rsvps.length === 0 ? '<div class="rdash-empty">Ingen svar ennå 🌿</div>' :
+    rsvps.map(function(r, i) {
+      return '<div class="rdash-entry">' +
+        '<div class="rdash-entry-header"><span class="rdash-entry-name">' + escHtml(r.name) + '</span>' +
+        '<span class="rdash-badge ' + (r.coming === 'yes' ? 'badge-yes' : 'badge-no') + '">' + (r.coming === 'yes' ? '✓ Kommer' : '✗ Kan ikke') + '</span></div>' +
+        '<div class="rdash-entry-info">' + (r.coming === 'yes' ? r.count + ' person' + (r.count > 1 ? 'er' : '') : '') + '</div>' +
+        ((r.guestNames && r.guestNames.filter(function(n){return n;}).length) ?
+          '<div style="font-size:10px;color:var(--light);margin-top:3px;line-height:1.7;">' +
+          r.guestNames.filter(function(n){return n;}).map(function(n,j){return (j+2)+'. '+escHtml(n);}).join(' &nbsp;·&nbsp; ') +
+          '</div>' : '') +
+        ((r.allergy || r.msg) ?
+          '<button class="rdash-detail-btn" onclick="toggleDetail(' + i + ')">Detaljer ▾</button>' +
+          '<div class="rdash-entry-detail" id="rdash-det-' + i + '">' +
+          (r.allergy ? '<b>Allergier:</b> ' + escHtml(r.allergy) + '<br>' : '') +
+          (r.msg ? '<b>Melding:</b> ' + escHtml(r.msg) : '') + '</div>' : '') +
+        '</div>';
+    }).join('');
+}
+
+function toggleDetail(i) { const el = document.getElementById('rdash-det-' + i); if (el) el.classList.toggle('open'); }
+function escHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+// ─── ENVELOPE ─────────────────────────────────────────
+function openEnv() {
+  if (envDone) return;
+  envDone = true;
+  const hint  = document.getElementById('env-hint-text');
+  const names = document.querySelector('.env-names');
+  const wax   = document.getElementById('env-wax');
+  const flap  = document.getElementById('env-flap');
+  const ltr   = document.getElementById('env-letter');
+  const cue   = document.getElementById('s0-scroll-cue');
+
+  hint.style.animation = 'none';
+  hint.style.transition = 'opacity 0.3s'; hint.style.opacity = '0';
+  if (names) { names.style.opacity = '0'; }
+  wax.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+  wax.style.transform = 'translate(-50%,-50%) scale(0) rotate(20deg)'; wax.style.opacity = '0';
+
+  setTimeout(function() {
+    flap.classList.add('open');
+    setTimeout(function() {
+      ltr.classList.add('rising');
+      setTimeout(function() {
+        ltr.classList.remove('rising');
+        ltr.classList.add('settled');
+        setTimeout(function() { cue.style.opacity = '1'; }, 400);
+        setTimeout(syncLetterBg, 50);
+        setTimeout(function() {
+          if (cur === 0 && envDone) go(1);
+        }, autoTimerSec * 1000);
+      }, 900);
+    }, 1000);
+  }, 300);
+}
+
+// ─── SLIDESHOW (S4) ───────────────────────────────────
+function vsGo(idx) {
+  if (idx === vsIdx) return;
+  document.querySelectorAll('.vdot')[vsIdx].classList.remove('on');
+  const prevImg = document.getElementById('vs-' + vsIdx);
+  vsIdx = idx;
+  const nextImg = document.getElementById('vs-' + vsIdx);
+  document.querySelectorAll('.vdot')[vsIdx].classList.add('on');
+  nextImg.classList.add('active');
+  setTimeout(function() { prevImg.classList.remove('active'); }, 120);
+}
+function vsStart() {
+  if (vsTimer) clearInterval(vsTimer);
+  vsTimer = setInterval(function() { vsGo((vsIdx + 1) % 5); }, 5500);
+}
+function vsStop() { if (vsTimer) { clearInterval(vsTimer); vsTimer = null; } }
+
+// ─── MORPH TRANSITION ─────────────────────────────────
+function morphToSlide1() {
+  const ltr     = document.getElementById('env-letter');
+  const s1      = document.getElementById('s1');
+  const overlay = document.getElementById('morph-overlay');
+  const vvp = window.visualViewport || { width: window.innerWidth, height: window.innerHeight };
+  const W = vvp.width, H = vvp.height;
+  const r = ltr.getBoundingClientRect();
+  const letterCX = r.left + r.width  / 2;
+  const letterCY = r.top  + r.height / 2;
+  const screenCX = W / 2, screenCY = H / 2;
+  const scaleX = r.width  / W, scaleY = r.height / H;
+  const startScale = Math.max(scaleX, scaleY);
+  const dx = letterCX - screenCX, dy = letterCY - screenCY;
+  const nameEl = overlay.querySelector('.mo-names');
+  const ruleEl = overlay.querySelector('.mo-rule');
+  const subEl  = overlay.querySelector('.mo-sub');
+  const targetNameSize = Math.min(72, W * 0.14);
+  const targetSubSize  = 11;
+  const startNameSize = Math.max(targetNameSize * startScale, 10);
+  const startSubSize  = Math.max(targetSubSize  * startScale, 6);
+
+  overlay.style.transition = 'none';
+  overlay.style.willChange = 'transform, opacity, border-radius';
+  overlay.style.top    = '0'; overlay.style.left   = '0';
+  overlay.style.width  = W + 'px'; overlay.style.height = H + 'px';
+  overlay.style.borderRadius = '6px';
+  overlay.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + startScale + ')';
+  overlay.style.opacity = '1';
+
+  const moBg = document.getElementById('morph-overlay-bg');
+  if (moBg) { moBg.style.transition = 'none'; moBg.style.background = getBgFixed(); moBg.style.opacity = '1'; }
+
+  let moImg = document.getElementById('morph-overlay-img');
+  if (!moImg) {
+    moImg = document.createElement('div');
+    moImg.id = 'morph-overlay-img';
+    moImg.style.cssText = 'position:absolute;inset:0;background-size:cover;pointer-events:none;z-index:1;transition:none;';
+    overlay.insertBefore(moImg, overlay.firstChild);
+  }
+  const bgOverlay = document.getElementById('bg-img-overlay');
+  if (bgOverlay && bgOverlay.style.backgroundImage) {
+    const imgOpacity = parseFloat(bgOverlay.style.opacity) || 0.18;
+    const pctX = (r.left / Math.max(W - r.width,  1)) * 100;
+    const pctY = (r.top  / Math.max(H - r.height, 1)) * 100;
+    moImg.style.transition = 'none';
+    moImg.style.backgroundImage = bgOverlay.style.backgroundImage;
+    moImg.style.backgroundSize = 'cover';
+    moImg.style.backgroundPosition = pctX + '% ' + pctY + '%';
+    moImg.style.opacity = imgOpacity;
+  } else { moImg.style.backgroundImage = 'none'; }
+
+  nameEl.style.transition = 'none'; nameEl.style.transform  = 'none'; nameEl.style.fontSize   = startNameSize + 'px';
+  ruleEl.style.transition = 'none'; ruleEl.style.width      = '28px'; ruleEl.style.margin     = '6px auto';
+  subEl.style.transition  = 'none'; subEl.style.fontSize    = startSubSize + 'px';
+
+  ltr.style.visibility = 'hidden';
+  s1.style.transition = 'none'; s1.style.opacity = '0';
+  cur = 1;
+  for (let i = 0; i < NSLIDES; i++) {
+    const el = document.getElementById('s' + i);
+    if (!el) continue;
+    el.style.transition = 'none';
+    el.style.transform  = 'translateY(' + ((i - 1) * 100) + 'vh)';
+  }
+  document.querySelectorAll('.sdot').forEach(function(d, i) { d.classList.toggle('on', i === 1); });
+
+  const EXPAND_DUR = 820;
+  const EASE = 'cubic-bezier(0.65, 0, 0.15, 1)';
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      overlay.style.transition = 'transform ' + EXPAND_DUR + 'ms ' + EASE + ', border-radius ' + EXPAND_DUR + 'ms ' + EASE;
+      overlay.style.transform    = 'translate(0,0) scale(1)';
+      overlay.style.borderRadius = '0px';
+      const moImg2 = document.getElementById('morph-overlay-img');
+      if (moImg2 && moImg2.style.backgroundImage && moImg2.style.backgroundImage !== 'none') {
+        moImg2.style.transition = 'background-position ' + EXPAND_DUR + 'ms ' + EASE;
+        moImg2.style.backgroundPosition = '50% 50%';
+      }
+      nameEl.style.transition = 'font-size ' + EXPAND_DUR + 'ms ' + EASE;
+      ruleEl.style.transition = 'width ' + EXPAND_DUR + 'ms ease, margin ' + EXPAND_DUR + 'ms ease';
+      subEl.style.transition  = 'font-size ' + EXPAND_DUR + 'ms ' + EASE;
+      nameEl.style.fontSize = targetNameSize + 'px';
+      ruleEl.style.width    = '40px'; ruleEl.style.margin = '14px auto';
+      subEl.style.fontSize  = targetSubSize + 'px';
+    });
+  });
+
+  const FADE_DUR   = 480;
+  const FADE_START = EXPAND_DUR - 120;
+  setTimeout(function() {
+    s1.style.transition = 'opacity ' + FADE_DUR + 'ms ease'; s1.style.opacity = '1';
+    overlay.style.transition = 'opacity ' + FADE_DUR + 'ms ease'; overlay.style.opacity = '0';
+    setTimeout(function() {
+      overlay.style.transition = 'none'; overlay.style.transform  = 'translate(0,0) scale(0)';
+      overlay.style.opacity = '0'; overlay.style.width = '0'; overlay.style.height = '0';
+      overlay.style.willChange = 'auto';
+      // Fjern morph-overlay-img fra DOM så det ikke ligger igjen som et mørkt lag
+      const oldMoImg = document.getElementById('morph-overlay-img');
+      if (oldMoImg) oldMoImg.parentNode.removeChild(oldMoImg);
+      ltr.style.visibility = 'visible';
+      s1.style.opacity = ''; s1.style.transition = '';
+      busy = false;
+    }, FADE_DUR + 40);
+  }, FADE_START);
+}
+
+// ─── SLIDE NAVIGATION ─────────────────────────────────
+let mapInfoTimer = null;
+
+function go(idx) {
+  if (busy || idx === cur) return;
+  if (!envDone && idx > 0) return;
+  if (idx < 0 || idx >= NSLIDES) return;
+  if (cur === 4) vsStop();
+  if (cur === 0 && idx === 1) { busy = true; morphToSlide1(); return; }
+  if (mapInfoTimer) { clearTimeout(mapInfoTimer); mapInfoTimer = null; }
+  if (cur === 2 && idx !== 2) {
+    const card = document.getElementById('map-info-card');
+    if (card) card.style.opacity = '0';
+    const animOverlay = document.getElementById('anim-overlay');
+    if (animOverlay) animOverlay.style.display = 'none';
+  }
+  busy = true; cur = idx;
+  for (let i = 0; i < NSLIDES; i++) {
+    const el = document.getElementById('s' + i);
+    if (!el) continue;
+    el.style.transition = 'transform 0.9s cubic-bezier(0.77,0,0.175,1)';
+    el.style.transform = 'translateY(' + ((i - idx) * 100) + 'vh)';
+  }
+  document.querySelectorAll('.sdot').forEach(function(d, i) { d.classList.toggle('on', i === idx); });
+  if (idx === 2 && window._animHTML) {
+    loadAnimIframe();
+    const animOverlay = document.getElementById('anim-overlay');
+    if (animOverlay) {
+      animOverlay.style.display    = '';
+      animOverlay.style.background = 'transparent';
+      animOverlay.style.opacity    = (function() {
+        try { return (JSON.parse(localStorage.getItem('weddingAnim') || '{}').op || 100) / 100; } catch(e) { return 1; }
+      })();
+    }
+  }
+  if (idx === 2) {
+    mapInfoTimer = setTimeout(function() {
+      const card = document.getElementById('map-info-card');
+      if (card) card.style.opacity = '1';
+      mapInfoTimer = null;
+    }, 5000);
+  }
+  if (idx === 4) { vsGo(0); setTimeout(vsStart, 600); }
+  setTimeout(function() { busy = false; }, 950);
+}
+
+// ─── SCROLL / TOUCH ───────────────────────────────────
+window.addEventListener('message', function(e) {
+  if (!e.data || typeof e.data !== 'object') return;
+  if (e.data.type === 'iframeWheel') handleScroll(e.data.deltaY);
+  else if (e.data.type === 'iframeSwipe') handleSwipe(e.data.deltaY);
+});
+
+function handleScroll(deltaY) {
+  if (landed) { if (deltaY < -40) reviveLanding(); return; }
+  const now = Date.now();
+  if (now - lastWheel < 950) return;
+  if (deltaY > 20) {
+    if (!envDone) return; lastWheel = now;
+    if (cur < NSLIDES - 1) go(cur + 1); else exitLanding();
+  } else if (deltaY < -20) {
+    lastWheel = now;
+    if (cur > 1) go(cur - 1); else if (cur === 1) go(0);
+  }
+}
+function handleSwipe(d) {
+  if (landed) { if (d < -50) reviveLanding(); return; }
+  if (Math.abs(d) < 38) return;
+  if (d > 0) { if (!envDone) return; if (cur < NSLIDES - 1) go(cur + 1); else exitLanding(); }
+  else { if (cur > 1) go(cur - 1); else if (cur === 1) go(0); }
+}
+window.addEventListener('wheel', function(e) { handleScroll(e.deltaY); }, {passive: true});
+window.addEventListener('touchstart', function(e) { touchY = e.touches[0].clientY; }, {passive: true});
+window.addEventListener('touchend', function(e) { handleSwipe(touchY - e.changedTouches[0].clientY); }, {passive: true});
+
+function exitLanding() {
+  if (landed) return; landed = true;
+  document.getElementById('landing').classList.add('exiting');
+  document.getElementById('slide-dots').classList.remove('show');
+  document.getElementById('faq-btn').style.display = 'block';
+  document.getElementById('main').classList.add('visible');
+}
+function reviveLanding() {
+  if (!landed) return; landed = false;
+  document.getElementById('landing').classList.remove('exiting');
+  document.getElementById('slide-dots').classList.add('show');
+  document.getElementById('faq-btn').style.display = 'none';
+  document.getElementById('main').classList.remove('visible');
+  cur = NSLIDES - 1;
+  for (let i = 0; i < NSLIDES; i++) {
+    const el = document.getElementById('s' + i);
+    if (el) { el.style.transition = 'none'; el.style.transform = 'translateY(' + ((i - cur) * 100) + 'vh)'; }
+  }
+  document.querySelectorAll('.sdot').forEach(function(d, i) { d.classList.toggle('on', i === cur); });
+}
+
+// ─── COUNTDOWN ────────────────────────────────────────
+function countdown() {
+  const diff = new Date('2027-05-22T15:00:00') - new Date();
+  if (diff <= 0) return;
+  document.getElementById('cd-d').textContent = Math.floor(diff / 86400000);
+  document.getElementById('cd-h').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+  document.getElementById('cd-m').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+  document.getElementById('cd-s').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+}
+
+// ─── RSVP SKJEMA ──────────────────────────────────────
+function pickRsvp(v) {
+  document.getElementById('f-yes').classList.toggle('active', v === 'yes');
+  document.getElementById('f-no').classList.toggle('active', v === 'no');
+}
+function step(d) {
+  const el = document.getElementById('f-count');
+  const newVal = Math.max(1, Math.min(10, parseInt(el.value) + d));
+  el.value = newVal;
+  renderGuestNames(newVal);
+}
+function renderGuestNames(count) {
+  const container = document.getElementById('f-guest-names');
+  if (!container) return;
+  const existing = {};
+  container.querySelectorAll('input[data-guest]').forEach(function(inp) { existing[inp.dataset.guest] = inp.value; });
+  if (count <= 1) { container.innerHTML = ''; return; }
+  let html = '<div class="f-label" style="margin-bottom:8px;">Navn på øvrige gjester</div>';
+  for (let i = 2; i <= count; i++) {
+    html += '<div class="f-guest-entry"><span class="f-guest-num">' + i + '.</span>' +
+      '<input class="f-input" data-guest="' + i + '" type="text" placeholder="For- og etternavn" value="' + (existing[i] || '') + '"></div>';
+  }
+  container.innerHTML = html;
+}
+
+function sendRsvp() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Vennligst skriv inn ditt navn.'); return; }
+  const coming = document.getElementById('f-yes').classList.contains('active') ? 'yes'
+    : document.getElementById('f-no').classList.contains('active') ? 'no' : null;
+  if (!coming) { alert('Vennligst velg om du kommer.'); return; }
+  const count = parseInt(document.getElementById('f-count').value) || 1;
+  const guestNames = [];
+  document.querySelectorAll('#f-guest-names input[data-guest]').forEach(function(inp) { guestNames.push(inp.value.trim()); });
+  const entry = {
+    name: name, coming: coming, count: count, guestNames: guestNames,
+    allergy: document.getElementById('f-allergy').value.trim(),
+    msg: document.getElementById('f-msg').value.trim(),
+    ts: new Date().toISOString()
+  };
+
+  // Lagre lokalt
+  const rsvps = getRsvpsLocal(); rsvps.push(entry);
+  try { localStorage.setItem('rsvpList', JSON.stringify(rsvps)); } catch(e) {}
+
+  // Send til Firebase Firestore
+  if (window._fb && window._fb.saveRsvpFirestore) {
+    window._fb.saveRsvpFirestore(entry);
+  }
+
+  document.getElementById('rsvp-form').style.display = 'none';
+  document.getElementById('rsvp-thanks').style.display = 'block';
+}
+
+// ─── EKSPONER GLOBALE FUNKSJONER FOR FIREBASE-MODUL ───
+// Firebase-scriptet (type="module") har ikke tilgang til funksjoner definert
+// i dette scriptet med mindre de eksplisitt legges på window.
+window.applyPrimaryColor    = applyPrimaryColor;
+window.showAnimOverlay      = showAnimOverlay;
+window.loadAnimIframe       = loadAnimIframe;
+window.loadAnimIframeFromUrl = loadAnimIframeFromUrl;
+window.restoreAnimFrame     = restoreAnimFrame;
+</script>
+</body>
+</html>
