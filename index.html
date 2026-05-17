@@ -1,0 +1,4168 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a160c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#1a160c">
+<!-- iOS Safari spesifikt -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="B & C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<title>Benjamin &amp; Camilla · 22.05.2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   BASE / RESET / VARIABLES
+══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* Globale touch-vennlige defaults: ingen blå tap-highlight i Safari/Chrome,
+   ingen "rubber band"-bounce, og bedre touch-callout-håndtering. */
+html, body {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  overscroll-behavior: none;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+button, a, .vdot, .sdot, .env-outer, .f-radio, .stepper button,
+.color-preset, .imgm-slide-slot, .imgm-upload-zone, .imgm-tab,
+.faq-close, .rdash-close, .imgm-close, .color-close, .villa-show-wrap {
+  -webkit-tap-highlight-color: transparent;
+}
+:root {
+  --gold: #b8922a;
+  --gold-light: #d4aa3a;
+  --gold-dark: #9a7015;
+  --gold-rgb: 184, 148, 42;
+  --cream: #f8f3ec;
+  --dark: #2c2416;
+  --mid: #6e6455;
+  --light: #9e917e;
+  --glass: rgba(248,243,236,0.75);
+  --glass-border: rgba(var(--gold-rgb), 0.18);
+
+  /* ── Motion system ─────────────────────────────────
+     Felles easing/durations gir konsistent rytme over hele siden.
+     ease-out-soft brukes på alt som "lander" (slides, modaler, kort).
+     ease-in-out-soft brukes på morf/cross-fade.
+     ease-out-back gir lett "snap" til ikoner og knapper.
+  ────────────────────────────────────────────────────*/
+  --ease-out-soft:   cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out-back:   cubic-bezier(0.34, 1.42, 0.64, 1);
+  --dur-fast: 220ms;
+  --dur-med:  420ms;
+  --dur-slow: 760ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+html, body { scrollbar-width: none; scrollbar-gutter: stable; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; }
+* { scrollbar-width: none; }
+*::-webkit-scrollbar { display: none; width: 0; height: 0; }
+html, body {
+  height: 100%;
+  height: -webkit-fill-available;
+  height: var(--app-100vh, 100dvh);
+  overflow: hidden;
+  width: 100%;
+}
+html {
+  background: #1c1810;
+  min-height: -webkit-fill-available;
+}
+body {
+  font-family: 'Raleway', sans-serif;
+  background: #1c1810;
+  color: var(--dark);
+  min-height: -webkit-fill-available;
+  /* Forhindre at iOS pull-to-refresh trigges når brukeren swiper ned på topp */
+  overscroll-behavior-y: contain;
+  overscroll-behavior-x: contain;
+}
+
+/* ══════════════════════════════════════
+   FIREBASE SYNC INDICATOR
+══════════════════════════════════════ */
+#fb-status {
+  position: fixed; bottom: max(14px, env(safe-area-inset-bottom));
+  left: 50%;
+  z-index: 9999; pointer-events: none;
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(28,24,16,0.82); backdrop-filter: blur(12px);
+  border: 1px solid rgba(184,148,42,0.25); border-radius: 40px;
+  padding: 8px 16px;
+  font-family: 'Raleway', sans-serif; font-size: 10px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,245,210,0.85);
+  opacity: 0;
+  transform: translateX(-50%) translateY(10px);
+  transition: opacity 0.45s var(--ease-out-soft), transform 0.45s var(--ease-out-soft);
+}
+#fb-status.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#fb-status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold-light);
+  flex-shrink: 0;
+}
+#fb-status.saving  #fb-status-dot { background: #f0c040; animation: fbPulse 0.8s infinite; }
+#fb-status.saved   #fb-status-dot { background: #6abf69; }
+#fb-status.error   #fb-status-dot { background: #e57373; }
+@keyframes fbPulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+/* ══════════════════════════════════════
+   FIXED BACKGROUND
+══════════════════════════════════════ */
+#bg-fixed {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  height: 100vh;
+  height: 100dvh;
+  height: var(--app-100vh, 100dvh);
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(var(--gold-rgb),0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(var(--gold-rgb),0.06) 0%, transparent 50%),
+    linear-gradient(160deg, #1e1a10 0%, #2a2214 40%, #1a160c 100%);
+}
+
+/* ══════════════════════════════════════
+   SLIDE SYSTEM
+══════════════════════════════════════ */
+#landing {
+  position: fixed; inset: 0;
+  height: 100vh; height: 100dvh;
+  height: var(--app-100vh, 100dvh);
+  z-index: 10;
+  transition: transform 1.05s var(--ease-out-soft), opacity 0.7s var(--ease-out-soft);
+}
+#landing.exiting {
+  transform: translateY(-100vh);
+  transform: translateY(-100dvh);
+  transform: translateY(calc(-1 * var(--app-100vh, 100dvh)));
+  opacity: 0;
+  pointer-events: none;
+}
+.slide {
+  position: fixed; inset: 0;
+  height: 100vh; height: 100dvh;
+  height: var(--app-100vh, 100dvh);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  will-change: transform;
+}
+
+/* ══════════════════════════════════════
+   GLASS CARDS
+══════════════════════════════════════ */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: 0 12px 48px rgba(28,24,16,0.18), 0 2px 8px rgba(28,24,16,0.08);
+}
+/* Merk: glass-kortene har ingen separat entry-animasjon.
+   Slide-overgangen er det som introduserer innholdet — på samme måte
+   som i moderne apper (iOS, Linear, Stripe) der innholdet er "der"
+   når slide lander, istedenfor å etteranimere. Det gir en
+   sammenhengende, polert opplevelse. */
+
+/* ══════════════════════════════════════
+   SLIDE DOTS
+══════════════════════════════════════ */
+#slide-dots {
+  position: fixed; right: 18px; top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 8px;
+  z-index: 200; opacity: 0; transition: opacity 0.6s var(--ease-out-soft);
+}
+#slide-dots.show { opacity: 1; }
+.sdot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(var(--gold-rgb),0.18); cursor: pointer;
+  transition: background 0.35s var(--ease-out-soft), transform 0.35s var(--ease-out-back);
+}
+.sdot.on { background: var(--gold-light); transform: scale(1.5); }
+
+/* ══════════════════════════════════════
+   SECTION TITLE / GOLD RULE
+══════════════════════════════════════ */
+.section-title-big {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 8vw, 38px);
+  font-weight: 300; font-style: italic;
+  color: var(--dark); margin-bottom: 4px;
+}
+.gold-rule {
+  width: 36px; height: 1px; margin: 10px 0 18px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ══════════════════════════════════════
+   SCROLL CUE
+══════════════════════════════════════ */
+.scroll-cue {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  opacity: 0;
+  animation: scrollCueIn 0.9s var(--ease-out-soft) 0.6s forwards;
+}
+@keyframes scrollCueIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.scroll-cue-text {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.45);
+}
+.scroll-cue-line {
+  width: 1px; height: 32px;
+  background: linear-gradient(to bottom, rgba(var(--gold-rgb),0.5), transparent);
+  animation: scrollPulse 2.2s var(--ease-in-out-soft) infinite;
+  transform-origin: top center;
+}
+@keyframes scrollPulse {
+  0%,100% { opacity: 0.35; transform: scaleY(1); }
+  50%      { opacity: 1;    transform: scaleY(1.25); }
+}
+
+/* ══════════════════════════════════════
+   S0 — ENVELOPE
+══════════════════════════════════════ */
+.env-outer {
+  cursor: pointer; display: flex; flex-direction: column;
+  align-items: center; gap: 20px;
+  transition: transform 0.3s ease;
+}
+.env-box {
+  position: relative;
+  width: min(380px, 88vw); height: min(260px, 60vw);
+  overflow: visible;
+  /* 3D-perspective settes på containeren slik at flap-rotasjonen
+     blir konsistent og browseren ikke restarter sin compositor-context
+     ved slutten av rotasjonen (som tidligere kunne forårsake flash). */
+  perspective: 900px;
+  -webkit-perspective: 900px;
+  perspective-origin: 50% 0%;
+  transform-style: flat;
+}
+.env-body {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #f6ede0, #ecdcc8);
+  border-radius: 5px;
+  box-shadow: 0 20px 60px rgba(28,24,16,0.3), 0 4px 16px rgba(28,24,16,0.15);
+  border: 1px solid rgba(var(--gold-rgb),0.3);
+  overflow: hidden;
+  z-index: 1;
+}
+.env-fold-left {
+  position: absolute; bottom: 0; left: 0;
+  width: 0; height: 0;
+  border-bottom: min(130px, 30vw) solid rgba(220,205,178,0.6);
+  border-right: min(190px, 44vw) solid transparent;
+}
+.env-fold-right {
+  position: absolute; bottom: 0; right: 0;
+  width: 0; height: 0;
+  border-bottom: min(130px, 30vw) solid rgba(210,195,168,0.5);
+  border-left: min(190px, 44vw) solid transparent;
+}
+.env-names {
+  position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+  text-align: center; white-space: nowrap;
+  z-index: 5;
+  transition: opacity 0.4s ease;
+}
+.env-names-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(14px, 3.5vw, 18px);
+  font-style: italic; color: rgba(110,100,88,0.8);
+}
+.env-name-line {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb),0.4), transparent);
+  margin: 5px 0;
+}
+.env-flap {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 55%;
+  background: linear-gradient(175deg, #eeded0, #e6d4bc);
+  clip-path: polygon(0 0, 100% 0, 50% 68%);
+  transform-origin: top center;
+  transform: rotateX(0deg) translateZ(0);
+  transition: transform 1.4s cubic-bezier(0.32, 0.04, 0.18, 1);
+  z-index: 4;
+  border-bottom: 1px solid rgba(var(--gold-rgb),0.18);
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
+  transform-style: preserve-3d;
+  will-change: transform;
+  box-shadow: 0 1px 0 rgba(var(--gold-rgb), 0.12);
+}
+.env-flap.open {
+  /* Stopper ved -165° så lokket synes som om det er bøyd bakover —
+     en realistisk åpnet konvolutt der lokket henger over bakkanten.
+     z-index 3 holder lokket bak letter når letter når settled (z-index 6). */
+  transform: rotateX(-165deg) translateZ(0);
+  z-index: 3;
+}
+.wax {
+  position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: clamp(56px, 14vw, 72px); height: clamp(56px, 14vw, 72px);
+  background: radial-gradient(circle at 38% 35%, var(--gold-light), var(--gold), var(--gold-dark));
+  border-radius: 50%;
+  box-shadow: 0 4px 18px rgba(139,100,0,0.5), inset 0 1px 3px rgba(255,230,100,0.2);
+  z-index: 5; display: flex; align-items: center; justify-content: center;
+  transition: transform 0.45s var(--ease-out-back), opacity 0.35s var(--ease-out-soft);
+  animation: waxPulse 3.5s ease-in-out infinite;
+}
+@keyframes waxPulse {
+  0%,100% { box-shadow: 0 4px 18px rgba(139,100,0,0.5), 0 0 0 0 rgba(var(--gold-rgb),0.35); }
+  50%      { box-shadow: 0 4px 18px rgba(139,100,0,0.5), 0 0 0 12px rgba(var(--gold-rgb),0); }
+}
+.wax-inner {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(10px, 2.5vw, 13px);
+  color: rgba(255,245,210,0.95);
+  letter-spacing: 1px; user-select: none;
+}
+.env-letter {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%) translateY(-8%);
+  width: 82%; height: 85%;
+  z-index: 2;
+  background: transparent;
+  border-radius: 3px 3px 0 0;
+  padding: 12px 12px 10px;
+  box-shadow: 0 -3px 20px rgba(28,24,16,0.25);
+  border: 1px solid rgba(var(--gold-rgb),0.28);
+  text-align: center;
+  transition: transform 0.75s cubic-bezier(0.4,0,0.2,1);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.env-letter.peek {
+  transform: translateX(-50%) translateY(-8%);
+}
+.env-letter.rising {
+  transform: translateX(-50%) translateY(-115%);
+  transition: transform 0.85s cubic-bezier(0.3,0,0.1,1);
+  z-index: 6;
+}
+.env-letter.settled {
+  transform: translateX(-50%) translateY(-10%);
+  transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
+  z-index: 6;
+}
+.env-front {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #f6ede0, #ecdcc8);
+  border-radius: 5px;
+  border: 1px solid rgba(var(--gold-rgb),0.3);
+  overflow: hidden;
+  /* z-index 3 i lukket tilstand (under wax z=5, names z=5, flap z=4).
+     JS hever til 7 under rising (kortet gjennom V-åpning),
+     og senker tilbake til 3 under settled (kortet faller over konvolutten). */
+  z-index: 3;
+  pointer-events: none;
+  clip-path: polygon(50% 37.4%, 0% 0%, 0% 100%, 100% 100%, 100% 0%);
+}
+.env-front .env-fold-left {
+  position: absolute; bottom: 0; left: 0;
+  width: 0; height: 0;
+  border-bottom: min(130px, 30vw) solid rgba(220,205,178,0.6);
+  border-right: min(190px, 44vw) solid transparent;
+}
+.env-front .env-fold-right {
+  position: absolute; bottom: 0; right: 0;
+  width: 0; height: 0;
+  border-bottom: min(130px, 30vw) solid rgba(210,195,168,0.5);
+  border-left: min(190px, 44vw) solid transparent;
+}
+.env-letter-eyebrow {
+  font-family: 'Raleway', sans-serif;
+  font-size: 7px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.8); margin-bottom: 8px;
+  position: relative;
+}
+.env-letter-names {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(16px, 4.5vw, 22px);
+  font-weight: 300; color: #fff8ee;
+  line-height: 1.1; letter-spacing: -0.5px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  position: relative;
+}
+.env-letter-amp {
+  font-style: italic; color: rgba(var(--gold-rgb),0.9);
+  font-size: 0.75em; display: block;
+}
+.env-letter-rule {
+  width: 28px; height: 1px; margin: 7px auto;
+  background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb),0.6), transparent);
+  position: relative;
+}
+.env-letter-sub {
+  font-family: 'Raleway', sans-serif;
+  font-size: 9px; letter-spacing: 2px;
+  color: rgba(255,245,220,0.65);
+  line-height: 1.8; font-weight: 300;
+  position: relative;
+}
+#env-letter-bg {
+  position: absolute; inset: 0;
+  /* Default gull-mørk gradient — matcher #bg-fixed slik at kortet
+     ser ut til å være laget av samme materiale som scene-bakgrunnen.
+     Dette sikrer at konvolutten ikke ser tom ut i øyeblikket mellom
+     at lokket har åpnet og kortet løftes ut. syncLetterBg() oppdaterer
+     dette dynamisk hvis primærfargen endres. */
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(var(--gold-rgb),0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(var(--gold-rgb),0.06) 0%, transparent 50%),
+    linear-gradient(160deg, #1e1a10 0%, #2a2214 40%, #1a160c 100%);
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ══════════════════════════════════════
+   MORPH TRANSITION OVERLAY
+══════════════════════════════════════ */
+#morph-overlay {
+  position: fixed; z-index: 50; pointer-events: none;
+  background: transparent;
+  border: 1px solid rgba(var(--gold-rgb),0.28);
+  border-radius: 3px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  overflow: hidden;
+  opacity: 0;
+  top: 0; left: 0; width: 0; height: 0;
+}
+#morph-overlay-bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+  z-index: 0;
+}
+#morph-overlay .mo-names {
+  font-family: 'Playfair Display', serif;
+  font-weight: 300; color: #fff8ee;
+  line-height: 1.05; letter-spacing: -0.5px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  text-align: center;
+  position: relative;
+}
+#morph-overlay .mo-amp {
+  font-style: italic; color: rgba(var(--gold-rgb),0.9);
+  font-size: 0.75em; display: block;
+}
+#morph-overlay .mo-rule {
+  height: 1px; margin: 0 auto;
+  background: linear-gradient(90deg, transparent, rgba(var(--gold-rgb),0.6), transparent);
+  position: relative;
+}
+#morph-overlay .mo-sub {
+  font-family: 'Raleway', sans-serif;
+  letter-spacing: 2px;
+  color: rgba(255,245,220,0.65);
+  line-height: 1.8; font-weight: 300;
+  text-align: center;
+  position: relative;
+}
+.env-hint {
+  font-family: 'Raleway', sans-serif;
+  font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.55); opacity: 0;
+  animation: fadeInHint 2s ease 1.2s forwards;
+}
+@keyframes fadeInHint { to { opacity: 0.85; } }
+.float-heart {
+  position: absolute; pointer-events: none; opacity: 0;
+  animation: heartFloat var(--dur, 16s) ease-in-out var(--delay, 0s) infinite;
+  font-size: var(--sz, 22px); color: rgba(255,220,120,0.25);
+  user-select: none;
+}
+@keyframes heartFloat {
+  0%   { opacity: 0; transform: translateY(105vh) rotate(-10deg) scale(0.7); }
+  8%   { opacity: 1; }
+  92%  { opacity: 0.5; }
+  100% { opacity: 0; transform: translateY(-10vh) rotate(15deg) scale(1.1); }
+}
+
+/* ══════════════════════════════════════
+   S1 — INVITATION
+══════════════════════════════════════ */
+.invite-bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center 20%;
+  opacity: 0.15; filter: grayscale(40%) saturate(0.7);
+  z-index: 0;
+}
+.invite-vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(28,20,10,0.55) 100%);
+}
+.invite-body {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; text-align: center; padding: 24px;
+}
+.invite-eyebrow {
+  font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+  color: var(--gold-light); opacity: 0.85;
+}
+.invite-names {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(44px, 14vw, 72px);
+  font-weight: 300; color: #fff8ee;
+  line-height: 1.05; letter-spacing: -1px;
+  text-shadow: 0 2px 30px rgba(0,0,0,0.4);
+}
+.invite-amp {
+  font-style: italic; color: var(--gold-light);
+  font-size: 0.75em; display: block;
+}
+.invite-rule {
+  width: 40px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+}
+.invite-sub {
+  font-size: 11px; letter-spacing: 2px; color: rgba(255,245,220,0.75);
+  line-height: 1.8; font-weight: 300;
+}
+
+/* ══════════════════════════════════════
+   S2 — MAP
+══════════════════════════════════════ */
+#s2 { padding: 0; overflow: hidden; }
+.map-world-wrap {
+  position: relative; width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+#map-world-img {
+  width: min(700px, 95vw);
+  opacity: 0.22; filter: grayscale(30%) sepia(30%);
+  display: block; pointer-events: none;
+  user-select: none;
+}
+.map-overlay-top {
+  position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
+  text-align: center; z-index: 3;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+.map-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 6vw, 32px); font-weight: 300; font-style: italic;
+  color: rgba(255,245,215,0.92); text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+}
+.map-subtitle {
+  font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.75); margin-top: 4px;
+}
+.map-info-card {
+  padding: 14px 20px; text-align: center; z-index: 3;
+  min-width: min(300px, 88vw);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.map-info-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.map-info-label {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px;
+}
+.map-info-text {
+  font-size: 11px; color: var(--mid); line-height: 1.8; font-weight: 300;
+}
+
+/* ══════════════════════════════════════
+   S3 — DETAILS
+══════════════════════════════════════ */
+.details-card {
+  width: min(400px, 94vw);
+  max-height: 88vh; overflow-y: auto;
+  padding: 26px 22px;
+}
+.det-section { margin-bottom: 16px; }
+.det-label {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px; font-weight: 500;
+}
+.det-body { font-size: 12px; color: var(--mid); line-height: 1.75; font-weight: 300; }
+.det-strong { color: var(--dark); font-weight: 500; }
+
+/* ══════════════════════════════════════
+   S4 — VILLA SLIDESHOW
+══════════════════════════════════════ */
+#s4 { background: transparent; }
+.villa-show-wrap {
+  position: relative; z-index: 1;
+  width: min(480px, 92vw);
+  aspect-ratio: 4 / 3;
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  background: var(--dark);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-y pinch-zoom;
+}
+/* Tap-soner — venstre/høyre halvdel av bildet er klikkbare for nav.
+   Helt transparent som default; subtile chevron-piler vises kun ved
+   hover på PC (touch-enheter ser dem aldri — bevisst, slik at de
+   ikke skjuler bildet under fingeren). */
+.vs-zone {
+  position: absolute; top: 0; bottom: 0;
+  width: 38%;
+  z-index: 4;
+  display: flex; align-items: center;
+  pointer-events: none; /* trigget via JS direkte på villa-show */
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out-soft);
+}
+.vs-zone-left  { left: 0;  justify-content: flex-start; padding-left: 14px; }
+.vs-zone-right { right: 0; justify-content: flex-end;   padding-right: 14px; }
+.vs-arrow {
+  width: 36px; height: 36px;
+  background: rgba(28,24,16,0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,245,210,0.95);
+  font-size: 18px; line-height: 1;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  transform: scale(0.85);
+  transition: transform 0.3s var(--ease-out-back);
+}
+@media (hover: hover) and (pointer: fine) {
+  .villa-show-wrap:hover .vs-zone { opacity: 1; }
+  .villa-show-wrap:hover .vs-arrow { transform: scale(1); }
+}
+.villa-show-wrap img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 1.3s var(--ease-out-soft), transform 7s linear;
+  border-radius: 16px;
+  will-change: opacity, transform;
+}
+.villa-show-wrap img.active    { opacity: 1; transform: scale(1); }
+.villa-show-wrap img.fade-out  { opacity: 0; transition: opacity 1.3s var(--ease-out-soft); }
+.villa-show-dots {
+  display: flex; justify-content: center; gap: 8px;
+  margin-top: 12px;
+}
+.vdot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  transition: background 0.35s var(--ease-out-soft), transform 0.35s var(--ease-out-back);
+  cursor: pointer;
+}
+.vdot.on { background: rgba(255,255,255,0.95); transform: scale(1.5); }
+.villa-caption-block {
+  text-align: center; padding: 6px 0 2px;
+}
+.villa-caption-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 300; font-style: italic;
+  color: var(--gold-light);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+.villa-caption-sub {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.5); margin-top: 4px;
+}
+
+/* ══════════════════════════════════════
+   S5 — TIMELINE
+══════════════════════════════════════ */
+.timeline-card {
+  width: min(380px, 92vw);
+  max-height: 88vh; overflow-y: auto;
+  padding: 28px 22px;
+}
+.tl-list { display: flex; flex-direction: column; }
+.tl-item {
+  display: grid; grid-template-columns: 56px 20px 1fr;
+  gap: 0 12px; min-height: 56px;
+}
+.tl-time {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px; color: var(--gold); text-align: right;
+  padding-top: 3px;
+}
+.tl-spine { display: flex; flex-direction: column; align-items: center; }
+.tl-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold); flex-shrink: 0; margin-top: 7px;
+  box-shadow: 0 0 0 3px rgba(var(--gold-rgb),0.18);
+}
+.tl-line { flex: 1; width: 1px; background: rgba(var(--gold-rgb),0.28); }
+.tl-item:last-child .tl-line { display: none; }
+.tl-content { padding: 3px 0 18px; }
+.tl-event { font-size: 12px; font-weight: 500; color: var(--dark); }
+.tl-desc { font-size: 11px; color: var(--light); margin-top: 2px; line-height: 1.5; font-weight: 300; }
+
+/* ══════════════════════════════════════
+   S6 — RSVP
+══════════════════════════════════════ */
+.rsvp-card {
+  width: min(400px, 94vw);
+  max-height: 92vh; overflow-y: auto;
+  padding: 28px 22px;
+}
+.rsvp-big {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(44px, 13vw, 60px);
+  font-weight: 300; color: var(--dark); letter-spacing: 8px; text-align: center;
+}
+.rsvp-sub { font-size: 10px; letter-spacing: 3px; color: var(--mid); text-align: center; margin-bottom: 4px; }
+.f-field { margin-bottom: 14px; }
+.f-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: var(--light); margin-bottom: 6px; }
+.f-input, .f-textarea {
+  width: 100%; padding: 11px 14px; border-radius: 10px;
+  border: 1px solid rgba(var(--gold-rgb),0.22);
+  background: rgba(255,255,255,0.7);
+  font-family: 'Raleway', sans-serif; font-size: 13px; color: var(--dark);
+  outline: none;
+}
+.f-textarea { min-height: 72px; resize: vertical; }
+.f-input, .f-textarea {
+  transition: border-color 0.25s var(--ease-out-soft), background 0.25s var(--ease-out-soft), box-shadow 0.25s var(--ease-out-soft);
+}
+.f-input:focus, .f-textarea:focus {
+  border-color: var(--gold);
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 0 0 3px rgba(var(--gold-rgb), 0.12);
+}
+.f-radios { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.f-radio {
+  padding: 11px 10px; border-radius: 10px; text-align: center;
+  border: 1px solid rgba(var(--gold-rgb),0.22); font-size: 11px;
+  cursor: pointer; background: rgba(255,255,255,0.55);
+  color: var(--mid);
+  transition: background 0.3s var(--ease-out-soft), color 0.3s var(--ease-out-soft), border-color 0.3s var(--ease-out-soft), transform 0.25s var(--ease-out-back);
+}
+.f-radio:hover { transform: translateY(-1px); }
+.f-radio.active { background: var(--gold); color: white; border-color: var(--gold); transform: translateY(-1px); }
+.stepper { display: flex; align-items: center; gap: 10px; }
+.stepper button {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid rgba(var(--gold-rgb),0.3); background: rgba(255,255,255,0.6);
+  font-size: 18px; color: var(--gold); cursor: pointer;
+  transition: background 0.25s var(--ease-out-soft), transform 0.25s var(--ease-out-back), border-color 0.25s var(--ease-out-soft);
+}
+.stepper button:hover { background: var(--gold); color: white; transform: scale(1.08); border-color: var(--gold); }
+.stepper button:active { transform: scale(0.94); }
+.stepper input {
+  width: 48px; text-align: center; font-size: 15px; color: var(--dark);
+  border: none; background: transparent; font-family: 'Raleway', sans-serif;
+  transition: transform 0.25s var(--ease-out-back);
+}
+.stepper input.bump { transform: scale(1.18); }
+.f-submit {
+  width: 100%; padding: 14px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: white; font-family: 'Raleway', sans-serif;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  border: none; cursor: pointer; margin-top: 6px;
+  transition: transform 0.3s var(--ease-out-back), box-shadow 0.3s var(--ease-out-soft), filter 0.3s var(--ease-out-soft);
+}
+.f-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(var(--gold-rgb),0.45); filter: brightness(1.05); }
+.f-submit:active { transform: translateY(0) scale(0.98); }
+#f-guest-names { overflow: hidden; }
+.f-guest-entry {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px; animation: fadeSlideIn 0.4s var(--ease-out-soft);
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.f-guest-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px; font-style: italic; color: var(--gold);
+  min-width: 22px; text-align: center; flex-shrink: 0;
+}
+/* RSVP thanks-state cross-fade */
+#rsvp-form, #rsvp-thanks {
+  transition: opacity 0.55s var(--ease-out-soft), transform 0.55s var(--ease-out-soft);
+}
+#rsvp-form.fade-out { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+#rsvp-thanks.fade-in {
+  opacity: 1 !important; transform: translateY(0);
+  animation: thanksReveal 0.7s var(--ease-out-soft);
+}
+@keyframes thanksReveal {
+  0%   { opacity: 0; transform: translateY(14px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ══════════════════════════════════════
+   S7 — CONTACT
+══════════════════════════════════════ */
+.contact-card {
+  width: min(380px, 92vw); padding: 28px 22px; text-align: center;
+}
+.contact-cc { margin-bottom: 16px; }
+.cc-role { font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); }
+.cc-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-style: italic; color: var(--dark); margin: 3px 0;
+}
+.cc-info { font-size: 12px; color: var(--mid); line-height: 1.8; font-weight: 300; }
+.cc-info a { color: var(--mid); text-decoration: none; }
+.contact-sig {
+  font-family: 'Playfair Display', serif;
+  font-size: 38px; font-style: italic; font-weight: 300;
+  color: var(--gold-light); margin-top: 12px;
+}
+
+/* ══════════════════════════════════════
+   MAIN PAGE
+══════════════════════════════════════ */
+#main {
+  position: fixed; inset: 0; z-index: 5;
+  height: 100vh; height: 100dvh; height: var(--app-100vh, 100dvh);
+  display: none; flex-direction: column; align-items: center;
+  justify-content: center; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 24px 20px;
+}
+#main.visible { display: flex; }
+.main-header { text-align: center; margin-bottom: 16px; }
+.main-eyebrow {
+  font-size: 8px; letter-spacing: 6px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.55); margin-bottom: 10px;
+}
+.main-names {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(42px, 14vw, 68px);
+  font-weight: 300; color: rgba(255,248,230,0.96);
+  line-height: 1.05; text-shadow: 0 2px 30px rgba(0,0,0,0.35);
+}
+.main-amp { font-style: italic; color: var(--gold-light); }
+.main-date-line {
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb),0.5); margin-top: 10px;
+}
+.cdown-wrap { width: min(420px, 92vw); margin: 12px auto; padding: 22px 20px; }
+.cdown-label { font-size: 8px; letter-spacing: 5px; text-transform: uppercase; color: var(--mid); text-align: center; margin-bottom: 14px; }
+.cdown-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; text-align: center; }
+.cdown-unit { display: flex; flex-direction: column; gap: 3px; }
+.cdown-num {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 9vw, 48px);
+  font-weight: 300; color: var(--dark); line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transition: transform 0.35s var(--ease-out-back), color 0.35s var(--ease-out-soft);
+}
+.cdown-num.tick {
+  transform: scale(1.08);
+  color: var(--gold);
+}
+.cdown-lbl { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: var(--light); }
+.main-msg-card { width: min(420px, 92vw); margin: 8px auto; padding: 22px 22px; text-align: center; }
+.main-msg { font-family: 'Playfair Display', serif; font-size: clamp(17px, 5vw, 21px); font-style: italic; color: var(--dark); font-weight: 300; line-height: 1.5; }
+.main-msg-sub { font-size: 10px; letter-spacing: 2px; color: var(--mid); margin-top: 10px; line-height: 1.8; font-weight: 300; }
+
+/* ══════════════════════════════════════
+   FAQ
+══════════════════════════════════════ */
+#faq-btn {
+  position: fixed; bottom: 24px; right: 20px; z-index: 300;
+  background: var(--glass); backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border); border-radius: 50px;
+  padding: 11px 18px; font-family: 'Raleway', sans-serif;
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--dark); cursor: pointer;
+  box-shadow: 0 4px 20px rgba(28,24,16,0.1);
+  transition: transform 0.3s var(--ease-out-back), box-shadow 0.3s var(--ease-out-soft), opacity 0.5s var(--ease-out-soft);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+}
+#faq-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+#faq-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(28,24,16,0.18); }
+#faq-modal {
+  position: fixed; inset: 0; z-index: 400;
+  display: none;
+  align-items: center; justify-content: center;
+  background: rgba(28,24,16,0.5); backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity;
+}
+#faq-modal.open { opacity: 1; }
+.faq-box {
+  background: var(--cream); border-radius: 24px;
+  padding: 36px 28px; max-width: 420px; width: 100%;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(28,24,16,0.22); position: relative;
+  /* Kun opacity + scale — ingen translateY — gir compositor-vennlig animasjon
+     uten layout-arbeid, som var hovedårsaken til hakkete bevegelse. */
+  opacity: 0;
+  transform: scale(0.94);
+  transform-origin: center center;
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+#faq-modal.open .faq-box {
+  transform: scale(1);
+  opacity: 1;
+}
+.faq-close {
+  position: absolute; top: 18px; right: 18px;
+  background: none; border: none; cursor: pointer;
+  font-size: 18px; color: var(--mid);
+  transition: color 0.25s var(--ease-out-soft), transform 0.25s var(--ease-out-back);
+}
+.faq-close:hover { color: var(--dark); transform: rotate(90deg); }
+.faq-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 300; font-style: italic; color: var(--dark); margin-bottom: 20px; }
+.faq-q { font-size: 12px; font-weight: 500; color: var(--dark); margin-bottom: 4px; }
+.faq-a { font-size: 12px; color: var(--mid); line-height: 1.7; margin-bottom: 18px; font-weight: 300; }
+
+/* ══════════════════════════════════════
+   EDIT MODE
+══════════════════════════════════════ */
+#edit-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+  color: white; padding: 0 20px;
+  height: 52px; display: none; align-items: center;
+  justify-content: center; gap: 14px;
+  box-shadow: 0 4px 24px rgba(var(--gold-rgb), 0.5);
+}
+#edit-bar.on { display: flex; }
+.edit-bar-text { font-family: 'Raleway', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 500; }
+.edit-bar-btn {
+  border: none; border-radius: 20px; padding: 7px 16px;
+  font-family: 'Raleway', sans-serif; font-size: 9px;
+  letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+  transition: transform 0.22s var(--ease-out-back), background 0.22s var(--ease-out-soft), box-shadow 0.22s var(--ease-out-soft);
+  font-weight: 500;
+}
+.edit-save { background: white; color: var(--gold-dark); }
+.edit-exit { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.35); }
+.edit-rsvp { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); }
+.edit-save:hover, .edit-exit:hover, .edit-rsvp:hover { transform: scale(1.04); }
+.edit-timer-row {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px; padding: 5px 12px;
+}
+.edit-timer-lbl { font-family: 'Raleway', sans-serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: white; }
+.edit-timer-btn {
+  background: rgba(255,255,255,0.2); border: none; border-radius: 50%;
+  width: 20px; height: 20px; color: white; font-size: 14px; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.edit-timer-btn:hover { background: rgba(255,255,255,0.35); }
+#edit-timer-val { font-family: 'Raleway', sans-serif; font-size: 11px; color: white; min-width: 24px; text-align: center; font-weight: 500; }
+body.editing .ed {
+  outline: 2px dashed rgba(var(--gold-rgb),0.65) !important;
+  border-radius: 3px; cursor: text;
+  background: rgba(255,248,220,0.18) !important;
+  min-height: 1em; padding: 2px 4px;
+}
+
+/* RSVP Dashboard */
+#rsvp-dash {
+  position: fixed; inset: 0; z-index: 9998;
+  display: none;
+  align-items: center; justify-content: center;
+  background: rgba(28,24,16,0.55); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity;
+}
+#rsvp-dash.open { opacity: 1; }
+.rdash-box {
+  background: var(--cream); border-radius: 24px;
+  padding: 32px 28px; max-width: 460px; width: 100%;
+  max-height: 82vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(28,24,16,0.22); position: relative;
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+#rsvp-dash.open .rdash-box {
+  transform: scale(1);
+  opacity: 1;
+}
+.rdash-close {
+  position: absolute; top: 16px; right: 18px;
+  background: none; border: none; cursor: pointer;
+  font-size: 18px; color: var(--mid);
+  transition: color 0.25s var(--ease-out-soft), transform 0.25s var(--ease-out-back);
+}
+.rdash-close:hover { color: var(--dark); transform: rotate(90deg); }
+.rdash-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 300; font-style: italic; color: var(--dark); margin-bottom: 4px; }
+.rdash-sub { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--light); margin-bottom: 22px; }
+.rdash-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+.rstat-card { border-radius: 16px; padding: 18px 16px; text-align: center; }
+.rstat-yes { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border: 1px solid #a5d6a7; }
+.rstat-no  { background: linear-gradient(135deg, #fce4ec, #f8bbd0); border: 1px solid #f48fb1; }
+.rstat-total { background: linear-gradient(135deg, #fff3e0, #ffe0b2); border: 1px solid #ffcc80; grid-column: 1/-1; }
+.rstat-num { font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 300; color: var(--dark); line-height: 1; }
+.rstat-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-top: 4px; }
+.rstat-guests { font-size: 11px; color: var(--light); margin-top: 3px; }
+.rdash-list { display: flex; flex-direction: column; gap: 10px; }
+.rdash-entry { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; padding: 13px 14px; }
+.rdash-entry-header { display: flex; justify-content: space-between; align-items: center; }
+.rdash-entry-name { font-size: 13px; font-weight: 500; color: var(--dark); }
+.rdash-badge { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
+.badge-yes { background: #c8e6c9; color: #2e7d32; }
+.badge-no  { background: #f8bbd0; color: #ad1457; }
+.rdash-entry-info { font-size: 11px; color: var(--mid); margin-top: 5px; line-height: 1.6; }
+.rdash-entry-detail { margin-top: 6px; font-size: 10px; color: var(--light); display: none; border-top: 1px solid rgba(var(--gold-rgb),0.15); padding-top: 8px; line-height: 1.7; }
+.rdash-entry-detail.open { display: block; }
+.rdash-detail-btn { font-size: 9px; letter-spacing: 1px; color: var(--gold); background: none; border: none; cursor: pointer; text-transform: uppercase; margin-top: 5px; padding: 0; font-family: 'Raleway', sans-serif; }
+.rdash-empty { text-align: center; padding: 40px 0; font-family: 'Playfair Display', serif; font-style: italic; color: var(--light); font-size: 16px; }
+
+/* ══════════════════════════════════════
+   ANIM CONTROLS
+══════════════════════════════════════ */
+.anim-ctrl-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.anim-ctrl-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); min-width: 110px; }
+.anim-ctrl-row input[type=range] { flex: 1; accent-color: var(--gold); height: 4px; }
+.anim-ctrl-row span { font-size: 11px; color: var(--mid); min-width: 38px; text-align: right; }
+#animzone.has-anim { border-color: var(--gold); background: rgba(255,248,220,0.4); }
+#animzone.has-anim .imgm-upload-hint { color: var(--gold); font-weight: 500; }
+
+/* ══════════════════════════════════════
+   IMAGE MANAGER
+══════════════════════════════════════ */
+.edit-img { background: rgba(255,255,255,0.12); color: white; border: 1px solid rgba(255,255,255,0.28); }
+#img-manager {
+  position: fixed; inset: 0; z-index: 9997;
+  display: none;
+  align-items: center; justify-content: center;
+  background: rgba(28,24,16,0.6); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity;
+}
+#img-manager.open { opacity: 1; }
+.imgm-box {
+  background: var(--cream); border-radius: 24px;
+  padding: 32px 28px; max-width: 520px; width: 100%;
+  max-height: 88vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(28,24,16,0.28); position: relative;
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+#img-manager.open .imgm-box {
+  transform: scale(1);
+  opacity: 1;
+}
+.imgm-close {
+  position: absolute; top: 16px; right: 18px;
+  background: none; border: none; cursor: pointer;
+  font-size: 18px; color: var(--mid);
+  transition: color 0.25s var(--ease-out-soft), transform 0.25s var(--ease-out-back);
+}
+.imgm-close:hover { color: var(--dark); transform: rotate(90deg); }
+.imgm-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 300; font-style: italic; color: var(--dark); margin-bottom: 2px; }
+.imgm-sub { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); margin-bottom: 20px; }
+.imgm-tabs { display: flex; gap: 4px; margin-bottom: 20px; background: rgba(var(--gold-rgb),0.08); border-radius: 12px; padding: 4px; }
+.imgm-tab { flex: 1; padding: 9px; text-align: center; border-radius: 9px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; color: var(--light); transition: background 0.25s var(--ease-out-soft), color 0.25s var(--ease-out-soft), box-shadow 0.25s var(--ease-out-soft); }
+.imgm-tab.active { background: white; color: var(--dark); font-weight: 500; box-shadow: 0 2px 8px rgba(28,24,16,0.08); }
+.imgm-section-label { font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-weight: 500; }
+.imgm-upload-zone { border: 2px dashed rgba(var(--gold-rgb),0.35); border-radius: 16px; padding: 24px 20px; text-align: center; cursor: pointer; transition: border-color 0.25s var(--ease-out-soft), background 0.25s var(--ease-out-soft); background: rgba(255,255,255,0.5); position: relative; overflow: hidden; margin-bottom: 14px; }
+.imgm-upload-zone:hover { border-color: var(--gold); background: rgba(255,248,220,0.5); }
+.imgm-upload-zone.has-image { border-color: var(--gold); padding: 0; min-height: 140px; }
+.imgm-upload-icon { font-size: 28px; margin-bottom: 8px; }
+.imgm-upload-hint { font-size: 12px; color: var(--mid); font-weight: 400; }
+.imgm-upload-hint2 { font-size: 10px; color: var(--light); margin-top: 4px; }
+.imgm-preview { position: absolute; inset: 0; border-radius: 14px; background-size: cover; background-position: center; display: none; }
+.imgm-preview.visible { display: block; }
+.imgm-preview-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(28,24,16,0.7)); padding: 20px 12px 8px; border-radius: 0 0 14px 14px; font-size: 10px; color: rgba(255,245,210,0.85); letter-spacing: 2px; text-transform: uppercase; text-align: center; }
+.imgm-opacity-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.imgm-opacity-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); white-space: nowrap; min-width: 100px; }
+#bg-opacity-slider { flex: 1; accent-color: var(--gold); height: 4px; }
+#bg-opacity-val { font-size: 11px; color: var(--mid); min-width: 32px; }
+.imgm-clear-btn { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); background: none; border: 1px solid rgba(158,145,126,0.3); border-radius: 8px; padding: 8px 16px; cursor: pointer; transition: color 0.22s var(--ease-out-soft), border-color 0.22s var(--ease-out-soft); font-family: 'Raleway', sans-serif; }
+.imgm-clear-btn:hover { color: #b04040; border-color: #b04040; }
+.imgm-slides-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.imgm-slide-slot { border-radius: 12px; overflow: hidden; position: relative; aspect-ratio: 16/10; cursor: pointer; background: rgba(255,255,255,0.6); border: 2px dashed rgba(var(--gold-rgb),0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: border-color 0.25s var(--ease-out-soft), background 0.25s var(--ease-out-soft); }
+.imgm-slide-slot:hover { border-color: var(--gold); background: rgba(255,248,220,0.5); }
+.imgm-slide-slot.has-image { border-style: solid; border-color: var(--gold); }
+.imgm-slide-thumb { position: absolute; inset: 0; background-size: cover; background-position: center; border-radius: 10px; }
+.imgm-slide-num { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 300; color: var(--light); font-style: italic; }
+.imgm-slide-hint { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); margin-top: 4px; }
+.imgm-slide-overlay { position: absolute; inset: 0; border-radius: 10px; background: rgba(28,24,16,0.5); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; flex-direction: column; gap: 6px; }
+.imgm-slide-slot:hover .imgm-slide-overlay { opacity: 1; }
+.imgm-slide-overlay-text { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,245,210,0.9); }
+.imgm-slide-del { position: absolute; top: 6px; right: 6px; background: rgba(28,24,16,0.6); border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; color: rgba(255,200,180,0.9); font-size: 11px; display: none; align-items: center; justify-content: center; z-index: 2; }
+.imgm-slide-slot.has-image .imgm-slide-del { display: flex; }
+
+/* ══════════════════════════════════════
+   COLOR PICKER
+══════════════════════════════════════ */
+.edit-color { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); }
+#color-modal {
+  position: fixed; inset: 0; z-index: 9997;
+  display: none;
+  align-items: center; justify-content: center;
+  background: rgba(28,24,16,0.55); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity;
+}
+#color-modal.open {
+  opacity: 1;
+}
+.color-box {
+  background: var(--cream); border-radius: 24px;
+  padding: 32px 28px; max-width: 380px; width: 100%;
+  box-shadow: 0 24px 80px rgba(28,24,16,0.28); position: relative;
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+#color-modal.open .color-box {
+  transform: scale(1);
+  opacity: 1;
+}
+.color-close {
+  position: absolute; top: 16px; right: 18px;
+  background: none; border: none; cursor: pointer;
+  font-size: 18px; color: var(--mid);
+  transition: color 0.25s var(--ease-out-soft), transform 0.25s var(--ease-out-back);
+}
+.color-close:hover { color: var(--dark); transform: rotate(90deg); }
+.color-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 300; font-style: italic; color: var(--dark); margin-bottom: 4px; }
+.color-sub { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--light); margin-bottom: 22px; line-height: 1.6; }
+.color-presets { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 22px; }
+.color-preset {
+  aspect-ratio: 1; border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.25s var(--ease-out-back), border-color 0.25s var(--ease-out-soft), box-shadow 0.25s var(--ease-out-soft);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.color-preset:hover { transform: scale(1.18); box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
+.color-preset.selected { border-color: var(--dark); transform: scale(1.18); }
+.color-custom-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 12px 14px; background: rgba(255,255,255,0.6); border-radius: 12px; border: 1px solid rgba(var(--gold-rgb),0.2); }
+.color-custom-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--light); flex: 1; }
+.color-swatch-preview { width: 28px; height: 28px; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 2px solid rgba(255,255,255,0.8); flex-shrink: 0; }
+#color-custom-input { width: 36px; height: 36px; border: none; border-radius: 50%; cursor: pointer; padding: 0; background: none; opacity: 0; position: absolute; }
+.color-custom-row { position: relative; }
+.color-apply-btn {
+  width: 100%; padding: 14px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: white; font-family: 'Raleway', sans-serif;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  border: none; cursor: pointer;
+  transition: transform 0.3s var(--ease-out-back), box-shadow 0.3s var(--ease-out-soft), filter 0.3s var(--ease-out-soft);
+}
+.color-apply-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(var(--gold-rgb),0.45); filter: brightness(1.05); }
+.color-apply-btn:active { transform: translateY(0) scale(0.98); }
+
+/* ══════════════════════════════════════
+   LOADING SCREEN
+══════════════════════════════════════ */
+#loading-screen {
+  position: fixed; inset: 0; z-index: 99999;
+  height: 100vh; height: 100dvh; height: var(--app-100vh, 100dvh);
+  background: linear-gradient(160deg, #1e1a10 0%, #2a2214 40%, #1a160c 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0;
+  transition: opacity 0.8s var(--ease-out-soft), visibility 0.8s var(--ease-out-soft);
+}
+#loading-screen.hidden {
+  opacity: 0; visibility: hidden; pointer-events: none;
+}
+.ls-rings {
+  position: relative; width: 110px; height: 110px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 32px;
+}
+.ls-ring {
+  position: absolute; border-radius: 50%;
+  border: 1px solid transparent;
+}
+.ls-ring-1 {
+  width: 110px; height: 110px;
+  border-color: rgba(184,148,42,0.15);
+  animation: lsRotate 8s linear infinite;
+}
+.ls-ring-2 {
+  width: 82px; height: 82px;
+  border-color: rgba(184,148,42,0.25);
+  animation: lsRotate 5s linear infinite reverse;
+}
+.ls-ring-3 {
+  width: 56px; height: 56px;
+  border-color: rgba(184,148,42,0.4);
+  animation: lsRotate 3s linear infinite;
+}
+.ls-ring-1::after, .ls-ring-2::after, .ls-ring-3::after {
+  content: '';
+  position: absolute; top: -3px; left: 50%;
+  transform: translateX(-50%);
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold-light);
+  box-shadow: 0 0 8px 2px rgba(var(--gold-rgb), 0.6);
+}
+.ls-ring-2::after { top: -2px; width: 4px; height: 4px; }
+.ls-ring-3::after { top: -2px; width: 3px; height: 3px; }
+.ls-heart {
+  position: absolute;
+  font-size: 18px;
+  animation: lsHeartbeat 2.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(var(--gold-rgb), 0.5));
+}
+@keyframes lsHeartbeat {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  15%       { transform: scale(1.18); opacity: 1; }
+  30%       { transform: scale(0.95); opacity: 0.8; }
+  45%       { transform: scale(1.1); opacity: 1; }
+}
+@keyframes lsRotate { to { transform: rotate(360deg); } }
+.ls-names {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 6vw, 30px);
+  font-weight: 300; color: rgba(255,245,210,0.92);
+  letter-spacing: -0.5px; text-align: center;
+  line-height: 1.15;
+  animation: lsFadeIn 1.2s ease forwards;
+}
+.ls-amp {
+  font-style: italic; color: rgba(var(--gold-rgb), 0.9);
+  font-size: 0.75em; display: block;
+}
+.ls-rule {
+  width: 32px; height: 1px; margin: 14px auto 16px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  animation: lsFadeIn 1.4s ease forwards;
+}
+.ls-date {
+  font-family: 'Raleway', sans-serif;
+  font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+  color: rgba(var(--gold-rgb), 0.6);
+  animation: lsFadeIn 1.6s ease forwards;
+}
+.ls-dots {
+  display: flex; gap: 8px; margin-top: 36px;
+  animation: lsFadeIn 1.8s ease forwards;
+}
+.ls-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(var(--gold-rgb), 0.25);
+}
+.ls-dot.active {
+  background: var(--gold-light);
+  box-shadow: 0 0 6px rgba(var(--gold-rgb), 0.6);
+  animation: lsDotPulse 1.2s ease-in-out infinite;
+}
+.ls-dot:nth-child(2) { animation-delay: 0.2s; }
+.ls-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes lsDotPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.4); }
+}
+@keyframes lsFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ls-float {
+  position: absolute; pointer-events: none; opacity: 0;
+  font-size: var(--sz, 14px);
+  color: rgba(255,220,120,0.15);
+  animation: lsFloat var(--dur, 12s) ease-in-out var(--delay, 0s) infinite;
+  user-select: none;
+}
+@keyframes lsFloat {
+  0%   { opacity: 0; transform: translateY(100vh) rotate(-8deg); }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.4; }
+  100% { opacity: 0; transform: translateY(-10vh) rotate(10deg); }
+}
+
+#edit-bar   { padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
+#faq-btn    { bottom: max(24px, env(safe-area-inset-bottom)); right: max(20px, env(safe-area-inset-right)); }
+#slide-dots { right: max(18px, env(safe-area-inset-right)); }
+#main       { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+.scroll-cue { bottom: max(28px, env(safe-area-inset-bottom)); }
+@media (hover: none) {
+  .f-submit:hover, #faq-btn:hover, .edit-bar-btn:hover,
+  .imgm-upload-zone:hover, .imgm-slide-slot:hover,
+  .color-preset:hover, .color-apply-btn:hover,
+  .imgm-clear-btn:hover { transform: none !important; box-shadow: none !important; }
+}
+/* Touch-feedback (:active) — gir taktil respons ved trykk på mobil.
+   Scale ned subtilt så elementet føles "trykket". */
+@media (hover: none) and (pointer: coarse) {
+  .f-submit:active, .color-apply-btn:active {
+    transform: scale(0.97) !important;
+    transition: transform 0.12s ease-out !important;
+  }
+  .f-radio:active, #faq-btn:active, .edit-bar-btn:active,
+  .imgm-tab:active, .stepper button:active,
+  .color-preset:active, .imgm-slide-slot:active,
+  .imgm-upload-zone:active, .imgm-clear-btn:active {
+    transform: scale(0.95) !important;
+    transition: transform 0.12s ease-out !important;
+  }
+  .sdot:active, .vdot:active {
+    transform: scale(1.8) !important;
+    transition: transform 0.12s ease-out !important;
+  }
+  .env-outer:active { transform: scale(0.985); transition: transform 0.18s ease-out; }
+}
+.f-input, .f-textarea, .stepper input { font-size: max(16px, 13px) !important; }
+.details-card, .timeline-card, .rsvp-card,
+.contact-card, .faq-box, .rdash-box, .imgm-box, .color-box { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+#edit-bar { flex-wrap: wrap; height: auto; min-height: 52px; padding-top: 8px; padding-bottom: 8px; gap: 8px; }
+.edit-bar-text { width: 100%; text-align: center; margin-bottom: 2px; }
+@media (max-width: 480px) {
+  .env-box { width: min(340px, 92vw) !important; height: min(230px, 56vw) !important; }
+  .details-card, .rsvp-card, .contact-card, .timeline-card { width: min(100%, 96vw); padding: 18px 14px; }
+  .villa-show-wrap { width: min(100%, 96vw); }
+  #map-world-img { width: 100vw; }
+  .map-overlay-top { top: 16px; width: 94vw; }
+  #main { padding: 16px 14px; }
+  .cdown-wrap { padding: 16px 14px; margin: 8px auto; }
+  .main-msg-card { padding: 16px 14px; margin: 6px auto; }
+  .main-msg { font-size: clamp(15px, 4.5vw, 19px); }
+  .f-radios { grid-template-columns: 1fr; }
+  #slide-dots { right: max(10px, env(safe-area-inset-right)); gap: 10px; }
+  .edit-bar-text { display: none; }
+  .edit-bar-btn { padding: 8px 11px; font-size: 8px; }
+  .color-presets { grid-template-columns: repeat(4, 1fr); }
+  .color-box, .imgm-box { padding: 22px 16px; border-radius: 18px; }
+  /* Større touch-targets for tilgjengelighet */
+  .sdot { width: 8px; height: 8px; }
+  .vdot { width: 7px; height: 7px; }
+  .vs-arrow { width: 32px; height: 32px; font-size: 16px; }
+  /* Subtilt mindre intens blur for ytelse på mobil */
+  .glass { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+  #faq-modal, #rsvp-dash, #img-manager, #color-modal {
+    backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+  }
+  /* Felles padding på cards som scrolles, så bunntekst ikke blir avskåret */
+  .details-card, .timeline-card, .rsvp-card { padding-bottom: 22px; }
+}
+@media (min-width: 481px) and (max-width: 1024px) {
+  .details-card, .rsvp-card { width: min(480px, 90vw); }
+  .timeline-card { width: min(460px, 88vw); }
+  .contact-card { width: min(440px, 88vw); }
+  .villa-show-wrap { width: min(560px, 88vw); }
+  #map-world-img { width: min(700px, 90vw); }
+}
+@media (min-width: 1025px) {
+  .details-card  { width: 460px; padding: 32px 28px; }
+  .timeline-card { width: 440px; padding: 32px 28px; }
+  .rsvp-card     { width: 460px; padding: 32px 28px; }
+  .contact-card  { width: 420px; padding: 32px 28px; }
+  .villa-show-wrap { width: min(600px, 80vw); }
+  .env-box { width: 420px !important; height: 288px !important; }
+  #edit-bar { flex-wrap: nowrap; height: 52px; padding-top: 0; padding-bottom: 0; }
+  .edit-bar-text { width: auto; margin-bottom: 0; }
+  .cdown-wrap { padding: 28px 32px; }
+  .main-msg-card { padding: 28px 32px; }
+  .main-names { font-size: clamp(52px, 8vw, 80px); }
+  .imgm-slides-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .env-box { width: min(280px, 48vw) !important; height: min(190px, 36vw) !important; }
+  .env-outer { gap: 10px; }
+  .scroll-cue { display: none; }
+  .invite-names { font-size: clamp(32px, 10vw, 52px); }
+  .timeline-card, .rsvp-card, .details-card { max-height: 82vh; padding: 14px 16px; }
+  #main { justify-content: flex-start; padding-top: 12px; overflow-y: scroll; }
+  .cdown-num { font-size: clamp(22px, 6vw, 34px); }
+  .main-names { font-size: clamp(34px, 10vw, 52px); }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen">
+  <span class="ls-float" style="--sz:12px;--dur:14s;--delay:0s;left:10%">♡</span>
+  <span class="ls-float" style="--sz:18px;--dur:18s;--delay:2s;left:25%">♡</span>
+  <span class="ls-float" style="--sz:10px;--dur:11s;--delay:4s;left:50%">♡</span>
+  <span class="ls-float" style="--sz:16px;--dur:16s;--delay:1s;left:72%">♡</span>
+  <span class="ls-float" style="--sz:12px;--dur:13s;--delay:3s;left:88%">♡</span>
+  <div class="ls-rings">
+    <div class="ls-ring ls-ring-1"></div>
+    <div class="ls-ring ls-ring-2"></div>
+    <div class="ls-ring ls-ring-3"></div>
+    <div class="ls-heart">♡</div>
+  </div>
+  <div class="ls-names">
+    Benjamin<br>
+    <span class="ls-amp">&amp;</span>
+    Camilla
+  </div>
+  <div class="ls-rule"></div>
+  <div class="ls-date">22 · Mai · 2027</div>
+  <div class="ls-dots">
+    <div class="ls-dot active"></div>
+    <div class="ls-dot active" style="animation-delay:0.2s"></div>
+    <div class="ls-dot active" style="animation-delay:0.4s"></div>
+  </div>
+</div>
+
+
+<div id="fb-status">
+  <div id="fb-status-dot"></div>
+  <span id="fb-status-text">Lagrer...</span>
+</div>
+
+<!-- FIXED BACKGROUND -->
+<div id="bg-fixed"></div>
+
+<!-- EDIT BAR -->
+<div id="edit-bar">
+  <span class="edit-bar-text">✏️  Redigeringsmodus aktiv</span>
+  <button class="edit-bar-btn edit-save" onclick="saveEdits()">💾 Lagre</button>
+  <button class="edit-bar-btn edit-img" onclick="openImgManager()">🖼 Bilder</button>
+  <button class="edit-bar-btn edit-color" onclick="openColorPicker()">🎨 Farge</button>
+  <button class="edit-bar-btn edit-rsvp" onclick="openRsvpDash()">📋 Svar</button>
+  <div class="edit-timer-row">
+    <span class="edit-timer-lbl">⏱ Auto-bla</span>
+    <button class="edit-timer-btn" onclick="changeAutoTimer(-1)">−</button>
+    <span id="edit-timer-val">7s</span>
+    <button class="edit-timer-btn" onclick="changeAutoTimer(1)">+</button>
+  </div>
+  <button class="edit-bar-btn edit-exit" onclick="toggleEdit()">✕ Avslutt</button>
+</div>
+
+<!-- COLOR PICKER MODAL -->
+<div id="color-modal">
+  <div class="color-box">
+    <button class="color-close" onclick="closeColorPicker()">✕</button>
+    <div class="color-title">Primærfarge</div>
+    <div class="color-sub">Velg farge for gull-elementer på hele siden</div>
+    <div class="color-presets" id="color-presets"></div>
+    <div class="color-custom-row">
+      <label class="color-custom-label">Egendefinert</label>
+      <div class="color-swatch-preview" id="color-swatch-preview"></div>
+      <input type="color" id="color-custom-input" oninput="applyPrimaryColor(this.value, false)" onchange="applyPrimaryColor(this.value, false)">
+    </div>
+    <button class="color-apply-btn" onclick="savePrimaryColor()">✓ Lagre farge</button>
+  </div>
+</div>
+
+<!-- IMAGE MANAGER MODAL -->
+<div id="img-manager">
+  <div class="imgm-box">
+    <button class="imgm-close" onclick="closeImgManager()">✕</button>
+    <div class="imgm-title">Bildebehandling</div>
+    <div class="imgm-sub">Last opp og bytt ut bilder på invitasjonen</div>
+    <div class="imgm-tabs">
+      <div class="imgm-tab active" onclick="imgTab('bg')">Bakgrunn</div>
+      <div class="imgm-tab" onclick="imgTab('slideshow')">Slideshow</div>
+      <div class="imgm-tab" onclick="imgTab('anim')">Kart-anim.</div>
+    </div>
+    <div class="imgm-panel" id="imgm-bg">
+      <div class="imgm-section-label">Bakgrunn (alle slides unntatt første)</div>
+      <div class="imgm-upload-zone" onclick="triggerUpload('bg-global')" id="bgzone-global">
+        <div class="imgm-upload-icon">🌅</div>
+        <div class="imgm-upload-hint">Klikk for å laste opp bakgrunnsbilde</div>
+        <div class="imgm-upload-hint2">Anbefalt: mørkt, stemningsfullt bilde · JPG/PNG/WEBP</div>
+        <div class="imgm-preview" id="bgprev-global"></div>
+      </div>
+      <div class="imgm-opacity-row">
+        <label class="imgm-opacity-label">Gjennomsiktighet</label>
+        <input type="range" min="5" max="60" value="18" id="bg-opacity-slider" oninput="updateBgOpacity(this.value)">
+        <span id="bg-opacity-val">18%</span>
+      </div>
+      <button class="imgm-clear-btn" onclick="clearBg()">🗑 Fjern bakgrunn</button>
+
+      <div class="imgm-section-label" style="margin-top:22px">Bakgrunn nr. 1 (kun første slide)</div>
+      <div class="imgm-upload-zone" onclick="triggerUpload('bg-slide1')" id="bgzone-slide1">
+        <div class="imgm-upload-icon">✉️</div>
+        <div class="imgm-upload-hint">Klikk for å laste opp bilde for velkomstsiden</div>
+        <div class="imgm-upload-hint2">Vises kun på første slide (konvolutten) · JPG/PNG/WEBP</div>
+        <div class="imgm-preview" id="bgprev-slide1"></div>
+      </div>
+      <div class="imgm-opacity-row">
+        <label class="imgm-opacity-label">Gjennomsiktighet</label>
+        <input type="range" min="5" max="60" value="18" id="bg1-opacity-slider" oninput="updateBg1Opacity(this.value)">
+        <span id="bg1-opacity-val">18%</span>
+      </div>
+      <button class="imgm-clear-btn" onclick="clearBg1()">🗑 Fjern bakgrunn nr. 1</button>
+    </div>
+    <div class="imgm-panel" id="imgm-slideshow" style="display:none">
+      <div class="imgm-section-label">Slideshow bilder (5 stk)</div>
+      <div class="imgm-slides-grid" id="imgm-slides-grid"></div>
+    </div>
+    <div class="imgm-panel" id="imgm-anim" style="display:none">
+      <div class="imgm-section-label">Animasjon på kart-slide (slide 3)</div>
+      <div class="imgm-upload-zone" onclick="triggerAnimUpload()" id="animzone">
+        <div class="imgm-upload-icon">🗺️</div>
+        <div class="imgm-upload-hint">Klikk for å laste opp .html-animasjon</div>
+        <div class="imgm-upload-hint2">Filen vises som en iframe på slide 3 · kun .html</div>
+      </div>
+      <div id="anim-controls" style="display:none">
+        <div class="imgm-section-label" style="margin-top:14px">Størrelse</div>
+        <div class="anim-ctrl-row">
+          <span class="anim-ctrl-lbl">Bredde</span>
+          <input type="range" min="20" max="100" value="80" id="anim-w-slider" oninput="updateAnimFrame()">
+          <span id="anim-w-val">80%</span>
+        </div>
+        <div class="anim-ctrl-row">
+          <span class="anim-ctrl-lbl">Høyde</span>
+          <input type="range" min="20" max="100" value="60" id="anim-h-slider" oninput="updateAnimFrame()">
+          <span id="anim-h-val">60%</span>
+        </div>
+        <div class="anim-ctrl-row" style="margin-top:14px">
+          <span class="anim-ctrl-lbl">Gjennomsiktig</span>
+          <input type="range" min="10" max="100" value="100" id="anim-op-slider" oninput="updateAnimFrame()">
+          <span id="anim-op-val">100%</span>
+        </div>
+        <button class="imgm-clear-btn" style="margin-top:14px" onclick="clearAnim()">🗑 Fjern animasjon</button>
+      </div>
+    </div>
+    <input type="file" id="img-file-input" accept="image/*" style="display:none" onchange="handleImgUpload(event)">
+    <input type="file" id="img-file-input-slide" accept="image/*" style="display:none" onchange="handleSlideUpload(event)">
+    <input type="file" id="anim-file-input" accept=".html,text/html" style="display:none" onchange="handleAnimUpload(event)">
+  </div>
+</div>
+
+<!-- SLIDE DOTS -->
+<div id="slide-dots">
+  <div class="sdot on" onclick="go(0)"></div>
+  <div class="sdot" onclick="go(1)"></div>
+  <div class="sdot" onclick="go(2)"></div>
+  <div class="sdot" onclick="go(3)"></div>
+  <div class="sdot" onclick="go(4)"></div>
+  <div class="sdot" onclick="go(5)"></div>
+  <div class="sdot" onclick="go(6)"></div>
+  <div class="sdot" onclick="go(7)"></div>
+</div>
+
+<!-- ══════════════════ LANDING ══════════════════ -->
+<div id="landing">
+
+  <!-- S0: ENVELOPE -->
+  <div class="slide" id="s0" style="transform:translateY(0)">
+    <div aria-hidden="true">
+      <span class="float-heart" style="left:7%;--dur:15s;--delay:0s;--sz:24px;">♡</span>
+      <span class="float-heart" style="left:24%;--dur:19s;--delay:3s;--sz:18px;">🤍</span>
+      <span class="float-heart" style="left:44%;--dur:17s;--delay:7s;--sz:26px;">♡</span>
+      <span class="float-heart" style="left:68%;--dur:22s;--delay:1.5s;--sz:20px;">🤍</span>
+      <span class="float-heart" style="left:83%;--dur:14s;--delay:5s;--sz:16px;">♡</span>
+    </div>
+    <div class="env-outer" id="env-outer" onclick="openEnv()">
+      <div class="env-box">
+        <div class="env-body">
+          <div class="env-fold-left"></div>
+          <div class="env-fold-right"></div>
+        </div>
+        <div class="env-names">
+          <div class="env-name-line"></div>
+          <div class="env-names-text ed" id="ed-env-names">Benjamin &amp; Camilla</div>
+          <div class="env-name-line"></div>
+        </div>
+        <div class="env-letter" id="env-letter">
+          <div id="env-letter-bg"></div>
+          <div class="env-letter-names" style="position:relative;">
+            Benjamin<br>
+            <span class="env-letter-amp">&amp;</span><br>
+            Camilla
+          </div>
+          <div class="env-letter-rule" style="position:relative;"></div>
+          <div class="env-letter-sub" style="position:relative;">inviterer deg til å feire<br>deres bryllup</div>
+        </div>
+        <div class="env-front" id="env-front">
+          <div class="env-fold-left"></div>
+          <div class="env-fold-right"></div>
+        </div>
+        <div class="env-flap" id="env-flap"></div>
+        <div class="wax" id="env-wax"><div class="wax-inner">✦</div></div>
+      </div>
+      <div class="env-hint" id="env-hint-text">Trykk for å åpne</div>
+    </div>
+    <div class="scroll-cue" id="s0-scroll-cue" style="opacity:0;animation:none;transition:opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);">
+      <div class="scroll-cue-text">Bla ned</div>
+      <div class="scroll-cue-line"></div>
+    </div>
+  </div>
+
+  <!-- S1: INVITATION -->
+  <div class="slide" id="s1" style="transform:translateY(var(--app-100vh, 100vh))">
+    <div class="invite-body">
+      <div class="invite-eyebrow ed" id="ed-invite-eye">Sammen med sine familier</div>
+      <div style="height:1px;width:32px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent)"></div>
+      <div class="invite-names ed" id="ed-invite-names">Benjamin<br><span class="invite-amp">&amp;</span><br>Camilla</div>
+      <div class="invite-rule"></div>
+      <div class="invite-sub ed" id="ed-invite-sub">inviterer deg til å feire<br>deres bryllup</div>
+    </div>
+    <div class="scroll-cue"><div class="scroll-cue-text">Bla ned</div><div class="scroll-cue-line"></div></div>
+  </div>
+
+  <!-- S2: MAP -->
+  <div class="slide" id="s2" style="transform:translateY(calc(2 * var(--app-100vh, 100vh)))">
+    <div class="map-world-wrap">
+      <div class="map-overlay-top">
+        <div>
+          <div class="map-title ed" id="ed-map-title">Reisen til Aegina</div>
+          <div class="map-subtitle ed" id="ed-map-sub">Oslo → Athen</div>
+        </div>
+        <div class="map-info-card glass" id="map-info-card">
+          <div class="map-info-label ed" id="ed-map-info-lbl">Reiseinformasjon</div>
+          <div class="map-info-text ed" id="ed-map-info-txt">
+            ✈️ Fly: Oslo Gardermoen (OSL) → Athen (ATH)<br>
+            🚢 Ferge: Piraeus havn → Aegina (ca. 1 time)<br>
+            📍 Epitome Villa, Aegina, Hellas
+          </div>
+        </div>
+      </div>
+      <div id="anim-overlay" style="display:none;position:fixed;z-index:10;pointer-events:none;background:transparent;box-shadow:none;">
+        <iframe id="anim-iframe" scrolling="no" style="width:100%;height:100%;border:none;outline:none;background:transparent;pointer-events:auto;box-shadow:none;filter:none;border-radius:0;display:block;" allowtransparency="true" allow="autoplay"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: DETAILS -->
+  <div class="slide" id="s3" style="transform:translateY(calc(3 * var(--app-100vh, 100vh)))">
+    <div class="details-card glass">
+      <div class="section-title-big ed" id="ed-det-title">Detaljer</div>
+      <div class="gold-rule"></div>
+      <div class="det-section">
+        <div class="det-label">Reise</div>
+        <div class="det-body ed" id="ed-det-reise">Vi anbefaler fly til Athen (ATH) senest <span class="det-strong">20. mai 2027</span>. Fra Piraeus havn tar fergen til Aegina ca. 1 time. Vi koordinerer felles transport fra Athen.</div>
+      </div>
+      <div class="det-section">
+        <div class="det-label">Overnatting</div>
+        <div class="det-body ed" id="ed-det-hotel"><span class="det-strong">Epitome Villa</span> — Noen rom er reservert for nærmeste familie. Kontakt oss.<br><br><span class="det-strong">Hotel Apollo</span> — 5 min gange. Bruk kode <span class="det-strong">BENCAM2027</span> for rabatt.<br><br><span class="det-strong">Aegina Town</span> — Mange hoteller og Airbnb tilgjengelig.</div>
+      </div>
+      <div class="det-section">
+        <div class="det-label">Dresscode</div>
+        <div class="det-body ed" id="ed-det-dress"><span class="det-strong">Formelt / semi-formelt.</span> Lyse, sommerlige farger ønskes. Unngå hvitt og lyseblått.</div>
+      </div>
+      <div class="det-section">
+        <div class="det-label">Gaver</div>
+        <div class="det-body ed" id="ed-det-gifts">Din tilstedeværelse er vår største gave. Ønsker du likevel å gi noe, setter vi pris på bidrag til bryllupsreisen. Kontonummer på forespørsel.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: VILLA SLIDESHOW -->
+  <div class="slide" id="s4" style="transform:translateY(calc(4 * var(--app-100vh, 100vh)));align-items:center;justify-content:center;padding:20px 0;">
+    <div style="position:relative;z-index:1;width:min(500px,94vw);display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <div class="glass villa-info-card" style="padding:16px 20px;text-align:center;">
+        <div style="font-family:'Playfair Display',serif;font-size:clamp(18px,5vw,22px);font-weight:300;font-style:italic;color:var(--dark);" class="ed" id="ed-villa-info-title">Epitome Villa</div>
+        <div style="height:1px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent);margin:8px 0;"></div>
+        <div style="font-size:11px;color:var(--mid);line-height:1.75;font-weight:300;" class="ed" id="ed-villa-info-body">En eksklusiv privat villa med utsikt over Egeerhavet.<br>Privat basseng, hage og terrasse for selskapet.</div>
+      </div>
+      <div class="villa-show-wrap" id="villa-show">
+        <img id="vs-0" class="active" src="https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=900&auto=format&fit=crop" alt="Villa 1">
+        <img id="vs-1" src="https://images.unsplash.com/photo-1501183007986-d0d080b147f9?w=900&auto=format&fit=crop" alt="Villa 2">
+        <img id="vs-2" src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=900&auto=format&fit=crop" alt="Villa 3">
+        <img id="vs-3" src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=900&auto=format&fit=crop" alt="Villa 4">
+        <img id="vs-4" src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=900&auto=format&fit=crop" alt="Villa 5">
+        <!-- Tap-soner med subtile piler (kun synlige ved hover på PC) -->
+        <div class="vs-zone vs-zone-left"  aria-hidden="true"><div class="vs-arrow">‹</div></div>
+        <div class="vs-zone vs-zone-right" aria-hidden="true"><div class="vs-arrow">›</div></div>
+      </div>
+      <div class="villa-show-dots" id="villa-dots">
+        <div class="vdot on" onclick="vsGo(0)"></div>
+        <div class="vdot" onclick="vsGo(1)"></div>
+        <div class="vdot" onclick="vsGo(2)"></div>
+        <div class="vdot" onclick="vsGo(3)"></div>
+        <div class="vdot" onclick="vsGo(4)"></div>
+      </div>
+      <div class="villa-caption-block">
+        <div class="villa-caption-title ed" id="ed-villa-title">Epitome Villa</div>
+        <div class="villa-caption-sub ed" id="ed-villa-sub">Aegina, Hellas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5: TIMELINE -->
+  <div class="slide" id="s5" style="transform:translateY(calc(5 * var(--app-100vh, 100vh)))">
+    <div class="timeline-card glass">
+      <div class="section-title-big ed" id="ed-tl-title">Programmet</div>
+      <div class="gold-rule"></div>
+      <div class="tl-list">
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl1-t">14:30</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl1-e">Gjestene ankommer</div><div class="tl-desc ed" id="ed-tl1-d">Velkommen med drinker og snacks</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl2-t">15:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl2-e">Seremoni</div><div class="tl-desc ed" id="ed-tl2-d">Borgerlig vielse i hagene ved villa</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl3-t">16:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl3-e">Cocktailtime</div><div class="tl-desc ed" id="ed-tl3-d">Fotografering, drinker og kanapeer</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl4-t">18:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl4-e">Middag</div><div class="tl-desc ed" id="ed-tl4-d">Treretters gresk bryllupsmiddag</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl5-t">20:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl5-e">Taler &amp; dans</div><div class="tl-desc ed" id="ed-tl5-d">Musikk, underholdning og feiring</div></div></div>
+        <div class="tl-item"><div class="tl-time ed" id="ed-tl6-t">00:00</div><div class="tl-spine"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-event ed" id="ed-tl6-e">Midnatt 🥂</div><div class="tl-desc ed" id="ed-tl6-d">Takk for en uforglemmelig kveld</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S6: RSVP -->
+  <div class="slide" id="s6" style="transform:translateY(calc(6 * var(--app-100vh, 100vh)))">
+    <div class="rsvp-card glass">
+      <div class="rsvp-big">RSVP</div>
+      <div class="rsvp-sub ed" id="ed-rsvp-sub">Svar innen 1. februar 2027</div>
+      <div class="gold-rule"></div>
+      <div id="rsvp-form">
+        <div class="f-field"><div class="f-label">Ditt navn</div><input class="f-input" id="f-name" type="text" placeholder="For- og etternavn"></div>
+        <div class="f-field"><div class="f-label">Antall gjester</div><div class="stepper"><button onclick="step(-1)">−</button><input id="f-count" value="1" readonly><button onclick="step(1)">+</button></div></div>
+        <div id="f-guest-names"></div>
+        <div class="f-field"><div class="f-label">Kommer du?</div><div class="f-radios"><div class="f-radio" id="f-yes" onclick="pickRsvp('yes')">✓ Ja, jeg kommer!</div><div class="f-radio" id="f-no" onclick="pickRsvp('no')">✗ Kan dessverre ikke</div></div></div>
+        <div class="f-field"><div class="f-label">Allergier / Kosthold</div><input class="f-input" id="f-allergy" type="text" placeholder="Eks: vegetar, nøttallergi..."></div>
+        <div class="f-field"><div class="f-label">Melding (valgfritt)</div><textarea class="f-textarea" id="f-msg" placeholder="Din hilsen..."></textarea></div>
+        <button class="f-submit" onclick="sendRsvp()">Send svar →</button>
+      </div>
+      <div id="rsvp-thanks" style="display:none;text-align:center;padding:24px 0">
+        <div style="font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-style:italic;">Tusen takk! 🌿</div>
+        <div style="font-size:12px;color:var(--mid);margin-top:8px;line-height:1.7;">Vi gleder oss enormt til å feire<br>denne dagen med deg.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: CONTACT -->
+  <div class="slide" id="s7" style="transform:translateY(calc(7 * var(--app-100vh, 100vh)))">
+    <div class="contact-card glass">
+      <div class="section-title-big ed" id="ed-con-title">Kontakt</div>
+      <div class="gold-rule"></div>
+      <div style="font-size:11px;color:var(--mid);text-align:center;margin-bottom:16px;line-height:1.7;" class="ed" id="ed-con-sub">Spørsmål om bryllupet, reisen eller overnatting?<br>Ta gjerne kontakt!</div>
+      <div class="contact-cc">
+        <div class="cc-role">Brudgom</div>
+        <div class="cc-name ed" id="ed-b-name">Benjamin</div>
+        <div class="cc-info ed" id="ed-b-info">📱 +47 XXX XX XXX<br>✉️ benjamin@eksempel.no</div>
+      </div>
+      <div class="contact-cc">
+        <div class="cc-role">Brud</div>
+        <div class="cc-name ed" id="ed-c-name">Camilla</div>
+        <div class="cc-info ed" id="ed-c-info">📱 +47 XXX XX XXX<br>✉️ camilla@eksempel.no</div>
+      </div>
+      <div class="contact-sig">B &amp; C</div>
+      <div style="font-size:8px;letter-spacing:4px;color:var(--light);text-align:center;margin-top:4px;" class="ed" id="ed-con-date">22.05.2027 · Aegina, Hellas</div>
+    </div>
+  </div>
+
+</div><!-- /landing -->
+
+<!-- RSVP DASHBOARD -->
+<div id="rsvp-dash">
+  <div class="rdash-box">
+    <button class="rdash-close" onclick="closeModal('rsvp-dash')">✕</button>
+    <div class="rdash-title">Svar</div>
+    <div class="rdash-sub">Oversikt over RSVP</div>
+    <div class="rdash-stats" id="rdash-stats"></div>
+    <div class="rdash-list" id="rdash-list"></div>
+  </div>
+</div>
+
+<!-- MAIN PAGE -->
+<div id="main">
+  <div class="main-header">
+    <div class="main-eyebrow ed" id="ed-m-eye">Vi gifter oss</div>
+    <div class="main-names">Benjamin<br><span class="main-amp">&amp;</span><br>Camilla</div>
+    <div class="main-date-line ed" id="ed-m-date">22. Mai 2027 · Aegina, Hellas</div>
+  </div>
+  <div class="cdown-wrap glass">
+    <div class="cdown-label ed" id="ed-cd-lbl">Nedtelling til bryllupet</div>
+    <div class="cdown-grid">
+      <div class="cdown-unit"><div class="cdown-num" id="cd-d">—</div><div class="cdown-lbl">Dager</div></div>
+      <div class="cdown-unit"><div class="cdown-num" id="cd-h">—</div><div class="cdown-lbl">Timer</div></div>
+      <div class="cdown-unit"><div class="cdown-num" id="cd-m">—</div><div class="cdown-lbl">Min</div></div>
+      <div class="cdown-unit"><div class="cdown-num" id="cd-s">—</div><div class="cdown-lbl">Sek</div></div>
+    </div>
+  </div>
+  <div class="main-msg-card glass">
+    <div class="main-msg ed" id="ed-m-msg">Vi gleder oss enormt til å feire denne magiske dagen med deg</div>
+    <div style="height:1px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent);margin:14px 0;"></div>
+    <div class="main-msg-sub ed" id="ed-m-sub">Epitome Villa · Aegina, Hellas<br>22. Mai 2027</div>
+  </div>
+</div>
+
+<button id="faq-btn" onclick="openModal('faq-modal')">FAQ</button>
+<div id="faq-modal">
+  <div class="faq-box">
+    <button class="faq-close" onclick="closeModal('faq-modal')">✕</button>
+    <div class="faq-title">Spørsmål &amp; svar</div>
+    <div class="faq-q ed" id="ed-fq1">Når er svarfristen?</div>
+    <div class="faq-a ed" id="ed-fa1">Vi ønsker svar innen 1. februar 2027 så vi kan planlegge i detalj.</div>
+    <div class="faq-q ed" id="ed-fq2">Hva er dresscode?</div>
+    <div class="faq-a ed" id="ed-fa2">Formelt eller semi-formelt. Lyse sommerfarger er ønskelig — unngå hvitt og lyseblått.</div>
+    <div class="faq-q ed" id="ed-fq3">Transport til Aegina?</div>
+    <div class="faq-a ed" id="ed-fa3">Ferge fra Piraeus i Athen — ca. 1 time. Vi koordinerer felles transport fra Athen.</div>
+    <div class="faq-q ed" id="ed-fq4">Kan jeg ta med barn?</div>
+    <div class="faq-a ed" id="ed-fa4">Bryllupet er primært for voksne. Ta kontakt med oss om du har spørsmål.</div>
+    <div class="faq-q ed" id="ed-fq5">Er det allergihensyn i maten?</div>
+    <div class="faq-a ed" id="ed-fa5">Absolutt — oppgi allergier i RSVP-skjemaet så sørger vi for gode alternativer.</div>
+    <div class="faq-q ed" id="ed-fq6">Bilder på sosiale medier?</div>
+    <div class="faq-a ed" id="ed-fa6">Vi ber deg vente til vi har delt de offisielle bildene. Bruk gjerne #BenOgCamilla2027</div>
+  </div>
+</div>
+
+<!-- MORPH TRANSITION OVERLAY -->
+<div id="morph-overlay">
+  <div id="morph-overlay-bg"></div>
+  <div class="mo-names" style="position:relative;">Benjamin<br><span class="mo-amp">&amp;</span><br>Camilla</div>
+  <div class="mo-rule" style="position:relative;"></div>
+  <div class="mo-sub" style="position:relative;">inviterer deg til å feire<br>deres bryllup</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     FIREBASE SDK (ESM via CDN)
+══════════════════════════════════════ -->
+<script type="module">
+// ─── FIREBASE INIT ────────────────────────────────────
+import { initializeApp }           from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, serverTimestamp }
+                                   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getStorage, ref, uploadString, getDownloadURL, deleteObject }
+                                   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyBxw05fd7FCkTuVvUV6GZc7MHYmpEziFUM",
+  authDomain:        "bryllup-59330.firebaseapp.com",
+  projectId:         "bryllup-59330",
+  storageBucket:     "bryllup-59330.firebasestorage.app",
+  messagingSenderId: "289056136917",
+  appId:             "1:289056136917:web:4357d74fe8e596ba2f0c5c",
+  measurementId:     "G-P4EG9W9Z5G"
+};
+
+const app     = initializeApp(firebaseConfig);
+const db      = getFirestore(app);
+const storage = getStorage(app);
+
+// ─── STATUS HELPER ────────────────────────────────────
+let _statusTimer = null;
+function fbStatus(state, text) {
+  const el    = document.getElementById('fb-status');
+  const dot   = document.getElementById('fb-status-dot');
+  const label = document.getElementById('fb-status-text');
+  if (!el) return;
+  el.className = 'show ' + state;
+  label.textContent = text;
+  if (_statusTimer) clearTimeout(_statusTimer);
+  if (state !== 'saving') {
+    _statusTimer = setTimeout(function() { el.classList.remove('show'); }, 3000);
+  }
+}
+
+// ══════════════════════════════════════
+// FIRESTORE — RSVP
+// ══════════════════════════════════════
+
+/**
+ * Lagre RSVP-svar til Firestore.
+ * Kalles av window.sendRsvpToFirebase (satt nedenfor).
+ */
+async function saveRsvpFirestore(entry) {
+  try {
+    fbStatus('saving', 'Sender svar...');
+    await addDoc(collection(db, 'rsvp'), {
+      ...entry,
+      createdAt: serverTimestamp()
+    });
+    fbStatus('saved', 'Svar sendt ✓');
+  } catch (err) {
+    console.error('Firestore RSVP error:', err);
+    fbStatus('error', 'Feil ved sending');
+  }
+}
+
+/**
+ * Hent alle RSVP-svar fra Firestore (brukes av dashboardet).
+ */
+async function loadRsvpsFirestore() {
+  try {
+    const snap = await getDocs(collection(db, 'rsvp'));
+    return snap.docs.map(function(d) { return { id: d.id, ...d.data() }; });
+  } catch (err) {
+    console.error('Firestore load RSVP error:', err);
+    return [];
+  }
+}
+
+// ══════════════════════════════════════
+// FIRESTORE — INNSTILLINGER / TEKST
+// ══════════════════════════════════════
+
+/**
+ * Lagre alle redigerbare tekster + innstillinger (farge, timer, bgOpacity)
+ * til Firestore under dokumentet settings/main.
+ * Bilder lagres IKKE her — de går til Storage (se under).
+ */
+async function saveSettingsFirestore(data) {
+  try {
+    fbStatus('saving', 'Lagrer innstillinger...');
+    await setDoc(doc(db, 'settings', 'main'), {
+      ...data,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    fbStatus('saved', 'Lagret i skyen ✓');
+  } catch (err) {
+    console.error('Firestore settings error:', err);
+    fbStatus('error', 'Feil ved lagring');
+    throw err;
+  }
+}
+
+/**
+ * Hent innstillinger fra Firestore ved oppstart.
+ */
+async function loadSettingsFirestore() {
+  try {
+    const snap = await getDoc(doc(db, 'settings', 'main'));
+    if (snap.exists()) return snap.data();
+    return null;
+  } catch (err) {
+    console.error('Firestore load settings error:', err);
+    return null;
+  }
+}
+
+// ══════════════════════════════════════
+// STORAGE — BILDER & ANIMASJON
+// ══════════════════════════════════════
+
+/**
+ * Last opp en base64 data-URL til Firebase Storage.
+ * Returnerer den offentlige nedlastings-URL-en.
+ */
+async function uploadImageToStorage(path, dataUrl) {
+  // Finn ut content type fra data-URL
+  const mimeMatch = dataUrl.match(/^data:([^;]+);base64,/);
+  const mimeType  = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+  const base64    = dataUrl.split(',')[1];
+
+  const storageRef = ref(storage, path);
+  await uploadString(storageRef, base64, 'base64', { contentType: mimeType });
+  return await getDownloadURL(storageRef);
+}
+
+/**
+ * Slett fil fra Storage.
+ */
+async function deleteFromStorage(path) {
+  try {
+    await deleteObject(ref(storage, path));
+  } catch (err) {
+    // Ignorer "not found"-feil
+    if (err.code !== 'storage/object-not-found') console.warn('Storage delete error:', err);
+  }
+}
+
+/**
+ * Last opp bakgrunnsbilde.
+ * Lagrer URL-en tilbake i settings/main.bgImageUrl
+ */
+async function uploadBgImage(dataUrl) {
+  fbStatus('saving', 'Laster opp bilde...');
+  try {
+    const url = await uploadImageToStorage('images/bg-global', dataUrl);
+    // Oppdater settings-dokumentet med ny URL
+    await setDoc(doc(db, 'settings', 'main'),
+      { bgImageUrl: url, updatedAt: serverTimestamp() },
+      { merge: true }
+    );
+    fbStatus('saved', 'Bilde lastet opp ✓');
+    return url;
+  } catch (err) {
+    console.error('Storage bg upload error:', err);
+    fbStatus('error', 'Feil ved bildeopplasting');
+    throw err;
+  }
+}
+
+/**
+ * Last opp bakgrunnsbilde for slide 1 (velkomstsiden / konvolutten).
+ * Lagrer URL-en tilbake i settings/main.bg1ImageUrl
+ */
+async function uploadBg1Image(dataUrl) {
+  fbStatus('saving', 'Laster opp bilde...');
+  try {
+    const url = await uploadImageToStorage('images/bg-slide1', dataUrl);
+    await setDoc(doc(db, 'settings', 'main'),
+      { bg1ImageUrl: url, updatedAt: serverTimestamp() },
+      { merge: true }
+    );
+    fbStatus('saved', 'Bilde lastet opp ✓');
+    return url;
+  } catch (err) {
+    console.error('Storage bg1 upload error:', err);
+    fbStatus('error', 'Feil ved bildeopplasting');
+    throw err;
+  }
+}
+
+/**
+ * Last opp ett slideshow-bilde (index 0–4).
+ */
+async function uploadSlideImage(idx, dataUrl) {
+  fbStatus('saving', 'Laster opp bilde ' + (idx + 1) + '...');
+  try {
+    const url = await uploadImageToStorage('images/slide-' + idx, dataUrl);
+    // Lagre URL i settings
+    const field = 'slideUrl_' + idx;
+    await setDoc(doc(db, 'settings', 'main'),
+      { [field]: url, updatedAt: serverTimestamp() },
+      { merge: true }
+    );
+    fbStatus('saved', 'Slide ' + (idx + 1) + ' lastet opp ✓');
+    return url;
+  } catch (err) {
+    console.error('Storage slide upload error:', err);
+    fbStatus('error', 'Feil ved bildeopplasting');
+    throw err;
+  }
+}
+
+/**
+ * Last opp HTML-animasjonsfil.
+ */
+async function uploadAnimHtml(htmlText) {
+  fbStatus('saving', 'Laster opp animasjon...');
+  try {
+    const storageRef = ref(storage, 'anim/map-anim.html');
+    await uploadString(storageRef, htmlText, 'raw', { contentType: 'text/html' });
+    const url = await getDownloadURL(storageRef);
+    await setDoc(doc(db, 'settings', 'main'),
+      { animUrl: url, updatedAt: serverTimestamp() },
+      { merge: true }
+    );
+    fbStatus('saved', 'Animasjon lastet opp ✓');
+    return url;
+  } catch (err) {
+    console.error('Storage anim upload error:', err);
+    fbStatus('error', 'Feil ved animasjonsopplasting');
+    throw err;
+  }
+}
+
+/**
+ * Slett bakgrunnsbilde fra Storage og settings.
+ */
+async function deleteBgImage() {
+  await deleteFromStorage('images/bg-global');
+  await setDoc(doc(db, 'settings', 'main'),
+    { bgImageUrl: null, updatedAt: serverTimestamp() },
+    { merge: true }
+  );
+}
+
+/**
+ * Slett bakgrunnsbilde for slide 1 fra Storage og settings.
+ */
+async function deleteBg1Image() {
+  await deleteFromStorage('images/bg-slide1');
+  await setDoc(doc(db, 'settings', 'main'),
+    { bg1ImageUrl: null, updatedAt: serverTimestamp() },
+    { merge: true }
+  );
+}
+
+/**
+ * Slett ett slideshow-bilde.
+ */
+async function deleteSlideImage(idx) {
+  await deleteFromStorage('images/slide-' + idx);
+  const field = 'slideUrl_' + idx;
+  await setDoc(doc(db, 'settings', 'main'),
+    { [field]: null, updatedAt: serverTimestamp() },
+    { merge: true }
+  );
+}
+
+/**
+ * Slett animasjonsfil.
+ */
+async function deleteAnimFile() {
+  await deleteFromStorage('anim/map-anim.html');
+  await setDoc(doc(db, 'settings', 'main'),
+    { animUrl: null, updatedAt: serverTimestamp() },
+    { merge: true }
+  );
+}
+
+// ══════════════════════════════════════
+// OPPSTARTS-LASTING
+// ══════════════════════════════════════
+
+async function loadAllFromFirebase() {
+  const data = await loadSettingsFirestore();
+  if (!data) return; // ingen data ennå
+
+  // Tekst og innstillinger
+  document.querySelectorAll('.ed').forEach(function(el) {
+    if (data[el.id] !== undefined && data[el.id] !== null) {
+      el.innerHTML = data[el.id];
+    }
+  });
+
+  // Auto-timer
+  if (data.__autoTimer != null) {
+    window._autoTimerSec = parseInt(data.__autoTimer) || 7;
+    const el = document.getElementById('edit-timer-val');
+    if (el) el.textContent = window._autoTimerSec + 's';
+  }
+
+  // Primærfarge
+  if (data.__primaryColor) {
+    if (window.applyPrimaryColor) window.applyPrimaryColor(data.__primaryColor, true);
+  }
+
+  // Bakgrunnsopasitet
+  if (data.bgOpacity != null) {
+    const slider = document.getElementById('bg-opacity-slider');
+    const valEl  = document.getElementById('bg-opacity-val');
+    if (slider) slider.value = data.bgOpacity;
+    if (valEl)  valEl.textContent = data.bgOpacity + '%';
+  }
+
+  // Bakgrunnsopasitet for slide 1
+  if (data.bg1Opacity != null) {
+    const slider = document.getElementById('bg1-opacity-slider');
+    const valEl  = document.getElementById('bg1-opacity-val');
+    if (slider) slider.value = data.bg1Opacity;
+    if (valEl)  valEl.textContent = data.bg1Opacity + '%';
+  }
+
+  // VIKTIG rekkefølge: bg1 først så _bg1ImageUrl er satt før global skapes.
+  // Da kan updateActiveBackground() umiddelbart skjule global på slide 0.
+  // Bakgrunnsbilde nr. 1 fra Storage-URL
+  if (data.bg1ImageUrl) {
+    if (window.applyBackground1FromUrl) {
+      window.applyBackground1FromUrl(data.bg1ImageUrl, data.bg1Opacity || 18);
+    }
+    updateBg1ZonePreview(data.bg1ImageUrl);
+    // Pre-load bildet og åpne bg-porten på loading-skjermen når ferdig
+    if (window.preloadBackground) window.preloadBackground(data.bg1ImageUrl);
+  }
+
+  // Bakgrunnsbilde fra Storage-URL
+  if (data.bgImageUrl) {
+    applyBackgroundFromUrl(data.bgImageUrl, data.bgOpacity || 18);
+    if (window.preloadBackground) window.preloadBackground(data.bgImageUrl);
+  }
+
+  // Hvis det ikke finnes noen bakgrunn i Firebase, åpne bg-porten
+  // umiddelbart slik at loading-skjermen ikke står og venter på noe
+  // som ikke kommer. (Hvis lokal cache hadde bg, er porten allerede
+  // åpnet derifra; markReady er idempotent.)
+  if (!data.bg1ImageUrl && !data.bgImageUrl && window.markReady) {
+    window.markReady('bg');
+  }
+
+  // Oppdater visuell cache for øyeblikkelig lasting ved neste besøk
+  try {
+    const cache = {
+      primaryColor: data.__primaryColor || null,
+      bgImageUrl:   data.bgImageUrl || null,
+      bgOpacity:    data.bgOpacity || 18,
+      bg1ImageUrl:  data.bg1ImageUrl || null,
+      bg1Opacity:   data.bg1Opacity || 18
+    };
+    localStorage.setItem('weddingVisualCache', JSON.stringify(cache));
+  } catch(e) {}
+
+  // Slideshow-bilder fra Storage-URL
+  for (let i = 0; i < 5; i++) {
+    const url = data['slideUrl_' + i];
+    if (url) {
+      const img = document.getElementById('vs-' + i);
+      if (img) img.src = url;
+    }
+  }
+
+  // Animasjon fra Storage-URL
+  if (data.animUrl) {
+    loadAnimFromUrl(data.animUrl);
+  }
+
+  // Skjul loading-skjermen nå som alt er lastet
+  if (window.hideLoadingScreen) window.hideLoadingScreen();
+}
+
+function applyBackgroundFromUrl(url, opacity) {
+  let overlay = document.getElementById('bg-img-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'bg-img-overlay';
+    // Start usynlig — updateActiveBackground() (i hovedscript) styrer synlighet.
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;height:100vh;height:100dvh;height:var(--app-100vh, 100dvh);z-index:1;background-size:cover;background-position:center;pointer-events:none;transition:opacity 0.4s;opacity:0;';
+    const bgFixed = document.getElementById('bg-fixed');
+    if (bgFixed && bgFixed.parentNode) bgFixed.after(overlay);
+    else document.body.prepend(overlay);
+  }
+  overlay.style.backgroundImage = 'url(' + url + ')';
+  // Lagre opacity-verdi globalt slik at hovedscript-funksjonen kan bruke den
+  window._bgImageUrl     = url;
+  window._bgImageOpacity = (opacity || 18) / 100;
+  if (window.updateActiveBackground) window.updateActiveBackground();
+  if (window.syncLetterBg) window.syncLetterBg();
+  // Update preview in manager
+  updateBgZonePreview(url);
+}
+
+function loadAnimFromUrl(url) {
+  fetch(url)
+    .then(function(r) { return r.text(); })
+    .then(function(html) {
+      window._animHTML = html;
+      window.showAnimOverlay && window.showAnimOverlay();
+      if (window.cur === 2) window.loadAnimIframe && window.loadAnimIframe();
+      document.getElementById('anim-controls').style.display = '';
+      const zone = document.getElementById('animzone');
+      if (zone) {
+        zone.classList.add('has-anim');
+        zone.querySelector('.imgm-upload-hint').textContent = '✓ Animasjon lastet';
+      }
+      window.restoreAnimFrame && window.restoreAnimFrame();
+    })
+    .catch(function(err) { console.warn('Could not fetch anim HTML:', err); });
+}
+
+function updateBgZonePreview(url) {
+  const zone = document.getElementById('bgzone-global');
+  const prev = document.getElementById('bgprev-global');
+  if (!zone || !prev) return;
+  prev.style.backgroundImage = 'url(' + url + ')';
+  prev.classList.add('visible');
+  zone.classList.add('has-image');
+  if (!zone.querySelector('.imgm-preview-label')) {
+    const lbl = document.createElement('div');
+    lbl.className = 'imgm-preview-label';
+    lbl.textContent = 'Klikk for å bytte';
+    prev.appendChild(lbl);
+  }
+}
+
+function updateBg1ZonePreview(url) {
+  const zone = document.getElementById('bgzone-slide1');
+  const prev = document.getElementById('bgprev-slide1');
+  if (!zone || !prev) return;
+  prev.style.backgroundImage = 'url(' + url + ')';
+  prev.classList.add('visible');
+  zone.classList.add('has-image');
+  if (!zone.querySelector('.imgm-preview-label')) {
+    const lbl = document.createElement('div');
+    lbl.className = 'imgm-preview-label';
+    lbl.textContent = 'Klikk for å bytte';
+    prev.appendChild(lbl);
+  }
+}
+
+// ══════════════════════════════════════
+// EKSPONÉR TIL GLOBAL SCOPE
+// (kalles fra de ikke-module script-funksjonene nedenfor)
+// ══════════════════════════════════════
+window._fb = {
+  saveSettingsFirestore,
+  loadRsvpsFirestore,
+  saveRsvpFirestore,
+  uploadBgImage,
+  uploadBg1Image,
+  uploadSlideImage,
+  uploadAnimHtml,
+  deleteBgImage,
+  deleteBg1Image,
+  deleteSlideImage,
+  deleteAnimFile,
+};
+
+// Start opp
+window.addEventListener('load', function() {
+  loadAllFromFirebase().catch(function(err) {
+    console.warn('Firebase load failed, continuing with localStorage:', err);
+    if (window.hideLoadingScreen) window.hideLoadingScreen();
+  });
+});
+
+</script>
+
+<!-- ══════════════════════════════════════
+     HOVED-SCRIPT (non-module, samme som original + Firebase-hooks)
+══════════════════════════════════════ -->
+<script>
+// ─── STATE ────────────────────────────────────────────
+const NSLIDES = 8;
+let cur = 0, busy = false, envDone = false, landed = false;
+window.cur = cur; // eksponér for Firebase-modul
+let autoTimerSec = 7;
+let touchY = 0, lastWheel = 0;
+let editOn = false, secretBuf = '';
+let vsIdx = 0, vsTimer = null;
+
+// ─── VIEWPORT (iOS Safari fix) ────────────────────────
+// iOS Safari rapporterer 100vh som total høyde inkludert adresselinjen,
+// men når linjen er synlig dekker den deler av skjermen. Dette gjør at
+// 100vh-baserte transformer plasserer slides litt for langt opp/ned.
+//
+// Vi setter en CSS-variabel --app-vh (1 % av visualViewport-høyden)
+// som JS oppdaterer ved resize/orientation, og bruker `--app-100vh`
+// (= 100 × --app-vh) der vi tidligere hardkodet "100vh".
+function updateViewportVar() {
+  const vvp = window.visualViewport;
+  const h = vvp ? vvp.height : window.innerHeight;
+  const w = vvp ? vvp.width  : window.innerWidth;
+  document.documentElement.style.setProperty('--app-vh',    (h / 100) + 'px');
+  document.documentElement.style.setProperty('--app-100vh', h + 'px');
+  document.documentElement.style.setProperty('--app-100vw', w + 'px');
+  // Re-posisjoner slidene umiddelbart hvis vi er midt i visning, så de
+  // ikke "hopper" ved orientation-bytte eller når adresselinjen
+  // viser/skjuler seg under scrolling.
+  if (typeof repositionSlides === 'function' && !busy) {
+    repositionSlides();
+  }
+}
+function repositionSlides() {
+  for (let i = 0; i < NSLIDES; i++) {
+    const el = document.getElementById('s' + i);
+    if (!el) continue;
+    // Behold transitions hvis de er midt i en animasjon
+    el.style.transform = 'translateY(calc(' + (i - cur) + ' * var(--app-100vh, 100vh)))';
+  }
+}
+window.repositionSlides = repositionSlides;
+updateViewportVar();
+window.addEventListener('resize', updateViewportVar, { passive: true });
+window.addEventListener('orientationchange', updateViewportVar, { passive: true });
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', updateViewportVar, { passive: true });
+}
+
+// ─── INDEXEDDB (lokal fallback for store filer) ────────
+const IDB_NAME = 'weddingSlides', IDB_STORE = 'slides', IDB_VER = 1;
+let _idb = null;
+
+function openIDB() {
+  return new Promise(function(resolve, reject) {
+    try {
+      if (_idb) { resolve(_idb); return; }
+      if (!window.indexedDB) { reject(new Error('No IDB')); return; }
+      const req = indexedDB.open(IDB_NAME, IDB_VER);
+      req.onupgradeneeded = function(e) {
+        try { e.target.result.createObjectStore(IDB_STORE); } catch(err) {}
+      };
+      req.onsuccess = function(e) { _idb = e.target.result; resolve(_idb); };
+      req.onerror   = function(e) { reject(e.target.error); };
+    } catch(err) { reject(err); }
+  });
+}
+function idbSet(key, val) {
+  return openIDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put(val, key);
+      tx.oncomplete = resolve;
+      tx.onerror = function(e) { reject(e.target.error); };
+    });
+  });
+}
+function idbDel(key) {
+  return openIDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).delete(key);
+      tx.oncomplete = resolve;
+      tx.onerror = function(e) { reject(e.target.error); };
+    });
+  });
+}
+function idbGetAll() {
+  return openIDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      const store = db.transaction(IDB_STORE).objectStore(IDB_STORE);
+      const result = {};
+      const req = store.openCursor();
+      req.onsuccess = function(e) {
+        const cursor = e.target.result;
+        if (cursor) { result[cursor.key] = cursor.value; cursor.continue(); }
+        else resolve(result);
+      };
+      req.onerror = function(e) { reject(e.target.error); };
+    });
+  });
+}
+function idbGet(key) {
+  return openIDB().then(function(db) {
+    return new Promise(function(resolve, reject) {
+      const tx = db.transaction(IDB_STORE);
+      const req = tx.objectStore(IDB_STORE).get(key);
+      req.onsuccess = function() { resolve(req.result); };
+      req.onerror = function(e) { reject(e.target.error); };
+    });
+  });
+}
+
+// ─── LOADING SCREEN ───────────────────────────────────
+// Loading-skjermen skjules først når BÅDE Firebase-data er klar OG den
+// aktive bakgrunnen er ferdig nedlastet og renderbar. Hvis vi skjuler
+// for tidlig, ser brukeren et "bart" tomt grunn-CSS før bakgrunnsbildet
+// blir synlig. Bedre å holde loading-skjermen oppe litt lenger og vise
+// ferdig komposisjon i ett.
+//
+// To "porter" må passere før hideLoadingScreen() faktisk skjuler:
+//  1) _readyFirebase  — Firebase har svart (eller feilet/fallback)
+//  2) _readyBackground — relevant bakgrunnsbilde (bg1 på slide 0, ellers
+//     global bg) har trigget Image.onload, eller det finnes ingen bg
+//
+// Hver kilde markerer sin port ved å kalle markReady('firebase' | 'bg').
+// Den siste som kommer trigger faktisk skjul.
+//
+// Fallback: uansett, etter 6 sekunder skjules loading-skjermen — vi vil
+// aldri sitte fast hvis bildet er ekstremt tregt eller utilgjengelig.
+window._loadGate = { firebase: false, bg: false, forced: false };
+
+function _doHideLoadingScreen() {
+  const ls = document.getElementById('loading-screen');
+  if (!ls || ls.classList.contains('hidden')) return;
+  ls.classList.add('hidden');
+  setTimeout(function() { ls.style.display = 'none'; }, 900);
+}
+
+window.markReady = function(gate) {
+  if (window._loadGate[gate]) return;
+  window._loadGate[gate] = true;
+  // Skjul kun hvis begge porter er passert (eller fallback har tvunget)
+  if (window._loadGate.firebase && window._loadGate.bg) {
+    _doHideLoadingScreen();
+  }
+};
+
+// Bakoverkompatibelt API: hideLoadingScreen() betyr "firebase er klar"
+window.hideLoadingScreen = function() {
+  window.markReady('firebase');
+};
+
+// Pre-load et bakgrunnsbilde og marker bg-porten klar når det er ferdig.
+// Brukes både fra loadVisualCache (lokal cache) og loadAllFromFirebase
+// (når Storage-URL er kjent). Hvis samme URL allerede er pre-loaded,
+// returnerer raskt.
+window._preloadedBg = {};
+window.preloadBackground = function(url) {
+  if (!url) return;
+  if (window._preloadedBg[url]) return; // allerede i gang
+  window._preloadedBg[url] = true;
+  const img = new Image();
+  img.onload  = function() { window.markReady('bg'); };
+  img.onerror = function() { window.markReady('bg'); }; // ikke heng ved feil
+  img.src = url;
+};
+
+// Fallback: uansett, skjul etter 6 sekunder (var 4s — utvidet litt for
+// å gi bakgrunnsbildet bedre sjanse på trege forbindelser).
+setTimeout(function() {
+  if (window._loadGate.forced) return;
+  window._loadGate.forced = true;
+  // Tving begge porter slik at hideLoadingScreen() går gjennom
+  window._loadGate.firebase = true;
+  window._loadGate.bg = true;
+  _doHideLoadingScreen();
+}, 6000);
+
+// ─── VISUELL CACHE (øyeblikkelig lasting) ────────────
+// Laster farge og bakgrunn fra localStorage-cache FØR Firebase svarer.
+// Firebase oppdaterer cachen i bakgrunnen slik at neste besøk er à jour.
+function loadVisualCache() {
+  let hasAnyBg = false;
+  try {
+    const cache = JSON.parse(localStorage.getItem('weddingVisualCache') || '{}');
+    if (cache.primaryColor) applyPrimaryColor(cache.primaryColor, true);
+    // VIKTIG rekkefølge: bg1 først så _bg1ImageUrl er satt før global skapes.
+    // Da kan updateActiveBackground() umiddelbart skjule global på slide 0
+    // og vi unngår et hakkete bytte ved første-lasting.
+    if (cache.bg1ImageUrl) {
+      applyBackground1FromUrl(cache.bg1ImageUrl, cache.bg1Opacity || 18);
+      window.preloadBackground(cache.bg1ImageUrl);
+      hasAnyBg = true;
+    }
+    if (cache.bgImageUrl) {
+      applyBackgroundFromUrl(cache.bgImageUrl,  cache.bgOpacity  || 18);
+      window.preloadBackground(cache.bgImageUrl);
+      hasAnyBg = true;
+    }
+  } catch(e) {}
+  // PARALLELL HENT av bg1 fra IndexedDB. Vi venter IKKE til window.load —
+  // "Bakgrunn" får sin base64 fra localStorage synkront ved scriptstart,
+  // og bg1 må ha en tilsvarende rask bane for ikke å virke seint. IDB
+  // er async, men vi starter promisen umiddelbart slik at den resolverer
+  // så tidlig som mulig (typisk innen få ms). Bildet vises så snart
+  // promisen resolverer — uten å vente på window.load eller HTTP fra
+  // Firebase Storage.
+  if (typeof idbGet === 'function') {
+    idbGet('bg1').then(function(dataUrl) {
+      if (dataUrl) {
+        // Kun påfør hvis ikke allerede satt fra cache (unngå dobbel
+        // visning hvis cache-URL allerede har lastet bildet ferdig).
+        if (!window._bg1ImageUrl) {
+          applyBackground1(dataUrl);
+        } else {
+          // Bytt fra HTTP-URL til base64 i bakgrunnen — neste gang
+          // brukeren ser sliden er det base64 som vises (raskere).
+          const overlay = document.getElementById('bg-img-overlay-1');
+          if (overlay) overlay.style.backgroundImage = 'url(' + dataUrl + ')';
+        }
+        // base64 er øyeblikkelig "lastet" — marker bg-porten klar.
+        window.markReady('bg');
+      }
+    }).catch(function() {});
+  }
+  // Sjekk også local base64 bg (lagret av saveBgImageLocal)
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    if (saved.bg) {
+      // base64 er øyeblikkelig — marker bg-porten klar nå
+      window.markReady('bg');
+      hasAnyBg = true;
+    }
+  } catch(e) {}
+  // Hvis det ikke finnes NOEN bakgrunn (verken cache, base64 eller IDB
+  // kommer til å levere noe), må vi raskt markere bg-porten klar slik
+  // at loading-skjermen ikke henger på fallback-tiden. Vi kan ikke vite
+  // sikkert om IDB returnerer null før promisen resolverer — så gi den
+  // 250ms å resolvere, ellers anta ingen bg.
+  setTimeout(function() {
+    if (!hasAnyBg && !window._bg1ImageUrl && !window._bgImageUrl) {
+      window.markReady('bg');
+    }
+  }, 250);
+}
+loadVisualCache();
+
+// ─── INIT ─────────────────────────────────────────────
+window.addEventListener('load', function() {
+  try { countdown(); } catch(e) {}
+  setInterval(function() { try { countdown(); } catch(e) {} }, 1000);
+  try { document.getElementById('slide-dots').classList.add('show'); } catch(e) {}
+  try { loadEditsLocal(); } catch(e) {}
+  try { loadPrimaryColor(); } catch(e) {}
+  openIDB()
+    .then(function() { loadSavedImagesLocal(); })
+    .catch(function() { loadSavedImagesLocal(); });
+});
+
+// ─── SECRET CODE ─────────────────────────────────────
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    if (secretBuf === 'tototuttis') toggleEdit();
+    secretBuf = ''; return;
+  }
+  if (e.key.length === 1) {
+    secretBuf += e.key.toLowerCase();
+    if (secretBuf.length > 20) secretBuf = secretBuf.slice(-20);
+  }
+});
+
+// ─── EDIT MODE ────────────────────────────────────────
+function changeAutoTimer(d) {
+  autoTimerSec = Math.max(1, Math.min(60, autoTimerSec + d));
+  const el = document.getElementById('edit-timer-val');
+  if (el) el.textContent = autoTimerSec + 's';
+}
+
+function toggleEdit() {
+  editOn = !editOn;
+  document.body.classList.toggle('editing', editOn);
+  document.getElementById('edit-bar').classList.toggle('on', editOn);
+  document.querySelectorAll('.ed').forEach(function(el) {
+    el.contentEditable = editOn ? 'true' : 'false';
+  });
+}
+
+/**
+ * Lagre redigeringer:
+ * 1. Lokal localStorage (øyeblikkelig)
+ * 2. Firebase Firestore (asynkront)
+ */
+function saveEdits() {
+  const data = {};
+  document.querySelectorAll('.ed').forEach(function(el) { data[el.id] = el.innerHTML; });
+
+  // Bevar eksisterende fargeinnstilling
+  try {
+    const existing = JSON.parse(localStorage.getItem('weddingV3') || '{}');
+    if (existing.__primaryColor) data.__primaryColor = existing.__primaryColor;
+    const current = document.documentElement.style.getPropertyValue('--gold').trim();
+    if (current) data.__primaryColor = current;
+  } catch(e) {}
+  data.__autoTimer = autoTimerSec;
+
+  // Legg til bgOpacity fra slider (må skje FØR lagring til Firebase)
+  const slider = document.getElementById('bg-opacity-slider');
+  if (slider) data.bgOpacity = parseInt(slider.value);
+
+  // Lagre lokalt
+  try { localStorage.setItem('weddingV3', JSON.stringify(data)); } catch(e) {}
+
+  // Lagre til Firebase
+  if (window._fb && window._fb.saveSettingsFirestore) {
+    window._fb.saveSettingsFirestore(data).catch(function(err) {
+      console.warn('Firebase save failed:', err);
+    });
+  }
+
+  const btn = document.querySelector('.edit-save');
+  if (btn) { btn.textContent = '✓ Lagret!'; setTimeout(function() { btn.textContent = '💾 Lagre'; }, 2000); }
+}
+
+function loadEditsLocal() {
+  try {
+    const data = JSON.parse(localStorage.getItem('weddingV3') || '{}');
+    Object.entries(data).forEach(function(pair) {
+      const el = document.getElementById(pair[0]);
+      if (el) el.innerHTML = pair[1];
+    });
+    if (data.__autoTimer != null) {
+      autoTimerSec = parseInt(data.__autoTimer) || 7;
+      const el = document.getElementById('edit-timer-val');
+      if (el) el.textContent = autoTimerSec + 's';
+    }
+  } catch(e) {}
+}
+
+// ─── PRIMARY COLOR ────────────────────────────────────
+const COLOR_PRESETS = [
+  { hex: '#b8922a', name: 'Gull' },
+  { hex: '#a0784a', name: 'Bronse' },
+  { hex: '#7a9e7e', name: 'Salvie' },
+  { hex: '#8a7ab0', name: 'Lavendel' },
+  { hex: '#b07878', name: 'Rosatre' },
+  { hex: '#4a8fa8', name: 'Stålblå' },
+  { hex: '#c4784a', name: 'Terrakotta' },
+  { hex: '#6e9e6e', name: 'Myk grønn' },
+  { hex: '#a85858', name: 'Burgunder' },
+  { hex: '#888878', name: 'Skifer' },
+  { hex: '#9e7858', name: 'Varm mocca' },
+  { hex: '#5888a8', name: 'Dypblå' },
+];
+
+function hexToRgb(hex) {
+  return { r: parseInt(hex.slice(1,3),16), g: parseInt(hex.slice(3,5),16), b: parseInt(hex.slice(5,7),16) };
+}
+function lightenHex(hex, amount) {
+  const { r, g, b } = hexToRgb(hex);
+  return '#' + [r,g,b].map(function(v) { return Math.min(255, Math.round(v + (255-v)*amount)).toString(16).padStart(2,'0'); }).join('');
+}
+function darkenHex(hex, amount) {
+  const { r, g, b } = hexToRgb(hex);
+  return '#' + [r,g,b].map(function(v) { return Math.max(0, Math.round(v*(1-amount))).toString(16).padStart(2,'0'); }).join('');
+}
+
+function applyPrimaryColor(hex, updateInput) {
+  const light = lightenHex(hex, 0.22);
+  const dark  = darkenHex(hex, 0.25);
+  const { r, g, b } = hexToRgb(hex);
+  const root = document.documentElement;
+  root.style.setProperty('--gold',         hex);
+  root.style.setProperty('--gold-light',   light);
+  root.style.setProperty('--gold-dark',    dark);
+  root.style.setProperty('--gold-rgb',     r + ', ' + g + ', ' + b);
+  root.style.setProperty('--glass-border', 'rgba('+r+','+g+','+b+',0.18)');
+  const bgFixed = document.getElementById('bg-fixed');
+  if (bgFixed) {
+    bgFixed.style.background =
+      'radial-gradient(ellipse at 20% 50%, rgba('+r+','+g+','+b+',0.08) 0%, transparent 60%),' +
+      'radial-gradient(ellipse at 80% 20%, rgba('+r+','+g+','+b+',0.06) 0%, transparent 50%),' +
+      'linear-gradient(160deg, #1e1a10 0%, #2a2214 40%, #1a160c 100%)';
+  }
+  const swatch = document.getElementById('color-swatch-preview');
+  if (swatch) swatch.style.background = hex;
+  if (updateInput !== false) {
+    const inp = document.getElementById('color-custom-input');
+    if (inp) inp.value = hex;
+  }
+  document.querySelectorAll('.color-preset').forEach(function(el) {
+    el.classList.toggle('selected', el.dataset.hex === hex);
+  });
+  syncLetterBg();
+}
+
+function savePrimaryColor() {
+  const hex = document.documentElement.style.getPropertyValue('--gold').trim() || '#b8922a';
+  try {
+    const data = JSON.parse(localStorage.getItem('weddingV3') || '{}');
+    data.__primaryColor = hex;
+    localStorage.setItem('weddingV3', JSON.stringify(data));
+  } catch(e) {}
+  // Oppdater visuell cache
+  try {
+    const cache = JSON.parse(localStorage.getItem('weddingVisualCache') || '{}');
+    cache.primaryColor = hex;
+    localStorage.setItem('weddingVisualCache', JSON.stringify(cache));
+  } catch(e) {}
+  // Lagre til Firebase
+  if (window._fb && window._fb.saveSettingsFirestore) {
+    window._fb.saveSettingsFirestore({ __primaryColor: hex }).catch(function() {});
+  }
+  closeColorPicker();
+  const btn = document.querySelector('.edit-save');
+  if (btn) { btn.textContent = '✓ Lagret!'; setTimeout(function(){ btn.textContent = '💾 Lagre'; }, 2000); }
+}
+
+function loadPrimaryColor() {
+  try {
+    const data = JSON.parse(localStorage.getItem('weddingV3') || '{}');
+    if (data.__primaryColor) applyPrimaryColor(data.__primaryColor, true);
+  } catch(e) {}
+}
+
+// ─── MODAL HELPERS ────────────────────────────────────
+// Disse koordinerer display-toggle + transitions slik at backdrop-filter
+// og opacity ikke trigges på samme frame som elementet blir vist —
+// hovedårsaken til "hakkete" pop-up-animasjoner.
+function openModal(id) {
+  const m = document.getElementById(id);
+  if (!m) return;
+  if (m.classList.contains('open')) return;
+  // 1. Sett display: flex så element blir lagt ut i DOM-treet
+  m.style.display = 'flex';
+  // 2. Tving en reflow så browseren maler første frame uten transition
+  // eslint-disable-next-line no-unused-expressions
+  void m.offsetWidth;
+  // 3. Legg på .open i neste frame slik at transitions starter rent
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      m.classList.add('open');
+    });
+  });
+}
+function closeModal(id) {
+  const m = document.getElementById(id);
+  if (!m) return;
+  if (!m.classList.contains('open')) return;
+  m.classList.remove('open');
+  // Vent til transition er ferdig før vi skjuler elementet
+  setTimeout(function() {
+    if (!m.classList.contains('open')) {
+      m.style.display = '';
+    }
+  }, 560);
+}
+window.openModal  = openModal;
+window.closeModal = closeModal;
+
+function openColorPicker() {
+  const modal = document.getElementById('color-modal');
+  const grid  = document.getElementById('color-presets');
+  grid.innerHTML = COLOR_PRESETS.map(function(p) {
+    return '<div class="color-preset" data-hex="'+p.hex+'" title="'+p.name+'" style="background:'+p.hex+'" onclick="applyPrimaryColor(\''+p.hex+'\', true)"></div>';
+  }).join('');
+  const current = document.documentElement.style.getPropertyValue('--gold').trim() || '#b8922a';
+  applyPrimaryColor(current, true);
+  openModal('color-modal');
+}
+function closeColorPicker() {
+  closeModal('color-modal');
+}
+
+// ─── IMAGE MANAGER ────────────────────────────────────
+let currentUploadTarget = null;
+
+function openImgManager() {
+  openModal('img-manager');
+  renderSlideshowGrid();
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    if (saved.bg)  updateBgZonePreviewLocal(saved.bg);
+  } catch(e) {}
+  // bg1 ligger i IndexedDB (større kapasitet enn localStorage).
+  // Bruk current overlay-bilde umiddelbart hvis tilgjengelig så preview
+  // vises uten å vente på IDB.
+  if (window._bg1ImageUrl) {
+    updateBg1ZonePreviewLocal(window._bg1ImageUrl);
+  } else {
+    idbGet && idbGet('bg1').then(function(data) {
+      if (data) updateBg1ZonePreviewLocal(data);
+    }).catch(function() {});
+  }
+}
+function closeImgManager() {
+  closeModal('img-manager');
+}
+function imgTab(tab) {
+  document.querySelectorAll('.imgm-tab').forEach(function(t, i) {
+    t.classList.toggle('active',
+      (i === 0 && tab === 'bg') || (i === 1 && tab === 'slideshow') || (i === 2 && tab === 'anim')
+    );
+  });
+  document.getElementById('imgm-bg').style.display        = tab === 'bg'        ? '' : 'none';
+  document.getElementById('imgm-slideshow').style.display = tab === 'slideshow' ? '' : 'none';
+  document.getElementById('imgm-anim').style.display      = tab === 'anim'      ? '' : 'none';
+}
+
+function triggerUpload(target) {
+  currentUploadTarget = target;
+  const inp = document.getElementById('img-file-input');
+  inp.value = ''; inp.click();
+}
+function triggerSlideUpload(idx) {
+  currentUploadTarget = 'slide-' + idx;
+  const inp = document.getElementById('img-file-input-slide');
+  inp.value = ''; inp.click();
+}
+
+function handleImgUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const dataUrl = ev.target.result;
+    if (currentUploadTarget === 'bg-global') {
+      // Vis lokalt umiddelbart
+      applyBackground(dataUrl);
+      saveBgImageLocal(dataUrl);
+      updateBgZonePreviewLocal(dataUrl);
+      // Last opp til Firebase Storage
+      if (window._fb && window._fb.uploadBgImage) {
+        window._fb.uploadBgImage(dataUrl).then(function(url) {
+          // Oppdater visuell cache med Storage-URL
+          try {
+            const slider = document.getElementById('bg-opacity-slider');
+            const cache = JSON.parse(localStorage.getItem('weddingVisualCache') || '{}');
+            cache.bgImageUrl = url;
+            cache.bgOpacity  = slider ? parseInt(slider.value) : 18;
+            localStorage.setItem('weddingVisualCache', JSON.stringify(cache));
+          } catch(e) {}
+        }).catch(function(err) {
+          console.warn('Firebase bg upload failed:', err);
+        });
+      }
+    } else if (currentUploadTarget === 'bg-slide1') {
+      // Vis lokalt umiddelbart
+      applyBackground1(dataUrl);
+      saveBg1ImageLocal(dataUrl);
+      updateBg1ZonePreviewLocal(dataUrl);
+      // Last opp til Firebase Storage
+      if (window._fb && window._fb.uploadBg1Image) {
+        window._fb.uploadBg1Image(dataUrl).then(function(url) {
+          try {
+            const slider = document.getElementById('bg1-opacity-slider');
+            const cache = JSON.parse(localStorage.getItem('weddingVisualCache') || '{}');
+            cache.bg1ImageUrl = url;
+            cache.bg1Opacity  = slider ? parseInt(slider.value) : 18;
+            localStorage.setItem('weddingVisualCache', JSON.stringify(cache));
+          } catch(e) {}
+        }).catch(function(err) {
+          console.warn('Firebase bg1 upload failed:', err);
+        });
+      }
+    }
+  };
+  reader.onerror = function() { alert('Kunne ikke lese filen. Prøv igjen.'); };
+  reader.readAsDataURL(file);
+}
+
+function handleSlideUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const dataUrl = ev.target.result;
+    if (currentUploadTarget && currentUploadTarget.startsWith('slide-')) {
+      const idx = parseInt(currentUploadTarget.split('-')[1]);
+      applySlideImage(idx, dataUrl);
+      // Lagre lokalt (IndexedDB)
+      idbSet('slide_' + idx, dataUrl)
+        .then(function() { renderSlideshowGrid(); })
+        .catch(function() {
+          try { sessionStorage.setItem('slide_' + idx, dataUrl); } catch(se) {}
+          renderSlideshowGrid();
+        });
+      // Last opp til Firebase Storage
+      if (window._fb && window._fb.uploadSlideImage) {
+        window._fb.uploadSlideImage(idx, dataUrl).catch(function(err) {
+          console.warn('Firebase slide upload failed:', err);
+        });
+      }
+    }
+  };
+  reader.onerror = function() { alert('Kunne ikke lese filen. Prøv igjen.'); };
+  reader.readAsDataURL(file);
+}
+
+// ─── BACKGROUND ───────────────────────────────────────
+function getBgFixed() {
+  const rgb = getComputedStyle(document.documentElement).getPropertyValue('--gold-rgb').trim() || '184, 148, 42';
+  return (
+    'radial-gradient(ellipse at 20% 50%, rgba(' + rgb + ',0.08) 0%, transparent 60%),' +
+    'radial-gradient(ellipse at 80% 20%, rgba(' + rgb + ',0.06) 0%, transparent 50%),' +
+    'linear-gradient(160deg, #1e1a10 0%, #2a2214 40%, #1a160c 100%)'
+  );
+}
+
+function syncLetterBg() {
+  const ltrBg = document.getElementById('env-letter-bg');
+  const ltr   = document.getElementById('env-letter');
+  if (!ltrBg || !ltr) return;
+
+  // Defer hvis envelope-animasjonen pågår:
+  //   - Brukeren har klikket (envDone === true)
+  //   - Men kortet er ikke ennå i "settled"-tilstand
+  // Å manipulere kort-bg eller -img-layer mens kortet er midt i
+  // bevegelse skaper et synlig flash. Utsett til kortet er på plass.
+  if (envDone && !ltr.classList.contains('settled')) {
+    setTimeout(syncLetterBg, 600);
+    return;
+  }
+
+  ltrBg.style.background = getBgFixed();
+  ltrBg.style.opacity = '1';
+  let imgLayer = document.getElementById('env-letter-img');
+  // Kortet (letteret) skal ALLTID vise den vanlige "Bakgrunn", aldri bg1.
+  // bg1 brukes kun som backdrop bak konvolutten på slide 0, ikke inne i kortet.
+  const currentBgUrl     = window._bgImageUrl || null;
+  const currentBgOpacity = window._bgImageOpacity || 0.18;
+  if (!currentBgUrl) {
+    if (imgLayer) imgLayer.style.backgroundImage = 'none';
+    return;
+  }
+  const r   = ltr.getBoundingClientRect();
+  const W   = window.innerWidth, H = window.innerHeight;
+  const pctX = (r.left / Math.max(W - r.width,  1)) * 100;
+  const pctY = (r.top  / Math.max(H - r.height, 1)) * 100;
+  if (!imgLayer) {
+    imgLayer = document.createElement('div');
+    imgLayer.id = 'env-letter-img';
+    imgLayer.style.cssText = 'position:absolute;inset:0;background-size:cover;pointer-events:none;z-index:1;';
+    ltr.insertBefore(imgLayer, ltr.firstChild);
+  }
+  imgLayer.style.backgroundImage    = 'url(' + currentBgUrl + ')';
+  imgLayer.style.backgroundPosition = pctX + '% ' + pctY + '%';
+  imgLayer.style.backgroundSize     = 'cover';
+  imgLayer.style.opacity            = currentBgOpacity;
+}
+
+function applyBackground(dataUrl) {
+  const slider = document.getElementById('bg-opacity-slider');
+  const opacity = slider ? slider.value / 100 : 0.18;
+  window._bgImageUrl     = dataUrl;
+  window._bgImageOpacity = opacity;
+  let overlay = document.getElementById('bg-img-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'bg-img-overlay';
+    // Start med opacity:0 — updateActiveBackground() bestemmer riktig
+    // opacity basert på gjeldende slide. Dette unngår at global "blinker"
+    // inn før bg1 rekker å overstyre den på slide 0.
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;height:100vh;height:100dvh;height:var(--app-100vh, 100dvh);z-index:1;background-size:cover;background-position:center;pointer-events:none;transition:opacity 0.4s;opacity:0;';
+    const bgFixed = document.getElementById('bg-fixed');
+    if (bgFixed && bgFixed.parentNode) bgFixed.after(overlay);
+    else document.body.prepend(overlay);
+  }
+  overlay.style.backgroundImage = 'url(' + dataUrl + ')';
+  updateActiveBackground();
+  syncLetterBg();
+}
+
+function applyBackgroundFromUrl(url, opacity) {
+  window._bgImageUrl     = url;
+  window._bgImageOpacity = (opacity || 18) / 100;
+  let overlay = document.getElementById('bg-img-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'bg-img-overlay';
+    // Start med opacity:0 — updateActiveBackground() styrer synlighet.
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;height:100vh;height:100dvh;height:var(--app-100vh, 100dvh);z-index:1;background-size:cover;background-position:center;pointer-events:none;transition:opacity 0.4s;opacity:0;';
+    const bgFixed = document.getElementById('bg-fixed');
+    if (bgFixed && bgFixed.parentNode) bgFixed.after(overlay);
+    else document.body.prepend(overlay);
+  }
+  overlay.style.backgroundImage = 'url(' + url + ')';
+  updateActiveBackground();
+  syncLetterBg();
+}
+
+function updateBgOpacity(val) {
+  const valEl = document.getElementById('bg-opacity-val');
+  if (valEl) valEl.textContent = val + '%';
+  window._bgImageOpacity = parseInt(val) / 100;
+  const overlay = document.getElementById('bg-img-overlay');
+  if (overlay) overlay.style.opacity = window._bgImageOpacity;
+  updateActiveBackground();
+  syncLetterBg();
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    saved.bgOpacity = val;
+    localStorage.setItem('weddingImages', JSON.stringify(saved));
+  } catch(e) {}
+  // Oppdater visuell cache
+  try {
+    const cache = JSON.parse(localStorage.getItem('weddingVisualCache') || '{}');
+    cache.bgOpacity = parseInt(val);
+    localStorage.setItem('weddingVisualCache', JSON.stringify(cache));
+  } catch(e) {}
+  // Oppdater Firebase
+  if (window._fb && window._fb.saveSettingsFirestore) {
+    window._fb.saveSettingsFirestore({ bgOpacity: parseInt(val) }).catch(function() {});
+  }
+}
+
+function saveBgImageLocal(dataUrl) {
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    saved.bg = dataUrl;
+    const slider = document.getElementById('bg-opacity-slider');
+    saved.bgOpacity = slider ? slider.value : 18;
+    localStorage.setItem('weddingImages', JSON.stringify(saved));
+  } catch(e) {}
+}
+
+function clearBg() {
+  window._bgImageUrl     = null;
+  window._bgImageOpacity = 0.18;
+  const overlay = document.getElementById('bg-img-overlay');
+  if (overlay) overlay.remove();
+  const prev = document.getElementById('bgprev-global');
+  if (prev) { prev.style.backgroundImage = ''; prev.classList.remove('visible'); }
+  const zone = document.getElementById('bgzone-global');
+  if (zone) {
+    zone.classList.remove('has-image');
+    const lbl = zone.querySelector('.imgm-preview-label');
+    if (lbl) lbl.remove();
+  }
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    delete saved.bg;
+    localStorage.setItem('weddingImages', JSON.stringify(saved));
+  } catch(e) {}
+  // Slett fra Firebase
+  if (window._fb && window._fb.deleteBgImage) {
+    window._fb.deleteBgImage().catch(function() {});
+  }
+  // Hvis vi er på slide 0 og det ikke finnes bg1, må vi fjerne letter-img også
+  syncLetterBg();
+  updateActiveBackground();
+}
+
+// ─── BACKGROUND #1 (kun første slide) ─────────────────
+function applyBackground1(dataUrl) {
+  const slider = document.getElementById('bg1-opacity-slider');
+  const opacity = slider ? slider.value / 100 : 0.18;
+  window._bg1ImageUrl     = dataUrl;
+  window._bg1ImageOpacity = opacity;
+  let overlay = document.getElementById('bg-img-overlay-1');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'bg-img-overlay-1';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;height:100vh;height:100dvh;height:var(--app-100vh, 100dvh);z-index:1;background-size:cover;background-position:center;pointer-events:none;transition:opacity 0.4s;opacity:0;';
+    const bgFixed = document.getElementById('bg-fixed');
+    if (bgFixed && bgFixed.parentNode) bgFixed.after(overlay);
+    else document.body.prepend(overlay);
+  }
+  overlay.style.backgroundImage = 'url(' + dataUrl + ')';
+  updateActiveBackground();
+  syncLetterBg();
+}
+
+function applyBackground1FromUrl(url, opacity) {
+  window._bg1ImageUrl     = url;
+  window._bg1ImageOpacity = (opacity || 18) / 100;
+  let overlay = document.getElementById('bg-img-overlay-1');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'bg-img-overlay-1';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;height:100vh;height:100dvh;height:var(--app-100vh, 100dvh);z-index:1;background-size:cover;background-position:center;pointer-events:none;transition:opacity 0.4s;opacity:0;';
+    const bgFixed = document.getElementById('bg-fixed');
+    if (bgFixed && bgFixed.parentNode) bgFixed.after(overlay);
+    else document.body.prepend(overlay);
+  }
+  overlay.style.backgroundImage = 'url(' + url + ')';
+  updateActiveBackground();
+  syncLetterBg();
+}
+window.applyBackground1FromUrl = applyBackground1FromUrl;
+
+function updateBg1Opacity(val) {
+  const valEl = document.getElementById('bg1-opacity-val');
+  if (valEl) valEl.textContent = val + '%';
+  window._bg1ImageOpacity = parseInt(val) / 100;
+  // Hvis bg1 er aktiv (slide 0), oppdater overlay direkte
+  updateActiveBackground();
+  syncLetterBg();
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    saved.bg1Opacity = val;
+    localStorage.setItem('weddingImages', JSON.stringify(saved));
+  } catch(e) {}
+  try {
+    const cache = JSON.parse(localStorage.getItem('weddingVisualCache') || '{}');
+    cache.bg1Opacity = parseInt(val);
+    localStorage.setItem('weddingVisualCache', JSON.stringify(cache));
+  } catch(e) {}
+  if (window._fb && window._fb.saveSettingsFirestore) {
+    window._fb.saveSettingsFirestore({ bg1Opacity: parseInt(val) }).catch(function() {});
+  }
+}
+
+function saveBg1ImageLocal(dataUrl) {
+  // base64 for bakgrunnsbildet kan være 1–3 MB. localStorage er begrenset
+  // til ~5 MB totalt, og deles med "Bakgrunn"-bildet pluss tekstinnstillinger,
+  // så en QuotaExceededError er sannsynlig hvis vi prøver å lagre to bilder
+  // som base64 der. IndexedDB har mye større kapasitet og brukes allerede
+  // for slideshow-bildene — bg1's base64 lagres derfor der.
+  idbSet('bg1', dataUrl).catch(function(e) {
+    console.warn('idbSet bg1 failed:', e);
+  });
+  // Opacity beholdes i localStorage så loading-rekkefølgen kan lese det
+  // synkront sammen med resten av weddingImages-innstillingene.
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    const slider = document.getElementById('bg1-opacity-slider');
+    saved.bg1Opacity = slider ? slider.value : 18;
+    localStorage.setItem('weddingImages', JSON.stringify(saved));
+  } catch(e) {}
+}
+
+function clearBg1() {
+  window._bg1ImageUrl     = null;
+  window._bg1ImageOpacity = 0.18;
+  const overlay = document.getElementById('bg-img-overlay-1');
+  if (overlay) overlay.remove();
+  const prev = document.getElementById('bgprev-slide1');
+  if (prev) { prev.style.backgroundImage = ''; prev.classList.remove('visible'); }
+  const zone = document.getElementById('bgzone-slide1');
+  if (zone) {
+    zone.classList.remove('has-image');
+    const lbl = zone.querySelector('.imgm-preview-label');
+    if (lbl) lbl.remove();
+  }
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    delete saved.bg1;
+    delete saved.bg1Opacity;
+    localStorage.setItem('weddingImages', JSON.stringify(saved));
+  } catch(e) {}
+  // Slett base64 fra IndexedDB også
+  idbDel('bg1').catch(function() {});
+  if (window._fb && window._fb.deleteBg1Image) {
+    window._fb.deleteBg1Image().catch(function() {});
+  }
+  // Re-aktiver global bakgrunn for slide 0 (fallback)
+  updateActiveBackground();
+  syncLetterBg();
+}
+
+function updateBg1ZonePreviewLocal(url) {
+  const zone = document.getElementById('bgzone-slide1');
+  const prev = document.getElementById('bgprev-slide1');
+  if (!zone || !prev) return;
+  prev.style.backgroundImage = 'url(' + url + ')';
+  prev.classList.add('visible');
+  zone.classList.add('has-image');
+  if (!zone.querySelector('.imgm-preview-label')) {
+    const lbl = document.createElement('div');
+    lbl.className = 'imgm-preview-label';
+    lbl.textContent = 'Klikk for å bytte';
+    prev.appendChild(lbl);
+  }
+}
+
+/**
+ * Veksle hvilken bakgrunn som er synlig basert på gjeldende slide.
+ * - Slide 0 (velkomst/konvolutt): vis bg1 hvis satt, ellers global bg.
+ * - Slide 1+: vis global bg.
+ * Begge overlays beholdes i DOM med opacity-overgang for myk veksling.
+ */
+function updateActiveBackground() {
+  const slide   = (typeof cur === 'number') ? cur : 0;
+  const globOv  = document.getElementById('bg-img-overlay');
+  const bg1Ov   = document.getElementById('bg-img-overlay-1');
+  const bg1Url  = window._bg1ImageUrl || null;
+  const bg1Op   = window._bg1ImageOpacity || 0.18;
+  const globOp  = window._bgImageOpacity || 0.18;
+
+  if (slide === 0 && bg1Url) {
+    // Vis slide 1-bakgrunn, skjul global
+    if (bg1Ov) bg1Ov.style.opacity = bg1Op;
+    if (globOv) globOv.style.opacity = '0';
+  } else {
+    // Vis global bakgrunn (eller ingenting), skjul slide 1-bakgrunn
+    if (bg1Ov) bg1Ov.style.opacity = '0';
+    if (globOv && window._bgImageUrl) globOv.style.opacity = globOp;
+  }
+}
+window.updateActiveBackground = updateActiveBackground;
+
+function updateBgZonePreviewLocal(url) {
+  const zone = document.getElementById('bgzone-global');
+  const prev = document.getElementById('bgprev-global');
+  if (!zone || !prev) return;
+  prev.style.backgroundImage = 'url(' + url + ')';
+  prev.classList.add('visible');
+  zone.classList.add('has-image');
+  if (!zone.querySelector('.imgm-preview-label')) {
+    const lbl = document.createElement('div');
+    lbl.className = 'imgm-preview-label';
+    lbl.textContent = 'Klikk for å bytte';
+    prev.appendChild(lbl);
+  }
+}
+
+// ─── HTML ANIMATION (S2) ──────────────────────────────
+// window._animHTML brukes slik at Firebase-modulen kan sette verdien og
+// det ikke-module scriptet kan lese den (lokal variabel ville vært isolert)
+window._animHTML = window._animHTML || null;
+
+function triggerAnimUpload() {
+  document.getElementById('anim-file-input').value = '';
+  document.getElementById('anim-file-input').click();
+}
+
+function handleAnimUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const html = ev.target.result;
+    window._animHTML = html;
+    if (cur === 2) loadAnimIframe();
+    showAnimOverlay();
+    // Lagre lokalt (IDB)
+    idbSet('anim_html', html).catch(function() {});
+    // Last opp til Firebase
+    if (window._fb && window._fb.uploadAnimHtml) {
+      window._fb.uploadAnimHtml(html).catch(function(err) {
+        console.warn('Firebase anim upload failed:', err);
+      });
+    }
+    const zone = document.getElementById('animzone');
+    zone.classList.add('has-anim');
+    zone.querySelector('.imgm-upload-hint').textContent = '✓ ' + file.name + ' lastet opp';
+    zone.querySelector('.imgm-upload-hint2').textContent = 'Klikk for å bytte fil';
+    document.getElementById('anim-controls').style.display = '';
+  };
+  reader.onerror = function() { alert('Kunne ikke lese filen.'); };
+  reader.readAsText(file);
+}
+
+function applyAnimHTML(html) {
+  window._animHTML = html;
+  showAnimOverlay();
+  restoreAnimFrame();
+}
+
+function loadAnimIframe() {
+  if (!window._animHTML) return;
+  const iframe = document.getElementById('anim-iframe');
+  // Persistens: hvis iframen allerede har akkurat denne animasjons-HTML
+  // lastet, hopp over ny lasting. Da beholder animasjonen sin tilstand
+  // (tid, posisjon, intern state) når brukeren forlater slide 2 og
+  // kommer tilbake — i stedet for å starte på nytt fra begynnelsen
+  // hver gang. Tracker nullstilles i clearAnim slik at en ny opplasting
+  // (selv av identisk fil) faktisk laster på nytt.
+  if (window._animLoadedHTML === window._animHTML && iframe.src) return;
+  const injected_style  = '<style>html,body{background:transparent!important;margin:0!important;padding:0!important;}*{box-shadow:none!important;}</style>';
+  const injected_script = '<script>(function(){var lastFwd=0;window.addEventListener("wheel",function(e){var now=Date.now();if(now-lastFwd<50)return;lastFwd=now;try{window.parent.postMessage({type:"iframeWheel",deltaY:e.deltaY},"*");}catch(err){}},{passive:true});var _ty=0;window.addEventListener("touchstart",function(e){_ty=e.touches[0].clientY;},{passive:true});window.addEventListener("touchend",function(e){var d=_ty-e.changedTouches[0].clientY;try{window.parent.postMessage({type:"iframeSwipe",deltaY:d},"*");}catch(err){}},{passive:true});})();<\/script>';
+  const withStyle  = window._animHTML.replace(/<head([^>]*)>/i, '<head$1>' + injected_style);
+  const withScript = withStyle.replace(/<\/body>/i, injected_script + '</body>');
+  const finalHtml  = (withScript.includes('<head') ? withScript : injected_style + injected_script + withScript);
+  if (iframe._blobUrl) { try { URL.revokeObjectURL(iframe._blobUrl); } catch(e) {} }
+  const blob = new Blob([finalHtml], {type: 'text/html'});
+  const url  = URL.createObjectURL(blob);
+  iframe._blobUrl = url;
+  iframe.src = url;
+  // Marker hvilken HTML som nå er lastet, slik at fremtidige
+  // loadAnimIframe-kall kan oppdage at det ikke er noe å gjøre.
+  window._animLoadedHTML = window._animHTML;
+}
+
+function showAnimOverlay() {
+  const overlay = document.getElementById('anim-overlay');
+  overlay.style.display = '';
+  restoreAnimFrame();
+}
+
+function updateAnimFrame() {
+  const w  = document.getElementById('anim-w-slider').value;
+  const h  = document.getElementById('anim-h-slider').value;
+  const op = document.getElementById('anim-op-slider').value;
+  document.getElementById('anim-w-val').textContent  = w  + '%';
+  document.getElementById('anim-h-val').textContent  = h  + '%';
+  document.getElementById('anim-op-val').textContent = op + '%';
+  const overlay = document.getElementById('anim-overlay');
+  if (!overlay) return;
+  overlay.style.width     = w + 'vw';
+  overlay.style.height    = h + 'vh';
+  overlay.style.left      = '50%';
+  overlay.style.top       = '50%';
+  overlay.style.transform = 'translate(-50%, -50%)';
+  overlay.style.opacity   = op / 100;
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingAnim') || '{}');
+    saved.w = w; saved.h = h; saved.op = op;
+    localStorage.setItem('weddingAnim', JSON.stringify(saved));
+  } catch(err) {}
+}
+
+function restoreAnimFrame() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingAnim') || '{}');
+    if (saved.w  != null) { document.getElementById('anim-w-slider').value  = saved.w;  document.getElementById('anim-w-val').textContent  = saved.w  + '%'; }
+    if (saved.h  != null) { document.getElementById('anim-h-slider').value  = saved.h;  document.getElementById('anim-h-val').textContent  = saved.h  + '%'; }
+    if (saved.op != null) { document.getElementById('anim-op-slider').value = saved.op; document.getElementById('anim-op-val').textContent = saved.op + '%'; }
+  } catch(err) {}
+  updateAnimFrame();
+}
+
+function clearAnim() {
+  const overlay = document.getElementById('anim-overlay');
+  overlay.style.display = 'none';
+  document.getElementById('anim-iframe').src = '';
+  document.getElementById('anim-controls').style.display = 'none';
+  // Nullstill persistens-trackeren: iframen er nå tom, så neste
+  // loadAnimIframe må faktisk laste — selv om brukeren skulle laste opp
+  // en identisk fil på nytt.
+  window._animLoadedHTML = null;
+  const zone = document.getElementById('animzone');
+  zone.classList.remove('has-anim');
+  zone.querySelector('.imgm-upload-hint').textContent = 'Klikk for å laste opp .html-animasjon';
+  zone.querySelector('.imgm-upload-hint2').textContent = 'Filen vises som en iframe på slide 3 · kun .html';
+  idbDel('anim_html').catch(function() {});
+  try { localStorage.removeItem('weddingAnim'); } catch(e) {}
+  // Slett fra Firebase
+  if (window._fb && window._fb.deleteAnimFile) {
+    window._fb.deleteAnimFile().catch(function() {});
+  }
+}
+
+// ─── SLIDESHOW IMAGES ─────────────────────────────────
+const SLIDE_PLACEHOLDERS = [
+  'https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=900&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1501183007986-d0d080b147f9?w=900&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=900&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=900&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=900&auto=format&fit=crop'
+];
+
+function applySlideImage(idx, dataUrl) {
+  const img = document.getElementById('vs-' + idx);
+  if (img) img.src = dataUrl;
+}
+
+function clearSlideImage(idx) {
+  const img = document.getElementById('vs-' + idx);
+  if (img) img.src = SLIDE_PLACEHOLDERS[idx];
+  try { sessionStorage.removeItem('slide_' + idx); } catch(e) {}
+  idbDel('slide_' + idx).catch(function() {});
+  // Slett fra Firebase
+  if (window._fb && window._fb.deleteSlideImage) {
+    window._fb.deleteSlideImage(idx).catch(function() {});
+  }
+  setTimeout(function() { renderSlideshowGrid(); }, 100);
+}
+
+function renderSlideshowGrid() {
+  const grid = document.getElementById('imgm-slides-grid');
+  if (!grid) return;
+  grid.innerHTML = Array.from({length: 5}, function(_, i) {
+    return '<div class="imgm-slide-slot" id="imgm-slot-' + i + '" onclick="triggerSlideUpload(' + i + ')">' +
+      '<div class="imgm-slide-thumb" id="imgm-thumb-' + i + '"></div>' +
+      '<div class="imgm-slide-overlay"><div class="imgm-slide-overlay-text">Bytt bilde</div></div>' +
+      '<div class="imgm-slide-num">' + (i + 1) + '</div>' +
+      '<div class="imgm-slide-hint">Last opp</div>' +
+      '<button class="imgm-slide-del" id="imgm-del-' + i + '" onclick="event.stopPropagation();clearSlideImage(' + i + ')">✕</button>' +
+      '</div>';
+  }).join('');
+
+  function applyToGrid(all) {
+    for (let i = 0; i < 5; i++) {
+      const dataUrl = (all && all['slide_' + i]) || null;
+      const slot  = document.getElementById('imgm-slot-' + i);
+      const thumb = document.getElementById('imgm-thumb-' + i);
+      const del   = document.getElementById('imgm-del-' + i);
+      if (!slot || !thumb) continue;
+      const num  = slot.querySelector('.imgm-slide-num');
+      const hint = slot.querySelector('.imgm-slide-hint');
+      if (dataUrl) {
+        thumb.style.backgroundImage = 'url(' + dataUrl + ')';
+        thumb.style.opacity = '1';
+        slot.classList.add('has-image');
+        if (num)  num.style.display  = 'none';
+        if (hint) hint.style.display = 'none';
+        if (del)  del.style.display  = 'flex';
+      } else {
+        const imgEl = document.getElementById('vs-' + i);
+        if (imgEl && imgEl.src) { thumb.style.backgroundImage = 'url(' + imgEl.src + ')'; thumb.style.opacity = '0.3'; }
+        slot.classList.remove('has-image');
+        if (num)  num.style.display  = '';
+        if (hint) hint.style.display = '';
+        if (del)  del.style.display  = 'none';
+      }
+    }
+  }
+  idbGetAll().then(function(all) { applyToGrid(all); }).catch(function() { applyToGrid({}); });
+}
+
+function loadSavedImagesLocal() {
+  let savedBg = null;
+  let savedBgOpacity = 18;
+  try {
+    const saved = JSON.parse(localStorage.getItem('weddingImages') || '{}');
+    // bg1 sin opacity hentes synkront her, men selve base64-bildet ligger
+    // i IndexedDB (se idbGetAll-blokken nedenfor) for å unngå localStorage-
+    // kvotekollisjon med "Bakgrunn".
+    if (saved.bg1Opacity != null) {
+      const opacity = saved.bg1Opacity || 18;
+      const slider = document.getElementById('bg1-opacity-slider');
+      const valEl  = document.getElementById('bg1-opacity-val');
+      if (slider) slider.value = opacity;
+      if (valEl)  valEl.textContent = opacity + '%';
+    }
+    if (saved.bg) {
+      savedBgOpacity = saved.bgOpacity || 18;
+      const slider = document.getElementById('bg-opacity-slider');
+      const valEl  = document.getElementById('bg-opacity-val');
+      if (slider) slider.value = savedBgOpacity;
+      if (valEl)  valEl.textContent = savedBgOpacity + '%';
+      savedBg = saved.bg;
+      // VIKTIG: vi kaller IKKE applyBackground(saved.bg) ennå. Hvis vi
+      // gjør det her — synkront, før IDB-promisen for bg1 har resolvert —
+      // og brukeren er på slide 0 mens _bg1ImageUrl fortsatt er null,
+      // havner updateActiveBackground() i else-grenen og viser global.
+      // Bg1 toner inn først noen hundre ms senere. Resultat: en synlig
+      // global-flash på slide 0. Vi venter til etter IDB-resultat.
+    }
+  } catch(e) {}
+  idbGetAll()
+    .then(function(all) {
+      // bg1 fra IDB FØRST — slik at _bg1ImageUrl er satt før vi anvender
+      // global bg. Da kan updateActiveBackground() umiddelbart skjule
+      // global-overlay på slide 0 og brukeren ser bg1 direkte.
+      if (all['bg1']) {
+        applyBackground1(all['bg1']);
+        updateBg1ZonePreviewLocal(all['bg1']);
+      }
+      // NÅ kan vi trygt anvende global bg — _bg1ImageUrl er satt om den
+      // finnes, så updateActiveBackground() vil holde global skjult på
+      // slide 0 fra det øyeblikket den globale overlayen opprettes.
+      if (savedBg) applyBackground(savedBg);
+      for (let i = 0; i < 5; i++) {
+        if (all['slide_' + i]) applySlideImage(i, all['slide_' + i]);
+      }
+      if (all['anim_html']) {
+        applyAnimHTML(all['anim_html']);
+        document.getElementById('anim-controls').style.display = '';
+        const zone = document.getElementById('animzone');
+        if (zone) {
+          zone.classList.add('has-anim');
+          zone.querySelector('.imgm-upload-hint').textContent = '✓ Animasjon lastet';
+        }
+      }
+    })
+    .catch(function() {
+      // Hvis IDB feiler: anvend savedBg likevel for ikke å miste global.
+      // Brukeren har da bare global synlig — bedre enn ingen bakgrunn.
+      if (savedBg) applyBackground(savedBg);
+    });
+}
+
+// ─── RSVP ─────────────────────────────────────────────
+function getRsvpsLocal() {
+  try { return JSON.parse(localStorage.getItem('rsvpList') || '[]'); } catch(e) { return []; }
+}
+
+/**
+ * Åpne RSVP-dashboardet.
+ * Henter fra Firebase for å vise alle svar (inkl. fra andre enheter).
+ */
+async function openRsvpDash() {
+  openModal('rsvp-dash');
+  // Vis lokale data umiddelbart
+  renderRsvpDash(getRsvpsLocal());
+  // Oppdater med Firebase-data
+  if (window._fb && window._fb.loadRsvpsFirestore) {
+    try {
+      const rsvps = await window._fb.loadRsvpsFirestore();
+      if (rsvps.length > 0) renderRsvpDash(rsvps);
+    } catch(err) {
+      console.warn('Could not load RSVP from Firebase:', err);
+    }
+  }
+}
+
+function renderRsvpDash(rsvps) {
+  const statsEl = document.getElementById('rdash-stats');
+  const listEl  = document.getElementById('rdash-list');
+  const yesE = rsvps.filter(function(r) { return r.coming === 'yes'; });
+  const noE  = rsvps.filter(function(r) { return r.coming === 'no'; });
+  const totalG = yesE.reduce(function(s, r) { return s + (parseInt(r.count) || 1); }, 0);
+  statsEl.innerHTML =
+    '<div class="rstat-card rstat-yes"><div class="rstat-num">' + yesE.length + '</div><div class="rstat-lbl">Kommer</div><div class="rstat-guests">' + totalG + ' gjest' + (totalG !== 1 ? 'er' : '') + '</div></div>' +
+    '<div class="rstat-card rstat-no"><div class="rstat-num">' + noE.length + '</div><div class="rstat-lbl">Kan ikke</div></div>' +
+    '<div class="rstat-card rstat-total"><div class="rstat-num">' + rsvps.length + '</div><div class="rstat-lbl">Totalt svar</div></div>';
+  listEl.innerHTML = rsvps.length === 0 ? '<div class="rdash-empty">Ingen svar ennå 🌿</div>' :
+    rsvps.map(function(r, i) {
+      return '<div class="rdash-entry">' +
+        '<div class="rdash-entry-header"><span class="rdash-entry-name">' + escHtml(r.name) + '</span>' +
+        '<span class="rdash-badge ' + (r.coming === 'yes' ? 'badge-yes' : 'badge-no') + '">' + (r.coming === 'yes' ? '✓ Kommer' : '✗ Kan ikke') + '</span></div>' +
+        '<div class="rdash-entry-info">' + (r.coming === 'yes' ? r.count + ' person' + (r.count > 1 ? 'er' : '') : '') + '</div>' +
+        ((r.guestNames && r.guestNames.filter(function(n){return n;}).length) ?
+          '<div style="font-size:10px;color:var(--light);margin-top:3px;line-height:1.7;">' +
+          r.guestNames.filter(function(n){return n;}).map(function(n,j){return (j+2)+'. '+escHtml(n);}).join(' &nbsp;·&nbsp; ') +
+          '</div>' : '') +
+        ((r.allergy || r.msg) ?
+          '<button class="rdash-detail-btn" onclick="toggleDetail(' + i + ')">Detaljer ▾</button>' +
+          '<div class="rdash-entry-detail" id="rdash-det-' + i + '">' +
+          (r.allergy ? '<b>Allergier:</b> ' + escHtml(r.allergy) + '<br>' : '') +
+          (r.msg ? '<b>Melding:</b> ' + escHtml(r.msg) : '') + '</div>' : '') +
+        '</div>';
+    }).join('');
+}
+
+function toggleDetail(i) { const el = document.getElementById('rdash-det-' + i); if (el) el.classList.toggle('open'); }
+function escHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+// ─── ENVELOPE ─────────────────────────────────────────
+function openEnv() {
+  if (envDone) return;
+  envDone = true;
+  const hint  = document.getElementById('env-hint-text');
+  const names = document.querySelector('.env-names');
+  const wax   = document.getElementById('env-wax');
+  const flap  = document.getElementById('env-flap');
+  const ltr   = document.getElementById('env-letter');
+  const front = document.getElementById('env-front');
+  const cue   = document.getElementById('s0-scroll-cue');
+
+  // ── KOREOGRAFI (eksakt kopi fra original-fil) ───────
+  // 0 ms     : voks-stempel og hint forsvinner
+  // 300 ms   : lokket begynner å åpne (1.4 s — beholdt animasjon)
+  // 1300 ms  : kortet begynner å stige (0.85 s) — overlapper slutten av flap
+  //            env-front heves til z-index 7 så kortet går gjennom V-åpning
+  // 2200 ms  : settled (0.7 s) — env-front senkes til z-index 3
+  //            slik at kortet faller OVER hele konvolutten (som original)
+  // 2600 ms  : scroll-cue toner inn
+  // ─────────────────────────────────────────────────────
+
+  hint.style.animation = 'none';
+  hint.style.transition = 'opacity 0.3s'; hint.style.opacity = '0';
+  if (names) { names.style.opacity = '0'; }
+  wax.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+  wax.style.transform = 'translate(-50%,-50%) scale(0) rotate(20deg)'; wax.style.opacity = '0';
+
+  setTimeout(function() {
+    flap.classList.add('open');
+    setTimeout(function() {
+      // Hev V-formen FORAN kortet, slik at kortet trekkes gjennom åpningen
+      if (front) front.style.zIndex = '7';
+      ltr.classList.add('rising');
+      setTimeout(function() {
+        ltr.classList.remove('rising');
+        ltr.classList.add('settled');
+        // Senk V-formen tilbake — kortet faller nå OVER hele konvolutten
+        if (front) front.style.zIndex = '3';
+        setTimeout(function() { if (cue) cue.style.opacity = '1'; }, 400);
+        setTimeout(syncLetterBg, 50);
+        setTimeout(function() {
+          if (cur === 0 && envDone) go(1);
+        }, autoTimerSec * 1000);
+      }, 900);
+    }, 1000);
+  }, 300);
+}
+
+// ─── SLIDESHOW (S4) ───────────────────────────────────
+const VS_COUNT = 5;
+let _vsRestartTimer = null;
+let _vsInteractionReady = false;
+
+function vsGo(idx) {
+  if (idx === vsIdx) return;
+  const dots = document.querySelectorAll('.vdot');
+  if (dots[vsIdx]) dots[vsIdx].classList.remove('on');
+  const prevImg = document.getElementById('vs-' + vsIdx);
+  vsIdx = idx;
+  const nextImg = document.getElementById('vs-' + vsIdx);
+  if (dots[vsIdx]) dots[vsIdx].classList.add('on');
+  if (nextImg) nextImg.classList.add('active');
+  // Fjern .active fra forrige bilde litt etter at det nye er fadet inn,
+  // slik at cross-fade ser jevnere ut.
+  setTimeout(function() { if (prevImg) prevImg.classList.remove('active'); }, 200);
+}
+function vsReset() {
+  // Tving alle bilder til riktig start-tilstand (kun bilde 0 aktivt).
+  document.querySelectorAll('.villa-show-wrap img').forEach(function(img, i) {
+    img.classList.toggle('active', i === 0);
+  });
+  document.querySelectorAll('.vdot').forEach(function(d, i) {
+    d.classList.toggle('on', i === 0);
+  });
+  vsIdx = 0;
+}
+function vsNext() {
+  if (cur !== 4) return;
+  vsStop();
+  vsGo((vsIdx + 1) % VS_COUNT);
+  vsScheduleRestart();
+}
+function vsPrev() {
+  if (cur !== 4) return;
+  vsStop();
+  vsGo((vsIdx - 1 + VS_COUNT) % VS_COUNT);
+  vsScheduleRestart();
+}
+function vsScheduleRestart() {
+  // Pause auto-cycle i 5s etter manuell interaksjon, så restart.
+  if (_vsRestartTimer) clearTimeout(_vsRestartTimer);
+  _vsRestartTimer = setTimeout(function() {
+    if (cur === 4) vsStart();
+    _vsRestartTimer = null;
+  }, 5000);
+}
+function vsStart() {
+  if (vsTimer) clearInterval(vsTimer);
+  vsTimer = setInterval(function() { vsGo((vsIdx + 1) % VS_COUNT); }, 6500);
+}
+function vsStop() {
+  if (vsTimer) { clearInterval(vsTimer); vsTimer = null; }
+}
+
+// Sett opp tap-soner + swipe på villa-bildet (én gang)
+function setupVillaInteraction() {
+  if (_vsInteractionReady) return;
+  const wrap = document.getElementById('villa-show');
+  if (!wrap) return;
+  _vsInteractionReady = true;
+
+  let startX = 0, startY = 0, startTime = 0;
+  let swipeHandled = false;
+  let touchActive  = false;
+
+  // ── TOUCH (swipe + tap) ─────────────────────────────
+  wrap.addEventListener('touchstart', function(e) {
+    if (e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    startTime = Date.now();
+    swipeHandled = false;
+    touchActive = true;
+  }, { passive: true });
+
+  // Non-passive touchmove så vi kan stoppe browserens scroll under
+  // KLAR horisontal swipe. Vertikal/diagonal lar vi være — den
+  // bobler til window.touchend slik at brukeren kan bla slide
+  // selv om touch starter på villa-bildet.
+  wrap.addEventListener('touchmove', function(e) {
+    if (!touchActive || e.touches.length !== 1) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+    // Kun hvis bevegelsen er klart horisontal-dominant — så vertikal
+    // swipe forblir tilgjengelig som slide-navigation.
+    if (absDx > 18 && absDx > absDy * 1.4) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  wrap.addEventListener('touchend', function(e) {
+    if (!touchActive) return;
+    touchActive = false;
+    if (e.changedTouches.length !== 1) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    const dt = Date.now() - startTime;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+
+    // Horisontal swipe = bildebytte (lokal handling).
+    // Krav: rask nok (<700ms), klart horisontal-dominant (1.2x ratio).
+    // Bredde-terskel er 35px — gjør det enkelt å bla bilder.
+    if (absDx > 35 && absDx > absDy * 1.2 && dt < 700) {
+      swipeHandled = true;
+      // Stopper kun propagation for HORISONTAL swipe — vertikal og
+      // diagonal bobler til window.touchend og kan bla slide normalt.
+      e.stopPropagation();
+      if (dx < 0) vsNext();
+      else        vsPrev();
+      return;
+    }
+    // For alt annet (vertikal swipe, klare diagonaler, tap): la
+    // window.touchend få eventet uendret. Hvis det er vertikalt nok
+    // til å være en slide-swipe, blar slide-systemet videre — så
+    // brukeren blir ikke "stuck" på villa-bildet.
+  }, { passive: true });
+
+  wrap.addEventListener('touchcancel', function() {
+    touchActive = false;
+  }, { passive: true });
+
+  // ── CLICK (PC og tap på mobil) ──────────────────────
+  wrap.addEventListener('click', function(e) {
+    // Hvis nettopp swipe ble håndtert, ignorer klikk-eventet
+    if (swipeHandled) { swipeHandled = false; return; }
+    const rect = wrap.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if (x < rect.width / 2) vsPrev();
+    else                    vsNext();
+  });
+
+  // ── KEYBOARD (tastatur-navigasjon for PC) ───────────
+  window.addEventListener('keydown', function(e) {
+    if (cur !== 4 || landed) return;
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); vsPrev(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); vsNext(); }
+  });
+}
+
+// ─── MORPH TRANSITION ─────────────────────────────────
+function morphToSlide1() {
+  const ltr     = document.getElementById('env-letter');
+  const s1      = document.getElementById('s1');
+  const overlay = document.getElementById('morph-overlay');
+  const vvp = window.visualViewport || { width: window.innerWidth, height: window.innerHeight };
+  const W = vvp.width, H = vvp.height;
+  const r = ltr.getBoundingClientRect();
+  const letterCX = r.left + r.width  / 2;
+  const letterCY = r.top  + r.height / 2;
+  const screenCX = W / 2, screenCY = H / 2;
+  const scaleX = r.width  / W, scaleY = r.height / H;
+  const startScale = Math.max(scaleX, scaleY);
+  const dx = letterCX - screenCX, dy = letterCY - screenCY;
+  const nameEl = overlay.querySelector('.mo-names');
+  const ruleEl = overlay.querySelector('.mo-rule');
+  const subEl  = overlay.querySelector('.mo-sub');
+  const targetNameSize = Math.min(72, W * 0.14);
+  const targetSubSize  = 11;
+  const startNameSize = Math.max(targetNameSize * startScale, 10);
+  const startSubSize  = Math.max(targetSubSize  * startScale, 6);
+
+  overlay.style.transition = 'none';
+  overlay.style.willChange = 'transform, opacity, border-radius';
+  overlay.style.top    = '0'; overlay.style.left   = '0';
+  overlay.style.width  = W + 'px'; overlay.style.height = H + 'px';
+  overlay.style.borderRadius = '6px';
+  overlay.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + startScale + ')';
+  overlay.style.opacity = '1';
+
+  const moBg = document.getElementById('morph-overlay-bg');
+  if (moBg) { moBg.style.transition = 'none'; moBg.style.background = getBgFixed(); moBg.style.opacity = '1'; }
+
+  let moImg = document.getElementById('morph-overlay-img');
+  if (!moImg) {
+    moImg = document.createElement('div');
+    moImg.id = 'morph-overlay-img';
+    moImg.style.cssText = 'position:absolute;inset:0;background-size:cover;pointer-events:none;z-index:1;transition:none;';
+    overlay.insertBefore(moImg, overlay.firstChild);
+  }
+  // Morph-overlayet representerer kortet som zoomer inn — det skal vise
+  // den vanlige "Bakgrunn", aldri bg1 (bg1 ligger bak konvolutten på slide 0).
+  const currentBgUrl     = window._bgImageUrl || null;
+  const currentBgOpacity = window._bgImageOpacity || 0.18;
+  if (currentBgUrl) {
+    const pctX = (r.left / Math.max(W - r.width,  1)) * 100;
+    const pctY = (r.top  / Math.max(H - r.height, 1)) * 100;
+    moImg.style.transition = 'none';
+    moImg.style.backgroundImage = 'url(' + currentBgUrl + ')';
+    moImg.style.backgroundSize = 'cover';
+    moImg.style.backgroundPosition = pctX + '% ' + pctY + '%';
+    moImg.style.opacity = currentBgOpacity;
+  } else { moImg.style.backgroundImage = 'none'; }
+
+  nameEl.style.transition = 'none'; nameEl.style.transform  = 'none'; nameEl.style.fontSize   = startNameSize + 'px';
+  ruleEl.style.transition = 'none'; ruleEl.style.width      = '28px'; ruleEl.style.margin     = '6px auto';
+  subEl.style.transition  = 'none'; subEl.style.fontSize    = startSubSize + 'px';
+
+  ltr.style.visibility = 'hidden';
+  s1.style.transition = 'none'; s1.style.opacity = '0';
+  cur = 1;
+  window.cur = cur;
+  // Vi er nå "på" slide 1 — veksle bakgrunnene (skjul bg1-overlay, vis global)
+  if (window.updateActiveBackground) window.updateActiveBackground();
+  for (let i = 0; i < NSLIDES; i++) {
+    const el = document.getElementById('s' + i);
+    if (!el) continue;
+    el.style.transition = 'none';
+    el.style.transform  = 'translateY(calc(' + (i - 1) + ' * var(--app-100vh, 100vh)))';
+  }
+  document.querySelectorAll('.sdot').forEach(function(d, i) { d.classList.toggle('on', i === 1); });
+
+  const EXPAND_DUR = 920;
+  const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      overlay.style.transition = 'transform ' + EXPAND_DUR + 'ms ' + EASE + ', border-radius ' + EXPAND_DUR + 'ms ' + EASE;
+      overlay.style.transform    = 'translate(0,0) scale(1)';
+      overlay.style.borderRadius = '0px';
+      const moImg2 = document.getElementById('morph-overlay-img');
+      if (moImg2 && moImg2.style.backgroundImage && moImg2.style.backgroundImage !== 'none') {
+        moImg2.style.transition = 'background-position ' + EXPAND_DUR + 'ms ' + EASE;
+        moImg2.style.backgroundPosition = '50% 50%';
+      }
+      nameEl.style.transition = 'font-size ' + EXPAND_DUR + 'ms ' + EASE;
+      ruleEl.style.transition = 'width ' + EXPAND_DUR + 'ms ' + EASE + ', margin ' + EXPAND_DUR + 'ms ' + EASE;
+      subEl.style.transition  = 'font-size ' + EXPAND_DUR + 'ms ' + EASE;
+      nameEl.style.fontSize = targetNameSize + 'px';
+      ruleEl.style.width    = '40px'; ruleEl.style.margin = '14px auto';
+      subEl.style.fontSize  = targetSubSize + 'px';
+    });
+  });
+
+  const FADE_DUR   = 540;
+  const FADE_START = EXPAND_DUR - 160;
+  setTimeout(function() {
+    s1.style.transition = 'opacity ' + FADE_DUR + 'ms ' + EASE; s1.style.opacity = '1';
+    overlay.style.transition = 'opacity ' + FADE_DUR + 'ms ' + EASE; overlay.style.opacity = '0';
+    setTimeout(function() {
+      overlay.style.transition = 'none'; overlay.style.transform  = 'translate(0,0) scale(0)';
+      overlay.style.opacity = '0'; overlay.style.width = '0'; overlay.style.height = '0';
+      overlay.style.willChange = 'auto';
+      // Fjern morph-overlay-img fra DOM så det ikke ligger igjen som et mørkt lag
+      const oldMoImg = document.getElementById('morph-overlay-img');
+      if (oldMoImg) oldMoImg.parentNode.removeChild(oldMoImg);
+      ltr.style.visibility = 'visible';
+      s1.style.opacity = ''; s1.style.transition = '';
+      busy = false;
+    }, FADE_DUR + 40);
+  }, FADE_START);
+}
+
+// ─── SLIDE NAVIGATION ─────────────────────────────────
+let mapInfoTimer = null;
+
+// ID som økes ved hver go()-overgang. Brukes til å la setTimeout-callbacks
+// (frigjøring av will-change, info-kort) avbryte seg selv hvis en ny
+// overgang har startet i mellomtiden. Dette lar brukeren bla videre uten
+// å vente på at forrige slide har glidd helt på plass.
+let _navSeq = 0;
+
+function go(idx) {
+  if (idx === cur) return;
+  if (!envDone && idx > 0) return;
+  if (idx < 0 || idx >= NSLIDES) return;
+  if (cur === 4) vsStop();
+  // Spesialovergang fra slide 0 til 1: zoom-morph av konvolutten.
+  // Hvis morphen allerede er i gang og brukeren vil bla videre, avbryt
+  // morphen først og kjør en vanlig translateY-overgang i stedet.
+  if (cur === 0 && idx === 1) {
+    if (busy) {
+      // Morphen pågår — la den fullføre. Brukeren får ikke avbryte 0→1.
+      return;
+    }
+    busy = true; morphToSlide1(); return;
+  }
+  // Hvis morph fra 0→1 fortsatt pågår, ignorer videre kommandoer
+  // (overlay-state er midt i animasjon og kan ikke trygt avbrytes her).
+  if (busy && cur === 1 && idx > 1) {
+    // Vent — sjekk om morphen er i ferdig-tilstanden (overlay er fjernet)
+    const morphOv = document.getElementById('morph-overlay');
+    if (morphOv && morphOv.style.opacity !== '0' &&
+        parseFloat(morphOv.style.width || '0') > 0) {
+      return; // morph pågår fortsatt
+    }
+    // Hvis vi kommer hit har morphen blitt visuelt skjult — fortsett
+  }
+  if (mapInfoTimer) { clearTimeout(mapInfoTimer); mapInfoTimer = null; }
+  if (cur === 2 && idx !== 2) {
+    const card = document.getElementById('map-info-card');
+    if (card) card.classList.remove('visible');
+    const animOverlay = document.getElementById('anim-overlay');
+    if (animOverlay) animOverlay.style.display = 'none';
+  }
+  cur = idx;
+  window.cur = cur;
+  // Veksle synlighet på bakgrunner (slide 0 kan ha sin egen bg1)
+  if (window.updateActiveBackground) window.updateActiveBackground();
+  // Ny navigasjons-ID slik at tidligere overgangers timeouts blir nullet
+  const mySeq = ++_navSeq;
+  for (let i = 0; i < NSLIDES; i++) {
+    const el = document.getElementById('s' + i);
+    if (!el) continue;
+    el.style.willChange = 'transform';
+    el.style.transition = 'transform 0.95s cubic-bezier(0.22, 1, 0.36, 1)';
+    el.style.transform = 'translateY(calc(' + (i - idx) + ' * var(--app-100vh, 100vh)))';
+  }
+  // Frigjør will-change etter overgangen — men bare hvis denne overgangen
+  // er fortsatt den siste (ellers kan vi rive ut will-change midt i en
+  // ny overgang som brukeren startet).
+  setTimeout(function() {
+    if (mySeq !== _navSeq) return;
+    for (let i = 0; i < NSLIDES; i++) {
+      const el = document.getElementById('s' + i);
+      if (el) el.style.willChange = 'auto';
+    }
+  }, 1100);
+  document.querySelectorAll('.sdot').forEach(function(d, i) { d.classList.toggle('on', i === idx); });
+  if (idx === 2 && window._animHTML) {
+    // Persistent animasjon: loadAnimIframe() hopper over reload hvis HTML
+    // er uendret, slik at animasjonen beholder tilstanden sin når brukeren
+    // forlater slide 2 og kommer tilbake. Vi må derimot alltid SHOWE
+    // overlayet igjen — det ble skjult i (cur === 2 && idx !== 2)-blokken
+    // over da brukeren forlot slide 2.
+    loadAnimIframe();
+    const animOverlay = document.getElementById('anim-overlay');
+    if (animOverlay) animOverlay.style.display = '';
+  }
+  if (idx === 2) {
+    // Vis info-kort 2.5 sekunder etter at slide har landet — men avbryt
+    // om brukeren har blad videre i mellomtiden.
+    mapInfoTimer = setTimeout(function() {
+      if (mySeq !== _navSeq) return;
+      const card = document.getElementById('map-info-card');
+      if (card) card.classList.add('visible');
+      mapInfoTimer = null;
+    }, 2500);
+  }
+  if (idx === 4) {
+    setupVillaInteraction();  // én gang — er idempotent
+    vsReset();
+    setTimeout(function() {
+      if (mySeq !== _navSeq) return;
+      vsStart();
+    }, 700);
+  } else {
+    // Ute av slide 4 — kanseller eventuell pause-timer
+    if (_vsRestartTimer) { clearTimeout(_vsRestartTimer); _vsRestartTimer = null; }
+  }
+  // busy-flagget brukes nå kun for å beskytte morph-overgangen 0→1.
+  // For alle andre overganger er det aldri satt, så brukeren kan kalle
+  // go() når som helst og avbryte den pågående translate-en.
+}
+
+// ─── SCROLL / TOUCH ───────────────────────────────────
+window.addEventListener('message', function(e) {
+  if (!e.data || typeof e.data !== 'object') return;
+  if (e.data.type === 'iframeWheel') handleScroll(e.data.deltaY);
+  else if (e.data.type === 'iframeSwipe') handleSwipe(e.data.deltaY);
+});
+
+function handleScroll(deltaY) {
+  if (landed) { if (deltaY < -40) reviveLanding(); return; }
+  const now = Date.now();
+  // Throttle: nok til å unngå at et enkelt scroll-event registreres flere
+  // ganger (musehjul sender mange små eventer på kort tid), men kort nok
+  // til at brukeren kan bla raskt gjennom flere slides etter hverandre.
+  if (now - lastWheel < 220) return;
+  if (deltaY > 20) {
+    if (!envDone) return; lastWheel = now;
+    if (cur < NSLIDES - 1) go(cur + 1); else exitLanding();
+  } else if (deltaY < -20) {
+    lastWheel = now;
+    if (cur > 1) go(cur - 1); else if (cur === 1) go(0);
+  }
+}
+function handleSwipe(d) {
+  if (landed) { if (d < -50) reviveLanding(); return; }
+  if (Math.abs(d) < 38) return;
+  if (d > 0) { if (!envDone) return; if (cur < NSLIDES - 1) go(cur + 1); else exitLanding(); }
+  else { if (cur > 1) go(cur - 1); else if (cur === 1) go(0); }
+}
+
+// Sjekk om en touch starter inni et element som kan scrolles vertikalt.
+// Dette gjør at swipe inni et åpent RSVP-skjema, en timeline, en FAQ-modal,
+// eller andre cards med overflow-y: auto IKKE blar til neste slide.
+function isInsideScrollable(el) {
+  while (el && el !== document.body && el.nodeType === 1) {
+    // Modal-bakgrunner skal alltid svelge swipe — innholdet håndterer
+    // sin egen scroll og vi vil ikke at slide-systemet trigges når
+    // brukeren navigerer inni en modal.
+    // Merk: villa-show er IKKE i denne listen. Vertikal swipe der må
+    // fortsatt bla slide; villa-handleren stopper bare horisontale
+    // swipes lokalt (bildebytte).
+    if (el.id === 'faq-modal' || el.id === 'rsvp-dash' ||
+        el.id === 'img-manager' || el.id === 'color-modal') {
+      return true;
+    }
+    if (el.scrollHeight > el.clientHeight + 1) {
+      const style = window.getComputedStyle(el);
+      if (style.overflowY === 'auto' || style.overflowY === 'scroll') {
+        return true;
+      }
+    }
+    el = el.parentElement;
+  }
+  return false;
+}
+
+// Wheel: hvis brukeren scroller inni et card, ikke bla slide
+window.addEventListener('wheel', function(e) {
+  if (isInsideScrollable(e.target)) return;
+  handleScroll(e.deltaY);
+}, { passive: true });
+
+// Touch: lagre om touch startet inni scrollable card.
+let _touchInScrollable = false;
+window.addEventListener('touchstart', function(e) {
+  if (!e.touches[0]) return;
+  touchY = e.touches[0].clientY;
+  _touchInScrollable = isInsideScrollable(e.target);
+}, { passive: true });
+window.addEventListener('touchend', function(e) {
+  if (_touchInScrollable) { _touchInScrollable = false; return; }
+  if (!e.changedTouches[0]) return;
+  handleSwipe(touchY - e.changedTouches[0].clientY);
+}, { passive: true });
+
+function exitLanding() {
+  if (landed) return; landed = true;
+  document.getElementById('landing').classList.add('exiting');
+  document.getElementById('slide-dots').classList.remove('show');
+  const faqBtn = document.getElementById('faq-btn');
+  // FAQ-knapp synes nå via .visible-klassen, ikke display
+  faqBtn.style.display = 'block';
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      faqBtn.classList.add('visible');
+    });
+  });
+  document.getElementById('main').classList.add('visible');
+}
+function reviveLanding() {
+  if (!landed) return; landed = false;
+  document.getElementById('landing').classList.remove('exiting');
+  document.getElementById('slide-dots').classList.add('show');
+  const faqBtn = document.getElementById('faq-btn');
+  faqBtn.classList.remove('visible');
+  setTimeout(function() {
+    if (!landed) return; // brukeren kan ha eksitert igjen
+    faqBtn.style.display = 'none';
+  }, 500);
+  document.getElementById('main').classList.remove('visible');
+  cur = NSLIDES - 1;
+  window.cur = cur;
+  for (let i = 0; i < NSLIDES; i++) {
+    const el = document.getElementById('s' + i);
+    if (el) {
+      el.style.transition = 'none';
+      el.style.transform = 'translateY(calc(' + (i - cur) + ' * var(--app-100vh, 100vh)))';
+    }
+  }
+  document.querySelectorAll('.sdot').forEach(function(d, i) { d.classList.toggle('on', i === cur); });
+}
+
+// ─── COUNTDOWN ────────────────────────────────────────
+function setCdNum(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.textContent === value) return;
+  el.textContent = value;
+  // Subtle tick-animasjon (særlig pent for sekunder)
+  el.classList.remove('tick');
+  void el.offsetWidth; // tving reflow så animasjonen kan trigge igjen
+  el.classList.add('tick');
+  setTimeout(function() { el.classList.remove('tick'); }, 380);
+}
+function countdown() {
+  const diff = new Date('2027-05-22T15:00:00') - new Date();
+  if (diff <= 0) return;
+  setCdNum('cd-d', String(Math.floor(diff / 86400000)));
+  setCdNum('cd-h', String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0'));
+  setCdNum('cd-m', String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0'));
+  setCdNum('cd-s', String(Math.floor((diff % 60000) / 1000)).padStart(2, '0'));
+}
+
+// ─── RSVP SKJEMA ──────────────────────────────────────
+function pickRsvp(v) {
+  document.getElementById('f-yes').classList.toggle('active', v === 'yes');
+  document.getElementById('f-no').classList.toggle('active', v === 'no');
+}
+function step(d) {
+  const el = document.getElementById('f-count');
+  const newVal = Math.max(1, Math.min(10, parseInt(el.value) + d));
+  if (newVal === parseInt(el.value)) return;
+  el.value = newVal;
+  el.classList.remove('bump');
+  void el.offsetWidth;
+  el.classList.add('bump');
+  setTimeout(function() { el.classList.remove('bump'); }, 280);
+  renderGuestNames(newVal);
+}
+function renderGuestNames(count) {
+  const container = document.getElementById('f-guest-names');
+  if (!container) return;
+  const existing = {};
+  container.querySelectorAll('input[data-guest]').forEach(function(inp) { existing[inp.dataset.guest] = inp.value; });
+  if (count <= 1) { container.innerHTML = ''; return; }
+  let html = '<div class="f-label" style="margin-bottom:8px;">Navn på øvrige gjester</div>';
+  for (let i = 2; i <= count; i++) {
+    html += '<div class="f-guest-entry"><span class="f-guest-num">' + i + '.</span>' +
+      '<input class="f-input" data-guest="' + i + '" type="text" placeholder="For- og etternavn" value="' + (existing[i] || '') + '"></div>';
+  }
+  container.innerHTML = html;
+}
+
+function sendRsvp() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Vennligst skriv inn ditt navn.'); return; }
+  const coming = document.getElementById('f-yes').classList.contains('active') ? 'yes'
+    : document.getElementById('f-no').classList.contains('active') ? 'no' : null;
+  if (!coming) { alert('Vennligst velg om du kommer.'); return; }
+  const count = parseInt(document.getElementById('f-count').value) || 1;
+  const guestNames = [];
+  document.querySelectorAll('#f-guest-names input[data-guest]').forEach(function(inp) { guestNames.push(inp.value.trim()); });
+  const entry = {
+    name: name, coming: coming, count: count, guestNames: guestNames,
+    allergy: document.getElementById('f-allergy').value.trim(),
+    msg: document.getElementById('f-msg').value.trim(),
+    ts: new Date().toISOString()
+  };
+
+  // Lagre lokalt
+  const rsvps = getRsvpsLocal(); rsvps.push(entry);
+  try { localStorage.setItem('rsvpList', JSON.stringify(rsvps)); } catch(e) {}
+
+  // Send til Firebase Firestore
+  if (window._fb && window._fb.saveRsvpFirestore) {
+    window._fb.saveRsvpFirestore(entry);
+  }
+
+  // Pen cross-fade fra skjema til takk-melding
+  const form   = document.getElementById('rsvp-form');
+  const thanks = document.getElementById('rsvp-thanks');
+  form.classList.add('fade-out');
+  setTimeout(function() {
+    form.style.display = 'none';
+    thanks.style.display = 'block';
+    // Tving reflow før .fade-in legges på, så CSS-animasjonen starter
+    void thanks.offsetWidth;
+    thanks.classList.add('fade-in');
+  }, 480);
+}
+
+// ─── EKSPONER GLOBALE FUNKSJONER FOR FIREBASE-MODUL ───
+// Firebase-scriptet (type="module") har ikke tilgang til funksjoner definert
+// i dette scriptet med mindre de eksplisitt legges på window.
+window.applyPrimaryColor    = applyPrimaryColor;
+window.showAnimOverlay      = showAnimOverlay;
+window.loadAnimIframe       = loadAnimIframe;
+window.restoreAnimFrame     = restoreAnimFrame;
+</script>
+</body>
+</html>
